@@ -12,13 +12,6 @@ dist
 dist-ssr
 *.local
 
-# Gizli ortam değişkenleri — asla commit'leme
-.env
-server/.env
-
-# Veritabanı dosyası — yerel veri, repoya eklenmesin
-server/data/
-
 # Server node_modules
 server/node_modules/
 
