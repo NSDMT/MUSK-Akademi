@@ -1,0 +1,115 @@
+/* ===== FOOTER ===== */
+.footer {
+  background: var(--color-dark-2);
+  border-top: 2px solid rgba(201,168,76,0.25);
+  padding-top: 60px;
+}
+
+.footer__inner {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr 1fr 1.2fr;
+  gap: 40px;
+  padding-bottom: 40px;
+}
+
+.footer__brand {}
+
+.footer__logo {
+  height: 72px;
+  width: 72px;
+  object-fit: contain;
+  border-radius: 50%;
+  margin-bottom: 16px;
+}
+
+.footer__tagline {
+  color: var(--color-gray);
+  font-size: 0.88rem;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.footer__social {
+  display: flex;
+  gap: 12px;
+}
+
+.footer__social a {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gold);
+  transition: var(--transition);
+}
+
+.footer__social a svg { width: 18px; height: 18px; }
+
+.footer__social a:hover {
+  background: var(--color-gold);
+  color: var(--color-dark);
+  transform: translateY(-2px);
+}
+
+.footer__heading {
+  color: var(--color-gold);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.footer__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer__list li,
+.footer__list a {
+  color: var(--color-gray);
+  font-size: 0.88rem;
+  transition: color var(--transition);
+  cursor: default;
+}
+
+.footer__list a { cursor: pointer; }
+.footer__list a:hover { color: var(--color-gold); }
+
+.footer__contact li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.footer__icon { flex-shrink: 0; }
+
+.footer__bottom {
+  border-top: 1px solid rgba(201,168,76,0.1);
+  padding: 20px 0;
+  text-align: center;
+}
+
+.footer__bottom p {
+  color: var(--color-gray);
+  font-size: 0.82rem;
+}
+
+@media (max-width: 900px) {
+  .footer__inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 560px) {
+  .footer__inner {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}

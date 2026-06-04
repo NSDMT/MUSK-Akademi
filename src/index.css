@@ -1,0 +1,160 @@
+﻿/* ============================================
+   MUZAFFER UGUR SPOR KULÜBÜ - Global Styles
+   Palette: Dark #0a0a0a | Gold #c9a84c | Blue #1e88e5
+============================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-dark:      #0a0a0a;
+  --color-dark-2:    #111111;
+  --color-dark-3:    #1a1a1a;
+  --color-gold:      #c9a84c;
+  --color-gold-light:#e8c96a;
+  --color-blue:      #1e88e5;
+  --color-blue-light:#42a5f5;
+  --color-light:     #f5f5f5;
+  --color-white:     #ffffff;
+  --color-gray:      #888888;
+  --color-gray-light:#cccccc;
+  --font-main:       'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --navbar-height:   70px;
+  --transition:      0.3s ease;
+  --radius:          8px;
+  --shadow:          0 4px 20px rgba(0,0,0,0.4);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--color-dark);
+  color: var(--color-light);
+  line-height: 1.6;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { text-decoration: none; color: inherit; }
+ul, ol { list-style: none; }
+img { max-width: 100%; display: block; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-dark-2); }
+::-webkit-scrollbar-thumb { background: var(--color-gold); border-radius: 3px; }
+
+/* Utility */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+.section { padding: 80px 0; }
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  text-align: center;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.section-subtitle {
+  text-align: center;
+  color: var(--color-gray-light);
+  margin-bottom: 50px;
+  font-size: 1rem;
+}
+
+.section-divider {
+  width: 60px;
+  height: 3px;
+  background: var(--color-gold);
+  margin: 10px auto 40px;
+  border-radius: 2px;
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--color-gold), var(--color-gold-light));
+  color: var(--color-dark);
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(201,168,76,0.4);
+}
+
+.btn-outline {
+  display: inline-block;
+  padding: 12px 28px;
+  background: transparent;
+  color: var(--color-gold);
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: var(--radius);
+  border: 2px solid var(--color-gold);
+  cursor: pointer;
+  transition: var(--transition);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-outline:hover {
+  background: var(--color-gold);
+  color: var(--color-dark);
+  transform: translateY(-2px);
+}
+
+.gold-text { color: var(--color-gold); }
+.blue-text  { color: var(--color-blue); }
+
+/* Page wrapper – sits below fixed navbar */
+.page-wrapper { padding-top: var(--navbar-height); min-height: 100vh; }
+
+/* Page hero banner */
+.page-hero {
+  background: linear-gradient(135deg, var(--color-dark-3) 0%, var(--color-dark-2) 100%);
+  border-bottom: 2px solid var(--color-gold);
+  padding: 60px 20px;
+  text-align: center;
+}
+.page-hero h1 {
+  font-size: 2.4rem;
+  color: var(--color-gold);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+.page-hero p { color: var(--color-gray-light); font-size: 1.05rem; }
+
+/* Card */
+.card {
+  background: var(--color-dark-3);
+  border-radius: var(--radius);
+  padding: 28px;
+  border: 1px solid rgba(201,168,76,0.15);
+  transition: var(--transition);
+}
+.card:hover {
+  border-color: var(--color-gold);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+
+/* #root reset */
+#root { width: 100%; max-width: 100%; text-align: left; border: none; }
+
