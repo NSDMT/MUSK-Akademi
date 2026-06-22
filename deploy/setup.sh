@@ -12,7 +12,7 @@ set -euo pipefail
 
 DOMAIN="xn--musksporkulb-nlbb.com"      # musksporkulübü.com punycode
 APP_DIR="/var/www/sporsite"
-REPO_URL="https://github.com/KULLANICI_ADINIZ/REPO_ADINIZ.git"  # ← değiştir
+REPO_URL="https://github.com/NSDMT/MUSK-Akademi.git"
 ADMIN_EMAIL="admin@musksporkulubu.com"                            # ← değiştir
 
 echo "======================================================"
