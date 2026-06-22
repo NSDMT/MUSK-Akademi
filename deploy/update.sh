@@ -8,8 +8,8 @@ echo "🔄 Güncelleme başlıyor..."
 cd "$APP_DIR"
 
 git pull
-npm ci --silent
-cd server && npm ci --silent && cd ..
+npm install --silent
+cd server && npm install --silent && cd ..
 npm run build
 
 pm2 restart musksporkulubu-api

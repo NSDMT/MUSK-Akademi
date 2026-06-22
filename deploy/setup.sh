@@ -62,8 +62,8 @@ cd "$APP_DIR"
 
 # --- 7. Bağımlılıklar ve build ---
 echo "[7/9] Bağımlılıklar yükleniyor ve frontend build ediliyor..."
-npm ci --silent
-cd server && npm ci --silent && cd ..
+npm install --silent
+cd server && npm install --silent && cd ..
 npm run build
 
 # .env dosyasını kopyala (henüz yoksa)
