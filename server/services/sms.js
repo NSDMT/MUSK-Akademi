@@ -1,49 +1,101 @@
-const axios = require('axios');
+const { Client, LocalAuth } = require('whatsapp-web.js');
+const qrcode = require('qrcode-terminal');
+const path = require('path');
 
 /**
- * SMS gönderim servisi - Netgsm HTTP API
- * Ortam değişkenleri tanımlı değilse geliştirme modunda konsola log basar.
- * 
- * Netgsm hesabı için: https://www.netgsm.com.tr
- * .env dosyasına NETGSM_USERCODE, NETGSM_PASSWORD, NETGSM_HEADER ekleyin.
+ * WhatsApp mesaj gönderim servisi - whatsapp-web.js (ücretsiz)
+ *
+ * İlk çalıştırmada terminalde QR kodu görünür → telefonunuzdaki
+ * WhatsApp > Bağlı Cihazlar > Cihaz Bağla ile tarayın.
+ * Oturum .wwebjs_auth/ klasöründe saklanır, bir daha QR gerekmez.
+ *
+ * Sunucu kapatılırsa WhatsApp bağlantısı da kapanır; yeniden başlatınca
+ * kayıtlı oturumla otomatik bağlanır.
+ */
+
+let waClient = null;
+let isReady = false;
+let initStarted = false;
+
+function initWhatsApp() {
+  if (initStarted) return;
+  initStarted = true;
+
+  waClient = new Client({
+    authStrategy: new LocalAuth({
+      dataPath: path.join(__dirname, '../../.wwebjs_auth'),
+    }),
+    puppeteer: {
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+      ],
+    },
+  });
+
+  waClient.on('qr', qr => {
+    console.log('\n📱 WhatsApp QR Kodu — Telefonunuzla tarayın:');
+    qrcode.generate(qr, { small: true });
+    console.log('(WhatsApp > Bağlı Cihazlar > Cihaz Bağla)\n');
+  });
+
+  waClient.on('ready', () => {
+    console.log('✅ WhatsApp bağlantısı hazır — mesaj gönderilebilir');
+    isReady = true;
+  });
+
+  waClient.on('auth_failure', msg => {
+    console.error('[WhatsApp] Oturum hatası:', msg);
+    isReady = false;
+    initStarted = false;
+  });
+
+  waClient.on('disconnected', reason => {
+    console.warn('[WhatsApp] Bağlantı kesildi:', reason, '— 15 sn sonra yeniden denenecek');
+    isReady = false;
+    initStarted = false;
+    setTimeout(initWhatsApp, 15_000);
+  });
+
+  waClient.initialize().catch(err => {
+    console.error('[WhatsApp] Başlatma hatası:', err.message);
+    initStarted = false;
+    // Puppeteer eksikse veya hata varsa mock modda devam et
+  });
+}
+
+// Uygulama başlarken WhatsApp'ı başlat
+initWhatsApp();
+
+/**
+ * Veliye WhatsApp mesajı gönderir.
+ * WhatsApp bağlantısı hazır değilse mesajı konsola yazar (mock mod).
+ *
+ * @param {string} phone  - Türk numarası: 05XX, 905XX, +90 5XX vb.
+ * @param {string} message
  */
 async function sendSms(phone, message) {
-  const usercode = process.env.NETGSM_USERCODE;
-  const password = process.env.NETGSM_PASSWORD;
-  const header = process.env.NETGSM_HEADER || 'MUZAFFERUGUR';
+  // Numarayı normalize et → 905XXXXXXXXX@c.us
+  const digits = phone.replace(/\D/g, '');
+  const normalized = digits.startsWith('90') ? digits : digits.startsWith('0') ? `9${digits}` : `90${digits}`;
+  const chatId = `${normalized}@c.us`;
 
-  if (!usercode || !password) {
-    console.log(`[SMS-MOCK] Alıcı: ${phone}`);
-    console.log(`[SMS-MOCK] Mesaj: ${message}`);
-    return { success: true, mock: true };
+  if (!isReady || !waClient) {
+    console.log(`[WhatsApp-MOCK] Bağlantı hazır değil — mesaj loglanıyor`);
+    console.log(`[WhatsApp-MOCK] Alıcı : ${chatId}`);
+    console.log(`[WhatsApp-MOCK] Mesaj : ${message}`);
+    return { success: false, error: 'WhatsApp bağlantısı henüz hazır değil', mock: true };
   }
 
   try {
-    // Türk telefon numarasını normalize et → 905XXXXXXXXX
-    const normalized = phone.replace(/\D/g, '').replace(/^0/, '90').replace(/^(?!90)/, '90');
-
-    const params = new URLSearchParams({
-      usercode,
-      password,
-      gsmno: normalized,
-      message,
-      msgheader: header,
-      encoding: 'TR',
-    });
-
-    const response = await axios.get(
-      `https://api.netgsm.com.tr/sms/send/get?${params.toString()}`,
-      { timeout: 10000 }
-    );
-
-    // Netgsm başarılı yanıtı: "00 XXXX" (00 = başarılı)
-    const data = response.data?.toString() || '';
-    if (data.startsWith('00') || data.startsWith('01') || data.startsWith('02')) {
-      return { success: true, data };
-    }
-    return { success: false, error: `Netgsm yanıtı: ${data}` };
+    await waClient.sendMessage(chatId, message);
+    console.log(`[WhatsApp] ✓ Mesaj gönderildi → ${chatId}`);
+    return { success: true };
   } catch (error) {
-    console.error('[SMS-ERROR]', error.message);
+    console.error('[WhatsApp-ERROR]', error.message);
     return { success: false, error: error.message };
   }
 }

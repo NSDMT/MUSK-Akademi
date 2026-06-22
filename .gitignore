@@ -15,6 +15,16 @@ dist-ssr
 # Server node_modules
 server/node_modules/
 
+# Ortam değişkenleri — asla commit edilmemeli
+server/.env
+
+# Veritabanı dosyası (production'da sunucuda kalır)
+server/data/
+
+# WhatsApp oturum dosyaları
+.wwebjs_auth/
+.wwebjs_cache/
+
 
 # Editor directories and files
 .vscode/*

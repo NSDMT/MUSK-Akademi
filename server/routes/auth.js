@@ -1,14 +1,23 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const rateLimit = require('express-rate-limit');
 const { body, validationResult } = require('express-validator');
 const { getDb } = require('../db/init');
 const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
 
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 dakika
+  max: 10,                   // 15 dakikada en fazla 10 deneme
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Çok fazla giriş denemesi. 15 dakika bekleyin.' },
+});
+
 // POST /api/auth/login
-router.post('/login', [
+router.post('/login', loginLimiter, [
   body('email').isEmail().normalizeEmail(),
   body('password').notEmpty().withMessage('Şifre gerekli'),
 ], (req, res) => {

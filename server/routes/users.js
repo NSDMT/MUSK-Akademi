@@ -20,7 +20,8 @@ router.get('/', ...adminOnly, (req, res) => {
 router.post('/', ...adminOnly, [
   body('name').notEmpty().trim(),
   body('email').isEmail().normalizeEmail(),
-  body('password').isLength({ min: 6 }).withMessage('Şifre en az 6 karakter olmalı'),
+  body('password').isLength({ min: 8 }).matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Şifre en az 8 karakter, bir büyük harf, bir küçük harf ve bir rakam içermeli'),
+
   body('role').isIn(['admin', 'antrenor', 'veli']),
   body('phone').optional().trim(),
 ], (req, res) => {
@@ -47,7 +48,7 @@ router.put('/:id', ...adminOnly, [
   body('email').optional().isEmail().normalizeEmail(),
   body('role').optional().isIn(['admin', 'antrenor', 'veli']),
   body('phone').optional().trim(),
-  body('password').optional().isLength({ min: 6 }),
+  body('password').optional().isLength({ min: 8 }).matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Şifre en az 8 karakter, bir büyük harf, bir küçük harf ve bir rakam içermeli'),
   body('is_active').optional().isBoolean(),
 ], (req, res) => {
   const errors = validationResult(req);

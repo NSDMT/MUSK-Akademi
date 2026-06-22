@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import PanelLayout from '../../../components/PanelLayout';
 import { useAuth } from '../../../context/AuthContext';
 import client from '../../../api/client';
@@ -6,19 +6,19 @@ import client from '../../../api/client';
 const ATT_MAP = {
   present: { label: 'Geldi',     color: '#4caf50', bg: 'rgba(76,175,80,0.12)' },
   absent:  { label: 'Gelmedi',   color: '#f44336', bg: 'rgba(244,67,54,0.12)' },
-  late:    { label: 'GeÃ§ Geldi', color: '#ff9800', bg: 'rgba(255,152,0,0.12)' },
-  excused: { label: 'Ä°zinli',    color: '#9e9e9e', bg: 'rgba(158,158,158,0.12)' },
+  late:    { label: 'Geç Geldi', color: '#ff9800', bg: 'rgba(255,152,0,0.12)' },
+  excused: { label: 'İzinli',    color: '#9e9e9e', bg: 'rgba(158,158,158,0.12)' },
 };
 
 const DUE_STATUS = {
   pending: { label: 'Bekliyor',  color: '#ff9800', bg: 'rgba(255,152,0,0.12)' },
-  paid:    { label: 'Ã–dendi',    color: '#4caf50', bg: 'rgba(76,175,80,0.12)' },
+  paid:    { label: '�-dendi',    color: '#4caf50', bg: 'rgba(76,175,80,0.12)' },
   waived:  { label: 'Muaf',      color: '#9e9e9e', bg: 'rgba(158,158,158,0.12)' },
-  overdue: { label: 'GecikmiÅŸ', color: '#f44336', bg: 'rgba(244,67,54,0.12)' },
+  overdue: { label: 'Gecikmi�Y', color: '#f44336', bg: 'rgba(244,67,54,0.12)' },
 };
 
-const MONTHS = ['', 'Ocak', 'Åubat', 'Mart', 'Nisan', 'MayÄ±s', 'Haziran',
-                'Temmuz', 'AÄŸustos', 'EylÃ¼l', 'Ekim', 'KasÄ±m', 'AralÄ±k'];
+const MONTHS = ['', 'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+                'Temmuz', 'A�Yustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
 
 export default function ParentDashboard() {
   const { user } = useAuth();
@@ -28,7 +28,7 @@ export default function ParentDashboard() {
   const [dues, setDues]             = useState([]);
   const [loadingHist, setLoadingH]  = useState(false);
 
-  // Ã–deme modal state
+  // �-deme modal state
   const [payModal, setPayModal]     = useState(false);
   const [selectedDues, setSelDues]  = useState([]);
   const [payerName,  setPayerName]  = useState(user?.name || '');
@@ -59,7 +59,7 @@ export default function ParentDashboard() {
     } finally { setLoadingH(false); }
   }
 
-  // Ã–deme baÅŸlat
+  // �-deme ba�Ylat
   async function initiatePayment() {
     if (selectedDues.length === 0) return;
     setPaying(true);
@@ -82,26 +82,26 @@ export default function ParentDashboard() {
       }
       document.addEventListener('iyzicoCheckoutFormResult', onResult);
     } catch (err) {
-      setPayAlert({ type: 'error', msg: err.response?.data?.error || 'Ã–deme baÅŸlatÄ±lamadÄ±' });
+      setPayAlert({ type: 'error', msg: err.response?.data?.error || '�-deme ba�Ylatılamadı' });
     } finally { setPaying(false); }
   }
 
-  // Ã–deme doÄŸrula
+  // �-deme do�Yrula
   async function verifyPayment(token, expectSuccess) {
     try {
       const res = await client.post('/payments/verify', { token });
       if (res.data.success) {
-        setPayAlert({ type: 'success', msg: 'âœ… Ã–deme baÅŸarÄ±yla tamamlandÄ±!' });
+        setPayAlert({ type: 'success', msg: '�o. �-deme ba�Yarıyla tamamlandı!' });
         setCheckoutHtml('');
         setPayModal(false);
         setSelDues([]);
         selectStudent(selected); // dues listesini yenile
       } else {
-        setPayAlert({ type: 'error', msg: 'âŒ Ã–deme baÅŸarÄ±sÄ±z: ' + (res.data.error || '') });
+        setPayAlert({ type: 'error', msg: '�O �-deme ba�Yarısız: ' + (res.data.error || '') });
         setCheckoutHtml('');
       }
     } catch {
-      setPayAlert({ type: 'error', msg: 'DoÄŸrulama hatasÄ±' });
+      setPayAlert({ type: 'error', msg: 'Do�Yrulama hatası' });
       setCheckoutHtml('');
     }
   }
@@ -110,7 +110,7 @@ export default function ParentDashboard() {
   useEffect(() => {
     if (checkoutHtml && checkoutRef.current) {
       checkoutRef.current.innerHTML = checkoutHtml;
-      // Script taglarÄ±nÄ± Ã§alÄ±ÅŸtÄ±r
+      // Script taglarını çalı�Ytır
       checkoutRef.current.querySelectorAll('script').forEach(old => {
         const s = document.createElement('script');
         s.textContent = old.textContent;
@@ -131,8 +131,8 @@ export default function ParentDashboard() {
     <PanelLayout>
       {students.length === 0 && (
         <div className="empty-state">
-          <div style={{ fontSize: '3rem' }}>ğŸ‘¶</div>
-          <p>HesabÄ±nÄ±za baÄŸlÄ± sporcu bulunamadÄ±.</p>
+          <div style={{ fontSize: '3rem' }}>gY'�</div>
+          <p>Hesabınıza ba�Ylı sporcu bulunamadı.</p>
         </div>
       )}
 
@@ -154,7 +154,7 @@ export default function ParentDashboard() {
 
       {selected && (
         <>
-          {/* Sporcu Bilgi KartÄ± */}
+          {/* Sporcu Bilgi Kartı */}
           <div style={{
             background: '#161616', border: '1px solid rgba(201,168,76,0.15)',
             borderRadius: 14, padding: 24, marginBottom: 24,
@@ -162,13 +162,13 @@ export default function ParentDashboard() {
           }}>
             {[
               { l: 'Ad Soyad',     v: `${selected.first_name} ${selected.last_name}` },
-              { l: 'DoÄŸum Tarihi', v: selected.birth_date },
-              { l: 'Kan Grubu',    v: selected.blood_type || 'â€”' },
-              { l: 'Ayak',         v: selected.foot || 'â€”' },
-              { l: 'Okul',         v: selected.school || 'â€”' },
-              { l: 'Grup',         v: selected.group_name || 'â€”' },
-              { l: 'BranÅŸ',        v: selected.branch_name || 'â€”' },
-              { l: 'Sporcu Tel',   v: selected.athlete_phone || 'â€”' },
+              { l: 'Do�Yum Tarihi', v: selected.birth_date },
+              { l: 'Kan Grubu',    v: selected.blood_type || '�?"' },
+              { l: 'Ayak',         v: selected.foot || '�?"' },
+              { l: 'Okul',         v: selected.school || '�?"' },
+              { l: 'Grup',         v: selected.group_name || '�?"' },
+              { l: 'Bran�Y',        v: selected.branch_name || '�?"' },
+              { l: 'Sporcu Tel',   v: selected.athlete_phone || '�?"' },
             ].map(item => (
               <div key={item.l}>
                 <div style={{ fontSize: '0.7rem', color: '#555', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 3 }}>{item.l}</div>
@@ -177,13 +177,13 @@ export default function ParentDashboard() {
             ))}
           </div>
 
-          {/* === AÄ°DAT BÃ–LÃœMÃœ === */}
+          {/* === AİDAT B�-L�oM�o === */}
           <div style={{ marginBottom: 32 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
               <h2 style={{ fontSize: '1rem', fontWeight: 700, color: '#ddd', margin: 0 }}>Aidat Durumu</h2>
               {pendingDues.length > 0 && (
                 <button className="btn-panel" style={{ fontSize: '0.875rem' }} onClick={() => { setSelDues(pendingDues.map(d => d.id)); setPayModal(true); }}>
-                  ğŸ’³ Online Ã–de ({totalPending} â‚º)
+                  gY'� Online �-de ({totalPending} �,�)
                 </button>
               )}
             </div>
@@ -191,12 +191,12 @@ export default function ParentDashboard() {
             {payAlert && <div className={`alert alert-${payAlert.type}`} style={{ marginBottom: 12 }}>{payAlert.msg}</div>}
 
             {dues.length === 0 ? (
-              <p style={{ color: '#555', fontSize: '0.875rem' }}>Aidat kaydÄ± bulunamadÄ±.</p>
+              <p style={{ color: '#555', fontSize: '0.875rem' }}>Aidat kaydı bulunamadı.</p>
             ) : (
               <div className="panel-table-wrap">
                 <table className="panel-table">
                   <thead>
-                    <tr><th>DÃ¶nem</th><th>Tutar</th><th>Durum</th><th></th></tr>
+                    <tr><th>Dönem</th><th>Tutar</th><th>Durum</th><th></th></tr>
                   </thead>
                   <tbody>
                     {dues.map(d => {
@@ -205,7 +205,7 @@ export default function ParentDashboard() {
                       return (
                         <tr key={d.id}>
                           <td style={{ fontWeight: 600 }}>{MONTHS[d.month]} {d.year}</td>
-                          <td style={{ color: '#c9a84c', fontWeight: 700 }}>{d.amount} â‚º</td>
+                          <td style={{ color: '#c9a84c', fontWeight: 700 }}>{d.amount} �,�</td>
                           <td>
                             <span style={{ background: st.bg, color: st.color, borderRadius: 20, padding: '3px 10px', fontSize: '0.75rem', fontWeight: 700 }}>
                               {st.label}
@@ -215,7 +215,7 @@ export default function ParentDashboard() {
                             {canPay && (
                               <button className="btn-panel btn-panel-sm" style={{ fontSize: '0.75rem' }}
                                 onClick={() => { setSelDues([d.id]); setPayModal(true); }}>
-                                Ã–de
+                                �-de
                               </button>
                             )}
                           </td>
@@ -228,16 +228,16 @@ export default function ParentDashboard() {
             )}
           </div>
 
-          {/* Devam istatistiÄŸi */}
+          {/* Devam istatisti�Yi */}
           {history.length > 0 && (
             <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
               <div className="stat-card" style={{ flex: '0 0 auto' }}>
                 <div className="stat-card__value">{presentPct}%</div>
-                <div className="stat-card__label">Devam OranÄ±</div>
+                <div className="stat-card__label">Devam Oranı</div>
               </div>
               <div className="stat-card" style={{ flex: '0 0 auto' }}>
                 <div className="stat-card__value">{history.filter(h => h.status === 'absent').length}</div>
-                <div className="stat-card__label">DevamsÄ±zlÄ±k</div>
+                <div className="stat-card__label">Devamsızlık</div>
               </div>
               <div className="stat-card" style={{ flex: '0 0 auto' }}>
                 <div className="stat-card__value">{history.length}</div>
@@ -246,15 +246,15 @@ export default function ParentDashboard() {
             </div>
           )}
 
-          {/* Yoklama geÃ§miÅŸi */}
-          <h2 style={{ fontSize: '1rem', fontWeight: 700, color: '#ddd', marginBottom: 14 }}>Yoklama GeÃ§miÅŸi</h2>
-          {loadingHist && <p style={{ color: '#555' }}>YÃ¼kleniyor...</p>}
-          {!loadingHist && history.length === 0 && <p style={{ color: '#555', fontSize: '0.875rem' }}>HenÃ¼z yoklama kaydÄ± yok.</p>}
+          {/* Yoklama geçmi�Yi */}
+          <h2 style={{ fontSize: '1rem', fontWeight: 700, color: '#ddd', marginBottom: 14 }}>Yoklama Geçmi�Yi</h2>
+          {loadingHist && <p style={{ color: '#555' }}>Yükleniyor...</p>}
+          {!loadingHist && history.length === 0 && <p style={{ color: '#555', fontSize: '0.875rem' }}>Henüz yoklama kaydı yok.</p>}
           {history.length > 0 && (
             <div className="panel-table-wrap">
               <table className="panel-table">
                 <thead>
-                  <tr><th>Tarih</th><th>BranÅŸ</th><th>Grup</th><th>Saat</th><th>Durum</th></tr>
+                  <tr><th>Tarih</th><th>Bran�Y</th><th>Grup</th><th>Saat</th><th>Durum</th></tr>
                 </thead>
                 <tbody>
                   {history.map(h => {
@@ -264,7 +264,7 @@ export default function ParentDashboard() {
                         <td style={{ fontWeight: 600 }}>{h.date}</td>
                         <td>{h.branch_name}</td>
                         <td>{h.group_name}</td>
-                        <td>{h.start_time} â€“ {h.end_time}</td>
+                        <td>{h.start_time} �?" {h.end_time}</td>
                         <td>
                           <span style={{ background: st.bg, color: st.color, borderRadius: 20, padding: '3px 10px', fontSize: '0.75rem', fontWeight: 700 }}>
                             {st.label}
@@ -280,15 +280,15 @@ export default function ParentDashboard() {
         </>
       )}
 
-      {/* === Ã–DEME MODALI === */}
+      {/* === �-DEME MODALI === */}
       {payModal && (
         <div className="modal-backdrop" onClick={() => { if (!checkoutHtml) { setPayModal(false); setCheckoutHtml(''); } }}>
           <div className="modal modal--lg" onClick={e => e.stopPropagation()}>
             {!checkoutHtml ? (
               <>
-                <h2 className="modal__title">ğŸ’³ Aidat Ã–demesi</h2>
+                <h2 className="modal__title">gY'� Aidat �-demesi</h2>
                 <p style={{ color: '#888', fontSize: '0.875rem', marginBottom: 20 }}>
-                  Ã–denecek: <strong style={{ color: '#c9a84c' }}>{totalSelected} â‚º</strong>
+                  �-denecek: <strong style={{ color: '#c9a84c' }}>{totalSelected} �,�</strong>
                   {' '}({selectedDues.length} aidat)
                 </p>
                 <div className="form-grid">
@@ -307,19 +307,19 @@ export default function ParentDashboard() {
                 </div>
                 {payAlert && <div className={`alert alert-${payAlert.type}`} style={{ marginTop: 12 }}>{payAlert.msg}</div>}
                 <div className="form-actions">
-                  <button className="btn-panel btn-ghost" onClick={() => setPayModal(false)}>Ä°ptal</button>
+                  <button className="btn-panel btn-ghost" onClick={() => setPayModal(false)}>İptal</button>
                   <button className="btn-panel" onClick={initiatePayment} disabled={paying || !payerName || !payerEmail || !payerPhone}>
-                    {paying ? 'YÃ¶nlendiriliyor...' : `${totalSelected} â‚º Ã–de`}
+                    {paying ? 'Yönlendiriliyor...' : `${totalSelected} �,� �-de`}
                   </button>
                 </div>
               </>
             ) : (
               <>
-                <h2 className="modal__title">Ã–deme Formu</h2>
+                <h2 className="modal__title">�-deme Formu</h2>
                 <div ref={checkoutRef} style={{ minHeight: 300 }} />
                 <button className="btn-panel btn-ghost btn-panel-sm" style={{ marginTop: 16 }}
                   onClick={() => { setCheckoutHtml(''); }}>
-                  â† Geri
+                  �?� Geri
                 </button>
               </>
             )}

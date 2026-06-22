@@ -20,30 +20,31 @@ import './pages/panel/Login.css';
 
 // Admin
 import AdminDashboard from './pages/panel/admin/Dashboard';
-import AdminStudents  from './pages/panel/admin/Students';
-import AdminUsers     from './pages/panel/admin/Users';
-import AdminGroups    from './pages/panel/admin/Groups';
-import AdminSchedule  from './pages/panel/admin/Schedule';
-import AdminDues      from './pages/panel/admin/Dues';
+import AdminStudents from './pages/panel/admin/Students';
+import AdminUsers from './pages/panel/admin/Users';
+import AdminGroups from './pages/panel/admin/Groups';
+import AdminSchedule from './pages/panel/admin/Schedule';
+import AdminDues from './pages/panel/admin/Dues';
 
 // Coach
 import CoachDashboard from './pages/panel/coach/Dashboard';
 
 // Parent
 import ParentDashboard from './pages/panel/parent/Dashboard';
+import PaymentReturn from './pages/panel/PaymentReturn';
 
 function PublicSite() {
   return (
     <>
       <Navbar />
       <Routes>
-        <Route path="/"           element={<Home />} />
+        <Route path="/" element={<Home />} />
         <Route path="/hakkimizda" element={<About />} />
-        <Route path="/branslar"   element={<Branches />} />
-        <Route path="/haberler"   element={<News />} />
-        <Route path="/galeri"     element={<Gallery />} />
-        <Route path="/kayit"      element={<Register />} />
-        <Route path="/iletisim"   element={<Contact />} />
+        <Route path="/branslar" element={<Branches />} />
+        <Route path="/haberler" element={<News />} />
+        <Route path="/galeri" element={<Gallery />} />
+        <Route path="/kayit" element={<Register />} />
+        <Route path="/iletisim" element={<Contact />} />
       </Routes>
       <Footer />
     </>
@@ -83,6 +84,10 @@ export default function App() {
 
           <Route path="/panel/veli/dashboard" element={
             <ProtectedRoute roles={['veli', 'admin']}><ParentDashboard /></ProtectedRoute>
+          } />
+
+          <Route path="/panel/payment-return" element={
+            <ProtectedRoute roles={['veli', 'admin']}><PaymentReturn /></ProtectedRoute>
           } />
 
           <Route path="/panel" element={<Navigate to="/panel/login" replace />} />

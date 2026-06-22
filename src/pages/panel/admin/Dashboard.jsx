@@ -17,8 +17,8 @@ export default function AdminDashboard() {
         setStats({
           students: students.data.length,
           trainers: users.data.filter(u => u.role === 'antrenor').length,
-          parents:  users.data.filter(u => u.role === 'veli').length,
-          groups:   groups.data.length,
+          parents: users.data.filter(u => u.role === 'veli').length,
+          groups: groups.data.length,
           schedule: schedule.data.length,
         });
       } catch {
@@ -39,11 +39,11 @@ export default function AdminDashboard() {
 
       <div className="stat-grid">
         {[
-          { icon: '👦', value: stats?.students  ?? '—', label: 'Toplam Öğrenci' },
-          { icon: '🏃', value: stats?.trainers  ?? '—', label: 'Antrenör' },
-          { icon: '👪', value: stats?.parents   ?? '—', label: 'Veli' },
-          { icon: '🏆', value: stats?.groups    ?? '—', label: 'Grup' },
-          { icon: '📅', value: stats?.schedule  ?? '—', label: 'Haftalık Ders' },
+          { icon: '👦', value: stats?.students ?? '—', label: 'Toplam Öğrenci' },
+          { icon: '🏃', value: stats?.trainers ?? '—', label: 'Antrenör' },
+          { icon: '👪', value: stats?.parents ?? '—', label: 'Veli' },
+          { icon: '🏆', value: stats?.groups ?? '—', label: 'Grup' },
+          { icon: '📅', value: stats?.schedule ?? '—', label: 'Haftalık Ders' },
         ].map(s => (
           <div key={s.label} className="stat-card">
             <div className="stat-card__icon">{s.icon}</div>
@@ -55,7 +55,6 @@ export default function AdminDashboard() {
 
       <div style={{ color: '#555', fontSize: '0.875rem', marginTop: 24 }}>
         <p>Soldaki menüden öğrenci, kullanıcı, grup ve antrenman takvimi yönetimine erişebilirsiniz.</p>
-        <p style={{ marginTop: 8 }}>Varsayılan admin girişi: <code style={{ color: '#c9a84c' }}>admin@muzafferugur.com</code> / <code style={{ color: '#c9a84c' }}>Admin123!</code></p>
       </div>
     </PanelLayout>
   );
