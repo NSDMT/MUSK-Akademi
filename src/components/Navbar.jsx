@@ -3,13 +3,13 @@ import { NavLink, Link } from 'react-router-dom';
 import './Navbar.css';
 
 const navLinks = [
-  { to: '/',          label: 'Ana Sayfa' },
+  { to: '/', label: 'Ana Sayfa' },
   { to: '/hakkimizda', label: 'Hakkımızda' },
-  { to: '/branslar',  label: 'Branşlarımız' },
-  { to: '/haberler',  label: 'Haberler' },
-  { to: '/galeri',    label: 'Galeri' },
-  { to: '/kayit',     label: 'Sporcu Kaydı' },
-  { to: '/iletisim',  label: 'İletişim' },
+  { to: '/branslar', label: 'Branşlarımız' },
+  { to: '/haberler', label: 'Haberler' },
+  { to: '/galeri', label: 'Galeri' },
+  { to: '/kayit', label: 'Sporcu Kaydı' },
+  { to: '/iletisim', label: 'İletişim' },
 ];
 
 export default function Navbar() {
@@ -51,6 +51,11 @@ export default function Navbar() {
               </NavLink>
             </li>
           ))}
+          <li>
+            <NavLink to="/panel/login" className="navbar__login-link" onClick={closeMenu}>
+              Giriş Yap
+            </NavLink>
+          </li>
         </ul>
 
         {/* Hamburger */}
@@ -78,6 +83,15 @@ export default function Navbar() {
             {label}
           </NavLink>
         ))}
+        <NavLink
+          to="/panel/login"
+          className={({ isActive }) =>
+            'navbar__mobile-link navbar__mobile-login' + (isActive ? ' navbar__mobile-link--active' : '')
+          }
+          onClick={closeMenu}
+        >
+          Giriş Yap
+        </NavLink>
       </div>
     </nav>
   );

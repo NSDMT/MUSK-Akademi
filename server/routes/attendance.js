@@ -7,7 +7,7 @@ const { sendSms } = require('../services/sms');
 const router = express.Router();
 
 // GET /api/attendance?schedule_id=X&date=YYYY-MM-DD
-router.get('/', authenticate, [
+router.get('/', authenticate, authorize('admin', 'antrenor'), [
   query('schedule_id').isInt({ min: 1 }),
   query('date').matches(/^\d{4}-\d{2}-\d{2}$/),
 ], (req, res) => {
@@ -135,6 +135,20 @@ router.post('/bulk', authenticate, authorize('admin', 'antrenor'), [
 // GET /api/attendance/student/:id  — yoklama geçmişi
 router.get('/student/:id', authenticate, (req, res) => {
   const db = getDb();
+
+  // Antrenör sadece kendi grubundaki öğrencinin geçmişini görebilir
+  if (req.user.role === 'antrenor') {
+    const student = db.prepare(`
+      SELECT g.trainer_id
+      FROM students s
+      LEFT JOIN groups g ON s.group_id = g.id
+      WHERE s.id = ? AND s.is_active = 1
+    `).get(req.params.id);
+
+    if (!student || student.trainer_id !== req.user.id) {
+      return res.status(403).json({ error: 'Bu öğrenciye erişim yetkiniz yok' });
+    }
+  }
 
   // Veli sadece kendi çocuğunun geçmişini görebilir
   if (req.user.role === 'veli') {

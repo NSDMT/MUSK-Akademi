@@ -47,7 +47,7 @@ router.get('/', authenticate, (req, res) => {
 router.get('/:id', authenticate, (req, res) => {
   const db = getDb();
   const student = db.prepare(`
-    SELECT s.*, g.name AS group_name, b.name AS branch_name
+    SELECT s.*, g.name AS group_name, b.name AS branch_name, g.trainer_id AS group_trainer_id
     FROM students s
     LEFT JOIN groups g ON s.group_id = g.id
     LEFT JOIN branches b ON g.branch_id = b.id
@@ -58,6 +58,11 @@ router.get('/:id', authenticate, (req, res) => {
 
   // Veli sadece kendi çocuğunu görebilir
   if (req.user.role === 'veli' && student.veli_user_id !== req.user.id) {
+    return res.status(403).json({ error: 'Bu öğrenciye erişim yetkiniz yok' });
+  }
+
+  // Antrenör sadece kendi grubundaki öğrenciyi görebilir
+  if (req.user.role === 'antrenor' && student.group_trainer_id !== req.user.id) {
     return res.status(403).json({ error: 'Bu öğrenciye erişim yetkiniz yok' });
   }
 

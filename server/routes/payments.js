@@ -54,7 +54,7 @@ function mockCheckoutForm(token, amount) {
 
 // POST /api/payments/initiate
 // Body: { dues_ids: [1,2,...], payer_name, payer_email, payer_phone, payer_ip }
-router.post('/initiate', authenticate, [
+router.post('/initiate', authenticate, authorize('admin', 'veli'), [
   body('dues_ids').isArray({ min: 1 }),
   body('payer_name').notEmpty().trim(),
   body('payer_email').isEmail().normalizeEmail(),
@@ -69,13 +69,18 @@ router.post('/initiate', authenticate, [
   // Aidat kayıtlarını çek
   const placeholders = dues_ids.map(() => '?').join(',');
   const duesRecords = db.prepare(
-    `SELECT d.*, s.first_name, s.last_name, s.tc, s.address
+    `SELECT d.*, s.first_name, s.last_name, s.tc, s.address, s.veli_user_id
      FROM dues d JOIN students s ON d.student_id = s.id
      WHERE d.id IN (${placeholders}) AND d.status IN ('pending','overdue')`
   ).all(...dues_ids);
 
   if (duesRecords.length === 0) {
     return res.status(400).json({ error: 'Ödenecek aidat bulunamadı' });
+  }
+
+  // Veli sadece kendi çocuğuna ait aidatları ödeyebilir
+  if (req.user.role === 'veli' && duesRecords.some(d => d.veli_user_id !== req.user.id)) {
+    return res.status(403).json({ error: 'Bu aidatları ödeme yetkiniz yok' });
   }
 
   const totalAmount = duesRecords.reduce((sum, d) => sum + d.amount, 0);
@@ -112,9 +117,9 @@ router.post('/initiate', authenticate, [
   const baseUrl = process.env.BASE_URL || 'http://localhost:5173';
 
   const firstName = payer_name.split(' ')[0];
-  const lastName  = payer_name.split(' ').slice(1).join(' ') || firstName;
-  const ip        = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
-  const address   = student.address || 'Türkiye';
+  const lastName = payer_name.split(' ').slice(1).join(' ') || firstName;
+  const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+  const address = student.address || 'Türkiye';
 
   const iyzicoRequest = {
     locale: 'tr',
@@ -139,7 +144,7 @@ router.post('/initiate', authenticate, [
       country: 'Turkey',
     },
     shippingAddress: { contactName: payer_name, city: 'Istanbul', country: 'Turkey', address },
-    billingAddress:  { contactName: payer_name, city: 'Istanbul', country: 'Turkey', address },
+    billingAddress: { contactName: payer_name, city: 'Istanbul', country: 'Turkey', address },
     basketItems: duesRecords.map(d => ({
       id: String(d.id),
       name: `Aidat ${d.year}/${d.month}`,
@@ -168,13 +173,27 @@ router.post('/initiate', authenticate, [
 
 // POST /api/payments/verify — ödeme doğrula (frontend çağırır)
 // Body: { token }
-router.post('/verify', authenticate, async (req, res) => {
+router.post('/verify', authenticate, authorize('admin', 'veli'), async (req, res) => {
   const { token } = req.body;
   if (!token) return res.status(400).json({ error: 'Token gerekli' });
 
   const db = getDb();
   const payment = db.prepare('SELECT * FROM payments WHERE provider_token = ?').get(token);
   if (!payment) return res.status(404).json({ error: 'Ödeme bulunamadı' });
+
+  // Veli sadece kendi öğrencisine ait ödemeyi doğrulayabilir
+  if (req.user.role === 'veli') {
+    const owner = db.prepare(`
+      SELECT s.veli_user_id
+      FROM payments p
+      JOIN students s ON s.id = p.student_id
+      WHERE p.id = ?
+    `).get(payment.id);
+
+    if (!owner || owner.veli_user_id !== req.user.id) {
+      return res.status(403).json({ error: 'Bu ödemeye erişim yetkiniz yok' });
+    }
+  }
 
   // Zaten tamamlanmışsa direkt dön
   if (payment.status === 'completed') {
@@ -221,7 +240,7 @@ router.post('/verify', authenticate, async (req, res) => {
 });
 
 // GET /api/payments — ödeme listesi
-router.get('/', authenticate, (req, res) => {
+router.get('/', authenticate, authorize('admin', 'veli'), (req, res) => {
   const db = getDb();
   let sql = `
     SELECT p.*, s.first_name, s.last_name

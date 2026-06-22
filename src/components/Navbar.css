@@ -6,15 +6,15 @@
   right: 0;
   z-index: 1000;
   height: var(--navbar-height);
-  background: rgba(10,10,10,0.85);
+  background: rgba(10, 10, 10, 0.85);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(201,168,76,0.2);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.2);
   transition: background var(--transition), box-shadow var(--transition);
 }
 
 .navbar--scrolled {
-  background: rgba(10,10,10,0.97);
-  box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  background: rgba(10, 10, 10, 0.97);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
 }
 
 .navbar__inner {
@@ -78,7 +78,24 @@
 .navbar__link:hover,
 .navbar__link--active {
   color: var(--color-gold);
-  background: rgba(201,168,76,0.08);
+  background: rgba(201, 168, 76, 0.08);
+}
+
+.navbar__login-link {
+  margin-left: 8px;
+  padding: 8px 14px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--color-dark);
+  background: var(--color-gold);
+  border-radius: 8px;
+  letter-spacing: 0.3px;
+  transition: transform var(--transition), filter var(--transition);
+}
+
+.navbar__login-link:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
 }
 
 /* Hamburger */
@@ -104,9 +121,11 @@
 .navbar__hamburger.open span:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
 }
+
 .navbar__hamburger.open span:nth-child(2) {
   opacity: 0;
 }
+
 .navbar__hamburger.open span:nth-child(3) {
   transform: translateY(-7px) rotate(-45deg);
 }
@@ -116,7 +135,7 @@
   display: none;
   flex-direction: column;
   background: var(--color-dark-2);
-  border-top: 1px solid rgba(201,168,76,0.15);
+  border-top: 1px solid rgba(201, 168, 76, 0.15);
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.4s ease;
@@ -131,18 +150,31 @@
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-gray-light);
-  border-bottom: 1px solid rgba(201,168,76,0.08);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.08);
   transition: color var(--transition), background var(--transition);
 }
 
 .navbar__mobile-link:hover,
 .navbar__mobile-link--active {
   color: var(--color-gold);
-  background: rgba(201,168,76,0.05);
+  background: rgba(201, 168, 76, 0.05);
+}
+
+.navbar__mobile-login {
+  font-weight: 700;
+  color: var(--color-gold);
 }
 
 @media (max-width: 900px) {
-  .navbar__links { display: none; }
-  .navbar__hamburger { display: flex; }
-  .navbar__mobile { display: flex; }
+  .navbar__links {
+    display: none;
+  }
+
+  .navbar__hamburger {
+    display: flex;
+  }
+
+  .navbar__mobile {
+    display: flex;
+  }
 }
