@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios';
 import './Register.css';
 
 const branches = ['Futbol','Voleybol','Basketbol','Tekerlekli Paten','Yüzme','Tenis','Satranç'];
@@ -18,6 +19,8 @@ export default function Register() {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState('');
 
   const validate = () => {
     const e = {};
@@ -40,11 +43,32 @@ export default function Register() {
     setErrors(prev => ({ ...prev, [name]: undefined }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const e2 = validate();
     if (Object.keys(e2).length > 0) { setErrors(e2); return; }
-    setSubmitted(true);
+    setLoading(true);
+    setServerError('');
+    try {
+      await axios.post('/api/applications', {
+        parentName: form.parentName,
+        parentPhone: form.parentPhone,
+        parentEmail: form.parentEmail,
+        childName: form.childName,
+        childBirthYear: form.childBirthYear,
+        branch: form.branch,
+        message: form.message,
+      });
+      setSubmitted(true);
+    } catch (err) {
+      setServerError(
+        err.response?.data?.error ||
+        (err.response?.data?.errors?.[0]?.msg) ||
+        'Bir hata oluştu, lütfen tekrar deneyin.'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (submitted) {
@@ -204,9 +228,10 @@ export default function Register() {
               {errors.consent && <span className="form-error">{errors.consent}</span>}
             </div>
 
-            <button type="submit" className="btn-primary register-submit">
-              Kayıt Talebini Gönder
+            <button type="submit" className="btn-primary register-submit" disabled={loading}>
+              {loading ? 'Gönderiliyor...' : 'Kayıt Talebini Gönder'}
             </button>
+            {serverError && <p className="form-error" style={{ marginTop: 8 }}>{serverError}</p>}
           </form>
 
           {/* Info Panel */}

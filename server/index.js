@@ -33,6 +33,7 @@ app.use('/api/schedule', require('./routes/schedule'));
 app.use('/api/attendance', require('./routes/attendance'));
 app.use('/api/dues', require('./routes/dues'));
 app.use('/api/payments', require('./routes/payments'));
+app.use('/api/applications', require('./routes/applications'));
 
 // 404
 app.use((req, res) => res.status(404).json({ error: 'Endpoint bulunamadı' }));

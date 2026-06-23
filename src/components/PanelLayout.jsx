@@ -10,6 +10,7 @@ const NAV = {
     { path: '/panel/admin/groups',    label: 'Gruplar',            icon: '🏆' },
     { path: '/panel/admin/schedule',  label: 'Antrenman Takvimi',  icon: '📅' },
     { path: '/panel/admin/dues',      label: 'Aidat Yönetimi',     icon: '💰' },
+    { path: '/panel/admin/applications', label: 'Başvurular',         icon: '📋' },
   ],
   antrenor: [
     { path: '/panel/antrenor/dashboard', label: 'Takvimim & Yoklama', icon: '📅' },

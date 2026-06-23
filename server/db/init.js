@@ -140,6 +140,24 @@ function initDb() {
     );
   `);
 
+  // Başvuru tablosu
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS applications (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      parent_name TEXT NOT NULL,
+      parent_phone TEXT NOT NULL,
+      parent_email TEXT DEFAULT '',
+      child_name TEXT NOT NULL,
+      child_birth_year INTEGER NOT NULL,
+      branch TEXT NOT NULL,
+      message TEXT DEFAULT '',
+      status TEXT DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected')),
+      notes TEXT DEFAULT '',
+      created_at TEXT DEFAULT (datetime('now')),
+      processed_at TEXT DEFAULT NULL
+    );
+  `);
+
   // Seed admin user
   const existing = db.prepare('SELECT id FROM users WHERE email = ?').get('admin@muzafferugur.com');
   if (!existing) {
