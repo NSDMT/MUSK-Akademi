@@ -67,6 +67,18 @@ export default function Footer() {
               info@muzafferugursk.com
             </li>
           </ul>
+          <div className="footer__map">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d280.9708334955709!2d33.22128050459155!3d37.18069838841806!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14d98d4da9cf08ed%3A0x706de462c17873cd!2sKaraman%20Muzaffer%20U%C4%9Fur%20Akademi%20Spor%20Kul%C3%BCb%C3%BC!5e0!3m2!1str!2str!4v1782320005640!5m2!1str!2str"
+              width="100%"
+              height="160"
+              style={{ border: 0, borderRadius: 8, display: 'block', marginTop: 12, opacity: 0.85 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+              title="MUSK Spor Kulübü Konum"
+            />
+          </div>
         </div>
 
       </div>
