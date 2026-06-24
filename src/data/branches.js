@@ -17,6 +17,7 @@ Akademimizde yetişen sporcularımız, U-7'den itibaren U-18 ve A Takım seviyes
     trainers: [
       { name: 'Muzaffer Uğur',  role: 'UEFA C Futbol Antrenörü / UEFA Çocuk Gelişim Antrenörü', photo: '/images/trainer-muzaffer.jpg' },
       { name: 'Mümin Taş',      role: 'UEFA C Futbol Antrenörü', photo: '' },
+      { name: 'Gökhan Turan',   role: 'Futbol Antrenörü', photo: '' },
       { name: 'Berkant Özyer',  role: 'Yardımcı Antrenör', photo: '' },
       { name: 'Selimhan Kaya',  role: 'Yardımcı Antrenör', photo: '' },
     ],
@@ -34,8 +35,11 @@ Erken yaşta disiplin, özgüven, takım ruhu ve sporcu kimliği kazandırmayı 
 Geleceğin sporcularını yetiştirirken, çocuklarımızın mutlu, sağlıklı ve güçlü bireyler olarak yetişmesine katkı sağlıyoruz.`,
     trainers: [
       { name: 'Tuğba Uğur',    role: '3. Kademe Kıdemli Voleybol Antrenörü', photo: '/images/trainer-tugba.jpg' },
-      { name: 'İlayda Bulut',  role: 'Yardımcı Antrenör', photo: '' },
-      { name: 'Ayşegül Yolu',  role: 'Yardımcı Antrenör', photo: '' },
+      { name: 'Fatma Ceren Yılmaz', role: 'Voleybol Antrenörü', photo: '' },
+      { name: 'Şeval Akurt',         role: 'Voleybol Antrenörü', photo: '' },
+      { name: 'Nipel Uluca',          role: 'Voleybol Antrenörü', photo: '' },
+      { name: 'İlayda Bulut',         role: 'Yardımcı Antrenör', photo: '' },
+      { name: 'Ayşegül Yolu',         role: 'Yardımcı Antrenör', photo: '' },
     ],
   },
   {

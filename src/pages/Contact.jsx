@@ -78,8 +78,11 @@ export default function Contact() {
             <div className="card contact-social">
               <h4>Sosyal Medya</h4>
               <div className="contact-social__links">
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.instagram.com/karamanmusksporakademi?igsh=MXNqazQyd2Rqd2pkMw%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer">
                   📸 Instagram
+                </a>
+                <a href="https://wa.me/90XXXXXXXXXX" target="_blank" rel="noopener noreferrer">
+                  💬 WhatsApp
                 </a>
                 <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
                   👍 Facebook

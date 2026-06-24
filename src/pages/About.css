@@ -12,7 +12,7 @@
   height: 460px;
   object-fit: cover;
   border-radius: var(--radius);
-  border: 1px solid rgba(201,168,76,0.15);
+  border: 1px solid rgba(0,180,216,0.15);
 }
 
 .about-intro__text {

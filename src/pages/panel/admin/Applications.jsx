@@ -3,17 +3,17 @@ import PanelLayout from '../../../components/PanelLayout';
 import client from '../../../api/client';
 
 const STATUS_LABEL = {
-  pending:  { text: 'Bekliyor',  color: '#f59e0b' },
+  pending: { text: 'Bekliyor', color: '#f59e0b' },
   approved: { text: 'Onaylandı', color: '#4ade80' },
   rejected: { text: 'Reddedildi', color: '#f87171' },
 };
 
 export default function AdminApplications() {
-  const [apps, setApps]         = useState([]);
-  const [filter, setFilter]     = useState('pending');
-  const [loading, setLoading]   = useState(true);
-  const [alert, setAlert]       = useState(null);
-  const [detail, setDetail]     = useState(null);   // onay sonrası göster
+  const [apps, setApps] = useState([]);
+  const [filter, setFilter] = useState('pending');
+  const [loading, setLoading] = useState(true);
+  const [alert, setAlert] = useState(null);
+  const [detail, setDetail] = useState(null);   // onay sonrası göster
   const [processing, setProcessing] = useState(null); // id
 
   useEffect(() => { load(); }, [filter]);
@@ -63,7 +63,7 @@ export default function AdminApplications() {
     }
   }
 
-  const pending  = apps.filter(a => a.status === 'pending').length;
+  const pending = apps.filter(a => a.status === 'pending').length;
 
   return (
     <PanelLayout>

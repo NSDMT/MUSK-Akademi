@@ -21,22 +21,44 @@ router.post('/', [
   body('parentEmail').optional({ checkFalsy: true }).isEmail().normalizeEmail(),
   body('childName').notEmpty().trim().withMessage('Sporcu adı gereklidir'),
   body('childBirthYear')
-    .isInt({ min: 2000, max: 2023 }).withMessage('Geçerli doğum yılı girin'),
+    .isInt({ min: 2000, max: 2030 }).withMessage('Geçerli doğum yılı girin'),
   body('branch').isIn(VALID_BRANCHES).withMessage('Geçersiz branş'),
   body('message').optional().trim(),
+  body('childTc').optional().trim(),
+  body('childBirthDate').optional().trim(),
+  body('childHeight').optional().trim(),
+  body('childWeight').optional().trim(),
+  body('childBloodGroup').optional().trim(),
+  body('childSchool').optional().trim(),
+  body('childAddress').optional().trim(),
+  body('motherName').optional().trim(),
+  body('fatherName').optional().trim(),
+  body('motherJob').optional().trim(),
+  body('fatherJob').optional().trim(),
+  body('emergencyPhone').optional().trim(),
 ], (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  const { parentName, parentPhone, parentEmail, childName, childBirthYear, branch, message } = req.body;
+  const {
+    parentName, parentPhone, parentEmail, childName, childBirthYear, branch, message,
+    childTc, childBirthDate, childHeight, childWeight, childBloodGroup,
+    childSchool, childAddress, motherName, fatherName, motherJob, fatherJob, emergencyPhone,
+  } = req.body;
   const db = getDb();
 
   const result = db.prepare(`
-    INSERT INTO applications (parent_name, parent_phone, parent_email, child_name, child_birth_year, branch, message)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO applications (
+      parent_name, parent_phone, parent_email, child_name, child_birth_year, branch, message,
+      child_tc, child_birth_date, child_height, child_weight, child_blood_group,
+      child_school, child_address, mother_name, father_name, mother_job, father_job, emergency_phone
+    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
   `).run(
     parentName, parentPhone, parentEmail || '', childName,
-    parseInt(childBirthYear), branch, message || ''
+    parseInt(childBirthYear), branch, message || '',
+    childTc || '', childBirthDate || '', childHeight || '', childWeight || '',
+    childBloodGroup || '', childSchool || '', childAddress || '',
+    motherName || '', fatherName || '', motherJob || '', fatherJob || '', emergencyPhone || '',
   );
 
   res.status(201).json({ success: true, id: result.lastInsertRowid });
@@ -78,10 +100,10 @@ router.post('/:id/approve', authenticate, authorize('admin'), async (req, res) =
   }
 
   // Rastgele güçlü şifre üret: 3 büyük + 3 küçük + 3 rakam + @ = 10 karakter
-  const upper  = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-  const lower  = 'abcdefghjkmnpqrstuvwxyz';
+  const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  const lower = 'abcdefghjkmnpqrstuvwxyz';
   const digits = '23456789';
-  const rand   = (set) => set[crypto.randomInt(set.length)];
+  const rand = (set) => set[crypto.randomInt(set.length)];
   const rawPassword = [
     rand(upper), rand(upper), rand(upper),
     rand(lower), rand(lower), rand(lower),

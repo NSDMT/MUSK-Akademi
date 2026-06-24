@@ -32,7 +32,7 @@
 .pl__brand-name {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--color-gold, #c9a84c);
+  color: var(--color-gold, #00b4d8);
   line-height: 1.2;
 }
 
@@ -69,7 +69,7 @@
 
 .pl__link--active {
   background: rgba(201, 168, 76, 0.12);
-  color: var(--color-gold, #c9a84c);
+  color: var(--color-gold, #00b4d8);
   font-weight: 600;
 }
 
@@ -97,7 +97,7 @@
   height: 34px;
   border-radius: 50%;
   background: rgba(201, 168, 76, 0.2);
-  color: var(--color-gold, #c9a84c);
+  color: var(--color-gold, #00b4d8);
   font-weight: 700;
   font-size: 0.95rem;
   display: flex;
@@ -186,7 +186,7 @@
 }
 
 .stat-card__icon { font-size: 1.8rem; margin-bottom: 8px; }
-.stat-card__value { font-size: 2rem; font-weight: 700; color: var(--color-gold, #c9a84c); }
+.stat-card__value { font-size: 2rem; font-weight: 700; color: var(--color-gold, #00b4d8); }
 .stat-card__label { font-size: 0.8rem; color: #666; margin-top: 2px; }
 
 /* Table */
@@ -221,7 +221,7 @@
 
 /* Buttons */
 .btn-panel {
-  background: var(--color-gold, #c9a84c);
+  background: var(--color-gold, #00b4d8);
   color: #0a0a0a;
   border: none;
   border-radius: 8px;
@@ -328,7 +328,7 @@
 .form-field input:focus,
 .form-field select:focus,
 .form-field textarea:focus {
-  border-color: var(--color-gold, #c9a84c);
+  border-color: var(--color-gold, #00b4d8);
 }
 
 .form-field select option { background: #1e1e1e; }
@@ -360,7 +360,7 @@
 }
 
 .search-bar input:focus,
-.search-bar select:focus { border-color: var(--color-gold, #c9a84c); }
+.search-bar select:focus { border-color: var(--color-gold, #00b4d8); }
 
 .search-bar input { flex: 1; min-width: 200px; }
 
@@ -374,7 +374,7 @@
   font-weight: 600;
 }
 
-.badge-admin    { background: rgba(201,168,76,0.15); color: #c9a84c; }
+.badge-admin    { background: rgba(201,168,76,0.15); color: #00b4d8; }
 .badge-antrenor { background: rgba(30,136,229,0.15); color: #64b5f6; }
 .badge-veli     { background: rgba(76,175,80,0.15);  color: #81c784; }
 
@@ -402,7 +402,7 @@
 /* Day names */
 .day-badge {
   background: rgba(201,168,76,0.12);
-  color: var(--color-gold, #c9a84c);
+  color: var(--color-gold, #00b4d8);
   border-radius: 6px;
   padding: 3px 10px;
   font-size: 0.75rem;

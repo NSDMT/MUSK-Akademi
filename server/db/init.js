@@ -100,7 +100,26 @@ function initDb() {
   `);
 
   // --- Migrations (idempotent) ---
-  try { db.exec('ALTER TABLE groups ADD COLUMN monthly_fee INTEGER DEFAULT 0'); } catch {}
+  try { db.exec('ALTER TABLE groups ADD COLUMN monthly_fee INTEGER DEFAULT 0'); } catch { }
+
+  // Applications extended fields migration
+  const newCols = [
+    'child_tc TEXT DEFAULT \'\'',
+    'child_birth_date TEXT DEFAULT \'\'',
+    'child_height TEXT DEFAULT \'\'',
+    'child_weight TEXT DEFAULT \'\'',
+    'child_blood_group TEXT DEFAULT \'\'',
+    'child_school TEXT DEFAULT \'\'',
+    'child_address TEXT DEFAULT \'\'',
+    'mother_name TEXT DEFAULT \'\'',
+    'father_name TEXT DEFAULT \'\'',
+    'mother_job TEXT DEFAULT \'\'',
+    'father_job TEXT DEFAULT \'\'',
+    'emergency_phone TEXT DEFAULT \'\'',
+  ];
+  for (const col of newCols) {
+    try { db.exec(`ALTER TABLE applications ADD COLUMN ${col}`); } catch { }
+  }
 
   // Aidat tablosu
   db.exec(`

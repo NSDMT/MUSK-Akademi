@@ -1,6 +1,6 @@
 ﻿/* ============================================
    MUZAFFER UGUR SPOR KULÜBÜ - Global Styles
-   Palette: Dark #0a0a0a | Gold #c9a84c | Blue #1e88e5
+   Palette: Dark #0a0a0a | Teal #00b4d8 | White #ffffff
 ============================================ */
 
 *, *::before, *::after {
@@ -13,10 +13,10 @@
   --color-dark:      #0a0a0a;
   --color-dark-2:    #111111;
   --color-dark-3:    #1a1a1a;
-  --color-gold:      #c9a84c;
-  --color-gold-light:#e8c96a;
-  --color-blue:      #1e88e5;
-  --color-blue-light:#42a5f5;
+  --color-gold:      #00b4d8;
+  --color-gold-light:#48cae4;
+  --color-blue:      #0096b7;
+  --color-blue-light:#00b4d8;
   --color-light:     #f5f5f5;
   --color-white:     #ffffff;
   --color-gray:      #888888;
@@ -95,7 +95,7 @@ img { max-width: 100%; display: block; }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(201,168,76,0.4);
+  box-shadow: 0 6px 20px rgba(0,180,216,0.4);
 }
 
 .btn-outline {
@@ -146,7 +146,7 @@ img { max-width: 100%; display: block; }
   background: var(--color-dark-3);
   border-radius: var(--radius);
   padding: 28px;
-  border: 1px solid rgba(201,168,76,0.15);
+  border: 1px solid rgba(0,180,216,0.15);
   transition: var(--transition);
 }
 .card:hover {
