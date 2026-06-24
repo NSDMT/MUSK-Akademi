@@ -56,11 +56,11 @@ export default function Footer() {
           <ul className="footer__list footer__contact">
             <li>
               <span className="footer__icon">📍</span>
-              Karaman Merkez, Karaman
+              Seki Çeşme Mah. Adalet İş Merkezi 4.Kat No:72/C Karaman
             </li>
             <li>
               <span className="footer__icon">📞</span>
-              +90 (000) 000 00 00
+              <a href="tel:+905459699677">+90 545 969 96 77</a>
             </li>
             <li>
               <span className="footer__icon">✉️</span>
@@ -73,7 +73,7 @@ export default function Footer() {
 
       <div className="footer__bottom">
         <div className="container">
-          <p>© {new Date().getFullYear()} Muzaffer Uğur Spor Kulübü. Tüm hakları saklıdır.</p>
+          <p>© {new Date().getFullYear()} MUSK Spor Kulübü. Tüm hakları saklıdır.</p>
         </div>
       </div>
     </footer>

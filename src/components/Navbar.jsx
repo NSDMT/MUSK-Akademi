@@ -29,9 +29,9 @@ export default function Navbar() {
       <div className="navbar__inner container">
         {/* Logo */}
         <Link to="/" className="navbar__brand" onClick={closeMenu}>
-          <img src="/images/logo.png" alt="Muzaffer Uğur Spor Kulübü" className="navbar__logo" />
+          <img src="/images/logo.png" alt="MUSK Spor Kulübü" className="navbar__logo" />
           <span className="navbar__brand-text">
-            <span className="navbar__brand-main">Muzaffer Uğur</span>
+            <span className="navbar__brand-main">MUSK</span>
             <span className="navbar__brand-sub">Spor Kulübü</span>
           </span>
         </Link>

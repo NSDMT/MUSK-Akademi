@@ -34,7 +34,7 @@ export default function PanelLogin() {
       <div className="login-card">
         <div className="login-logo">
           <img src="/images/logo.png" alt="Logo" onError={e => e.target.style.display='none'} />
-          <h1>Muzaffer Uğur Spor</h1>
+          <h1>MUSK Spor Kulübü</h1>
           <p>Yönetim Paneli</p>
         </div>
 

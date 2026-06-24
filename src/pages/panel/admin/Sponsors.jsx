@@ -178,7 +178,7 @@ export default function AdminSponsors() {
                   <label>Logo URL</label>
                   <input name="logo_url" value={form.logo_url} onChange={handleChange} placeholder="https://... veya /images/sponsor-logo.png" />
                   {form.logo_url && (
-                    <img src={form.logo_url} alt="önizleme" style={{ height: 50, marginTop: 8, objectFit: 'contain', background: '#fff', borderRadius: 4, padding: 4 }} onError={e => e.target.style.display='none'} />
+                    <img src={form.logo_url} alt="önizleme" style={{ height: 50, marginTop: 8, objectFit: 'contain', background: '#fff', borderRadius: 4, padding: 4 }} onError={e => e.target.style.display = 'none'} />
                   )}
                 </div>
                 <div className="form-group">

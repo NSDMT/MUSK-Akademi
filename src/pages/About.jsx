@@ -30,10 +30,10 @@ export default function About() {
           </div>
           <div className="about-intro__text">
             <p className="section-subtitle" style={{textAlign:'left'}}>Biz Kimiz?</p>
-            <h2 className="section-title" style={{textAlign:'left'}}>Muzaffer Uğur Spor Kulübü</h2>
+            <h2 className="section-title" style={{textAlign:'left'}}>MUSK Spor Kulübü</h2>
             <div className="section-divider" style={{margin:'10px 0 28px'}} />
             <p>
-              Muzaffer Uğur Spor Kulübü, <strong>2023 yılından bu yana</strong> Karaman'da sporun
+              MUSK Spor Kulübü, <strong>2023 yılından bu yana</strong> Karaman'da sporun
               gelişimine katkı sağlamak amacıyla faaliyet göstermektedir.
             </p>
             <p>
@@ -124,7 +124,7 @@ export default function About() {
             <h2>Muzaffer Uğur</h2>
             <p>
               Yıllarca sporda edindiği deneyim ve bilgi birikimini gençlere aktarmak amacıyla
-              2023 yılında Muzaffer Uğur Spor Kulübü'nü kurdu. UEFA lisanslı antrenör
+              2023 yılında MUSK Spor Kulübü'nü kurdu. UEFA lisanslı antrenör
               olarak futbol branşında aktif görev yaparken kulübün vizyonunu şekillendiriyor.
             </p>
             <ul className="founder-text__badges">

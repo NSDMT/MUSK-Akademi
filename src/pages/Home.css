@@ -511,7 +511,10 @@
   color: inherit;
   transition: opacity 0.2s;
 }
-.sponsor-card__logo:hover { opacity: 0.8; }
+
+.sponsor-card__logo:hover {
+  opacity: 0.8;
+}
 
 .sponsor-card__logo img {
   max-height: 70px;

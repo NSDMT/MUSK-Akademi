@@ -64,7 +64,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    axios.get('/api/sponsors').then(r => setSponsors(r.data)).catch(() => {});
+    axios.get('/api/sponsors').then(r => setSponsors(r.data)).catch(() => { });
   }, []);
 
   return (
@@ -87,7 +87,7 @@ export default function Home() {
             Bugünden Yetiştiriyoruz
           </h1>
           <p className="hero__desc">
-            Muzaffer Uğur Spor Kulübü olarak 7 farklı branşta uzman kadromuzla
+            MUSK Spor Kulübü olarak 7 farklı branşta uzman kadromuzla
             çocuklarınızın fiziksel, zihinsel ve sosyal gelişimine katkı sağlıyoruz.
           </p>
           <div className="hero__actions">
@@ -219,35 +219,35 @@ export default function Home() {
 
       {/* ========== SPONSORS ========== */}
       {sponsors.length > 0 && (
-      <section className="section sponsors-section">
-        <div className="container">
-          <p className="section-subtitle">Destekçilerimiz</p>
-          <h2 className="section-title">Sponsorlarımız</h2>
-          <div className="section-divider" />
-          <div className="sponsors-grid">
-            {sponsors.map(s => (
-              <div key={s.id} className="sponsor-card card">
-                {s.website
-                  ? <a href={s.website} target="_blank" rel="noopener noreferrer" className="sponsor-card__logo">
+        <section className="section sponsors-section">
+          <div className="container">
+            <p className="section-subtitle">Destekçilerimiz</p>
+            <h2 className="section-title">Sponsorlarımız</h2>
+            <div className="section-divider" />
+            <div className="sponsors-grid">
+              {sponsors.map(s => (
+                <div key={s.id} className="sponsor-card card">
+                  {s.website
+                    ? <a href={s.website} target="_blank" rel="noopener noreferrer" className="sponsor-card__logo">
                       {s.logo_url
                         ? <img src={s.logo_url} alt={s.name} />
                         : <><span>🏢</span><p>{s.name}</p></>}
                     </a>
-                  : <div className="sponsor-card__logo">
+                    : <div className="sponsor-card__logo">
                       {s.logo_url
                         ? <img src={s.logo_url} alt={s.name} />
                         : <><span>🏢</span><p>{s.name}</p></>}
                     </div>
-                }
-                {s.description && <small className="sponsor-card__desc">{s.description}</small>}
-              </div>
-            ))}
+                  }
+                  {s.description && <small className="sponsor-card__desc">{s.description}</small>}
+                </div>
+              ))}
+            </div>
+            <p className="sponsors-note">
+              Sponsorluğa başvurmak için <Link to="/iletisim">bizimle iletişime geçin</Link>.
+            </p>
           </div>
-          <p className="sponsors-note">
-            Sponsorluğa başvurmak için <Link to="/iletisim">bizimle iletişime geçin</Link>.
-          </p>
-        </div>
-      </section>
+        </section>
       )}
 
       {/* ========== CTA ========== */}

@@ -11,7 +11,7 @@ const NAV = {
     { path: '/panel/admin/schedule', label: 'Antrenman Takvimi', icon: '📅' },
     { path: '/panel/admin/dues', label: 'Aidat Yönetimi', icon: '💰' },
     { path: '/panel/admin/applications', label: 'Başvurular', icon: '📋' },
-    { path: '/panel/admin/sponsors',    label: 'Sponsorlar', icon: '🏢' },
+    { path: '/panel/admin/sponsors', label: 'Sponsorlar', icon: '🏢' },
   ],
   antrenor: [
     { path: '/panel/antrenor/dashboard', label: 'Takvimim & Yoklama', icon: '📅' },

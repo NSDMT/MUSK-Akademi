@@ -46,15 +46,14 @@ export default function Contact() {
               <span className="contact-info__icon">📍</span>
               <div>
                 <h4>Adres</h4>
-                <p>Karaman Merkez, Karaman</p>
-                {/* FOTOĞRAF: harita veya tesis görseli için update edebilirsiniz */}
+                <p>Seki Çeşme Mah. Adalet İş Merkezi<br />4.Kat, No:72/C<br />Karaman Merkez</p>
               </div>
             </div>
             <div className="card contact-info__card">
               <span className="contact-info__icon">📞</span>
               <div>
                 <h4>Telefon</h4>
-                <a href="tel:+905000000000">+90 (000) 000 00 00</a>
+                <a href="tel:+905459699677">+90 545 969 96 77</a>
               </div>
             </div>
             <div className="card contact-info__card">
@@ -167,14 +166,18 @@ export default function Contact() {
               </form>
             )}
 
-            {/* Map placeholder */}
+            {/* Map */}
             <div className="contact-map">
-              {/* FOTOĞRAF / API: Google Maps embed veya harita görseli buraya eklenecek */}
-              <div className="contact-map__placeholder">
-                <span>🗺️</span>
-                <p>Harita Alanı</p>
-                <small>Google Maps embed buraya eklenecek</small>
-              </div>
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d280.9708334955709!2d33.22128050459155!3d37.18069838841806!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14d98d4da9cf08ed%3A0x706de462c17873cd!2sKaraman%20Muzaffer%20U%C4%9Fur%20Akademi%20Spor%20Kul%C3%BCb%C3%BC!5e0!3m2!1str!2str!4v1782320005640!5m2!1str!2str"
+                width="100%"
+                height="320"
+                style={{ border: 0, borderRadius: 'var(--radius)', display: 'block' }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+                title="MUSK Spor Kulübü Konum"
+              />
             </div>
           </div>
 
