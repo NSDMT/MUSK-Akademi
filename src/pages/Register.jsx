@@ -319,8 +319,8 @@ export default function Register() {
             <div className="card register-info__card">
               <h3>📞 Direkt İletişim</h3>
               <p>Formla uğraşmak yerine doğrudan aramak isterseniz:</p>
-              <a href="tel:+905000000000" className="register-info__phone">
-                +90 (000) 000 00 00
+              <a href="tel:+905459699677" className="register-info__phone">
+                +90 545 969 96 77
               </a>
             </div>
             <div className="card register-info__card">
