@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import './Home.css';
 
 const SLIDES = [
@@ -12,13 +13,13 @@ const SLIDES = [
 ];
 
 const branches = [
-  { icon: '⚽', name: 'Futbol',           desc: '5-15 yaş arası profesyonel futbol eğitimi', to: '/branslar#futbol' },
-  { icon: '🏐', name: 'Voleybol',         desc: '5-16 yaş arası profesyonel voleybol eğitimi', to: '/branslar#voleybol' },
-  { icon: '🏀', name: 'Basketbol',        desc: '5-16 yaş arası profesyonel basketbol eğitimi', to: '/branslar#basketbol' },
+  { icon: '⚽', name: 'Futbol', desc: '5-15 yaş arası profesyonel futbol eğitimi', to: '/branslar#futbol' },
+  { icon: '🏐', name: 'Voleybol', desc: '5-16 yaş arası profesyonel voleybol eğitimi', to: '/branslar#voleybol' },
+  { icon: '🏀', name: 'Basketbol', desc: '5-16 yaş arası profesyonel basketbol eğitimi', to: '/branslar#basketbol' },
   { icon: '🛼', name: 'Tekerlekli Paten', desc: 'Denge, koordinasyon ve teknik gelişim eğitimi', to: '/branslar#paten' },
-  { icon: '🏊', name: 'Yüzme',            desc: 'Profesyonel yüzme eğitimi', to: '/branslar#yuzme' },
-  { icon: '🎾', name: 'Tenis',            desc: 'Profesyonel tenis eğitimi', to: '/branslar#tenis' },
-  { icon: '♟️', name: 'Satranç',          desc: 'Stratejik düşünme ve problem çözme eğitimi', to: '/branslar#satranc' },
+  { icon: '🏊', name: 'Yüzme', desc: 'Profesyonel yüzme eğitimi', to: '/branslar#yuzme' },
+  { icon: '🎾', name: 'Tenis', desc: 'Profesyonel tenis eğitimi', to: '/branslar#tenis' },
+  { icon: '♟️', name: 'Satranç', desc: 'Stratejik düşünme ve problem çözme eğitimi', to: '/branslar#satranc' },
 ];
 
 const whyUs = [
@@ -38,27 +39,32 @@ const stats = [
 ];
 
 const coaches = [
-  { name: 'Muzaffer Uğur',      branch: 'Futbol',            role: 'UEFA C / Çocuk Gelişim Antrenörü', icon: '⚽' },
-  { name: 'Gökhan Turan',       branch: 'Futbol',            role: 'Futbol Antrenörü', icon: '⚽' },
-  { name: 'Mümin Taş',          branch: 'Futbol',            role: 'UEFA C Futbol Antrenörü', icon: '⚽' },
-  { name: 'Tuğba Uğur',         branch: 'Voleybol & Paten',  role: '3. Kademe Voleybol / Paten Antrenörü', icon: '🏐' },
-  { name: 'Fatma Ceren Yılmaz', branch: 'Voleybol',          role: 'Voleybol Antrenörü', icon: '🏐' },
-  { name: 'Şeval Akurt',        branch: 'Voleybol',          role: 'Voleybol Antrenörü', icon: '🏐' },
-  { name: 'Nipel Uluca',        branch: 'Voleybol',          role: 'Voleybol Antrenörü', icon: '🏐' },
-  { name: 'Mehmet Dinçer',      branch: 'Basketbol',         role: '3. Kademe Basketbol Antrenörü', icon: '🏀' },
-  { name: 'Fatma Gülten Özdil', branch: 'Basketbol',         role: '2. Kademe Basketbol Antrenörü', icon: '🏀' },
-  { name: 'Musa Çimen',         branch: 'Tenis',             role: '3. Kademe Paten Antrenörü', icon: '🎾' },
-  { name: 'Beyza Ünüvar',       branch: 'Satranç',           role: '2. Kademe Satranç Antrenörü', icon: '♟️' },
+  { name: 'Muzaffer Uğur', branch: 'Futbol', role: 'UEFA C / Çocuk Gelişim Antrenörü', icon: '⚽' },
+  { name: 'Gökhan Turan', branch: 'Futbol', role: 'Futbol Antrenörü', icon: '⚽' },
+  { name: 'Mümin Taş', branch: 'Futbol', role: 'UEFA C Futbol Antrenörü', icon: '⚽' },
+  { name: 'Tuğba Uğur', branch: 'Voleybol & Paten', role: '3. Kademe Voleybol / Paten Antrenörü', icon: '🏐' },
+  { name: 'Fatma Ceren Yılmaz', branch: 'Voleybol', role: 'Voleybol Antrenörü', icon: '🏐' },
+  { name: 'Şeval Akurt', branch: 'Voleybol', role: 'Voleybol Antrenörü', icon: '🏐' },
+  { name: 'Nipel Uluca', branch: 'Voleybol', role: 'Voleybol Antrenörü', icon: '🏐' },
+  { name: 'Mehmet Dinçer', branch: 'Basketbol', role: '3. Kademe Basketbol Antrenörü', icon: '🏀' },
+  { name: 'Fatma Gülten Özdil', branch: 'Basketbol', role: '2. Kademe Basketbol Antrenörü', icon: '🏀' },
+  { name: 'Musa Çimen', branch: 'Tenis', role: '3. Kademe Paten Antrenörü', icon: '🎾' },
+  { name: 'Beyza Ünüvar', branch: 'Satranç', role: '2. Kademe Satranç Antrenörü', icon: '♟️' },
 ];
 
 export default function Home() {
   const [slideIndex, setSlideIndex] = useState(0);
+  const [sponsors, setSponsors] = useState([]);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setSlideIndex(i => (i + 1) % SLIDES.length);
     }, 3000);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    axios.get('/api/sponsors').then(r => setSponsors(r.data)).catch(() => {});
   }, []);
 
   return (
@@ -212,19 +218,28 @@ export default function Home() {
       </section>
 
       {/* ========== SPONSORS ========== */}
+      {sponsors.length > 0 && (
       <section className="section sponsors-section">
         <div className="container">
           <p className="section-subtitle">Destekçilerimiz</p>
           <h2 className="section-title">Sponsorlarımız</h2>
           <div className="section-divider" />
           <div className="sponsors-grid">
-            {[1,2,3,4].map(i => (
-              <div key={i} className="sponsor-card card">
-                <div className="sponsor-card__logo">
-                  <span>🏢</span>
-                  <p>Sponsor {i}</p>
-                  <small>Logo eklenecek</small>
-                </div>
+            {sponsors.map(s => (
+              <div key={s.id} className="sponsor-card card">
+                {s.website
+                  ? <a href={s.website} target="_blank" rel="noopener noreferrer" className="sponsor-card__logo">
+                      {s.logo_url
+                        ? <img src={s.logo_url} alt={s.name} />
+                        : <><span>🏢</span><p>{s.name}</p></>}
+                    </a>
+                  : <div className="sponsor-card__logo">
+                      {s.logo_url
+                        ? <img src={s.logo_url} alt={s.name} />
+                        : <><span>🏢</span><p>{s.name}</p></>}
+                    </div>
+                }
+                {s.description && <small className="sponsor-card__desc">{s.description}</small>}
               </div>
             ))}
           </div>
@@ -233,6 +248,7 @@ export default function Home() {
           </p>
         </div>
       </section>
+      )}
 
       {/* ========== CTA ========== */}
       <section className="cta-section">

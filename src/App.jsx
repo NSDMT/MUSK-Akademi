@@ -26,6 +26,7 @@ import AdminGroups from './pages/panel/admin/Groups';
 import AdminSchedule from './pages/panel/admin/Schedule';
 import AdminDues from './pages/panel/admin/Dues';
 import AdminApplications from './pages/panel/admin/Applications';
+import AdminSponsors from './pages/panel/admin/Sponsors';
 
 // Coach
 import CoachDashboard from './pages/panel/coach/Dashboard';
@@ -81,6 +82,10 @@ export default function App() {
 
           <Route path="/panel/admin/applications" element={
             <ProtectedRoute roles={['admin']}><AdminApplications /></ProtectedRoute>
+          } />
+
+          <Route path="/panel/admin/sponsors" element={
+            <ProtectedRoute roles={['admin']}><AdminSponsors /></ProtectedRoute>
           } />
 
           <Route path="/panel/antrenor/dashboard" element={

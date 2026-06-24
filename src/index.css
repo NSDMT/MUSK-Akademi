@@ -3,32 +3,36 @@
    Palette: Dark #0a0a0a | Teal #00b4d8 | White #ffffff
 ============================================ */
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
 :root {
-  --color-dark:      #0a0a0a;
-  --color-dark-2:    #111111;
-  --color-dark-3:    #1a1a1a;
-  --color-gold:      #00b4d8;
-  --color-gold-light:#48cae4;
-  --color-blue:      #0096b7;
-  --color-blue-light:#00b4d8;
-  --color-light:     #f5f5f5;
-  --color-white:     #ffffff;
-  --color-gray:      #888888;
-  --color-gray-light:#cccccc;
-  --font-main:       'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-  --navbar-height:   70px;
-  --transition:      0.3s ease;
-  --radius:          8px;
-  --shadow:          0 4px 20px rgba(0,0,0,0.4);
+  --color-dark: #0a0a0a;
+  --color-dark-2: #111111;
+  --color-dark-3: #1a1a1a;
+  --color-gold: #00b4d8;
+  --color-gold-light: #48cae4;
+  --color-blue: #0096b7;
+  --color-blue-light: #00b4d8;
+  --color-light: #f5f5f5;
+  --color-white: #ffffff;
+  --color-gray: #888888;
+  --color-gray-light: #cccccc;
+  --font-main: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --navbar-height: 70px;
+  --transition: 0.3s ease;
+  --radius: 8px;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
 
 body {
   font-family: var(--font-main);
@@ -39,19 +43,45 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-a { text-decoration: none; color: inherit; }
-ul, ol { list-style: none; }
-img { max-width: 100%; display: block; }
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--color-dark-2); }
-::-webkit-scrollbar-thumb { background: var(--color-gold); border-radius: 3px; }
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-dark-2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold);
+  border-radius: 3px;
+}
 
 /* Utility */
-.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
 
-.section { padding: 80px 0; }
+.section {
+  padding: 80px 0;
+}
 
 .section-title {
   font-size: 2rem;
@@ -95,7 +125,7 @@ img { max-width: 100%; display: block; }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,180,216,0.4);
+  box-shadow: 0 6px 20px rgba(0, 180, 216, 0.4);
 }
 
 .btn-outline {
@@ -119,11 +149,19 @@ img { max-width: 100%; display: block; }
   transform: translateY(-2px);
 }
 
-.gold-text { color: var(--color-gold); }
-.blue-text  { color: var(--color-blue); }
+.gold-text {
+  color: var(--color-gold);
+}
+
+.blue-text {
+  color: var(--color-blue);
+}
 
 /* Page wrapper – sits below fixed navbar */
-.page-wrapper { padding-top: var(--navbar-height); min-height: 100vh; }
+.page-wrapper {
+  padding-top: var(--navbar-height);
+  min-height: 100vh;
+}
 
 /* Page hero banner */
 .page-hero {
@@ -132,6 +170,7 @@ img { max-width: 100%; display: block; }
   padding: 60px 20px;
   text-align: center;
 }
+
 .page-hero h1 {
   font-size: 2.4rem;
   color: var(--color-gold);
@@ -139,16 +178,21 @@ img { max-width: 100%; display: block; }
   letter-spacing: 2px;
   margin-bottom: 10px;
 }
-.page-hero p { color: var(--color-gray-light); font-size: 1.05rem; }
+
+.page-hero p {
+  color: var(--color-gray-light);
+  font-size: 1.05rem;
+}
 
 /* Card */
 .card {
   background: var(--color-dark-3);
   border-radius: var(--radius);
   padding: 28px;
-  border: 1px solid rgba(0,180,216,0.15);
+  border: 1px solid rgba(0, 180, 216, 0.15);
   transition: var(--transition);
 }
+
 .card:hover {
   border-color: var(--color-gold);
   transform: translateY(-4px);
@@ -156,5 +200,9 @@ img { max-width: 100%; display: block; }
 }
 
 /* #root reset */
-#root { width: 100%; max-width: 100%; text-align: left; border: none; }
-
+#root {
+  width: 100%;
+  max-width: 100%;
+  text-align: left;
+  border: none;
+}

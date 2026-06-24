@@ -10,7 +10,7 @@ export default function Contact() {
 
   const validate = () => {
     const e = {};
-    if (!form.name.trim())  e.name  = 'Ad soyad gereklidir.';
+    if (!form.name.trim()) e.name = 'Ad soyad gereklidir.';
     if (!/^\d{10,11}$/.test(form.phone.replace(/\s/g, '')))
       e.phone = 'Geçerli bir telefon numarası girin.';
     if (!form.message.trim()) e.message = 'Mesaj gereklidir.';
@@ -81,7 +81,7 @@ export default function Contact() {
                 <a href="https://www.instagram.com/karamanmusksporakademi?igsh=MXNqazQyd2Rqd2pkMw%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer">
                   📸 Instagram
                 </a>
-                <a href="https://wa.me/90XXXXXXXXXX" target="_blank" rel="noopener noreferrer">
+                <a href="https://wa.me/905459699677" target="_blank" rel="noopener noreferrer">
                   💬 WhatsApp
                 </a>
                 <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">

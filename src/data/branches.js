@@ -15,11 +15,11 @@ Erken yaşta disiplin, özgüven, takım ruhu ve sporcu kimliği kazandırmayı 
 Akademimizde yetişen sporcularımız, U-7'den itibaren U-18 ve A Takım seviyesine kadar gelişim sürecine dahil olmakta; resmi müsabakalarda tüm kategorilerde kulübümüzü başarıyla temsil etmektedir.`,
     highlight: '🏆 Geleceğin futbolcularını bugünden yetiştiriyoruz!',
     trainers: [
-      { name: 'Muzaffer Uğur',  role: 'UEFA C Futbol Antrenörü / UEFA Çocuk Gelişim Antrenörü', photo: '/images/trainer-muzaffer.jpg' },
-      { name: 'Mümin Taş',      role: 'UEFA C Futbol Antrenörü', photo: '' },
-      { name: 'Gökhan Turan',   role: 'Futbol Antrenörü', photo: '' },
-      { name: 'Berkant Özyer',  role: 'Yardımcı Antrenör', photo: '' },
-      { name: 'Selimhan Kaya',  role: 'Yardımcı Antrenör', photo: '' },
+      { name: 'Muzaffer Uğur', role: 'UEFA C Futbol Antrenörü / UEFA Çocuk Gelişim Antrenörü', photo: '/images/trainer-muzaffer.jpg' },
+      { name: 'Mümin Taş', role: 'UEFA C Futbol Antrenörü', photo: '' },
+      { name: 'Gökhan Turan', role: 'Futbol Antrenörü', photo: '' },
+      { name: 'Berkant Özyer', role: 'Yardımcı Antrenör', photo: '' },
+      { name: 'Selimhan Kaya', role: 'Yardımcı Antrenör', photo: '' },
     ],
   },
   {
@@ -34,12 +34,12 @@ Yaş gruplarına uygun, çocuk gelişimini destekleyen antrenman programlarımı
 Erken yaşta disiplin, özgüven, takım ruhu ve sporcu kimliği kazandırmayı hedefliyoruz.
 Geleceğin sporcularını yetiştirirken, çocuklarımızın mutlu, sağlıklı ve güçlü bireyler olarak yetişmesine katkı sağlıyoruz.`,
     trainers: [
-      { name: 'Tuğba Uğur',    role: '3. Kademe Kıdemli Voleybol Antrenörü', photo: '/images/trainer-tugba.jpg' },
+      { name: 'Tuğba Uğur', role: '3. Kademe Kıdemli Voleybol Antrenörü', photo: '/images/trainer-tugba.jpg' },
       { name: 'Fatma Ceren Yılmaz', role: 'Voleybol Antrenörü', photo: '' },
-      { name: 'Şeval Akurt',         role: 'Voleybol Antrenörü', photo: '' },
-      { name: 'Nipel Uluca',          role: 'Voleybol Antrenörü', photo: '' },
-      { name: 'İlayda Bulut',         role: 'Yardımcı Antrenör', photo: '' },
-      { name: 'Ayşegül Yolu',         role: 'Yardımcı Antrenör', photo: '' },
+      { name: 'Şeval Akurt', role: 'Voleybol Antrenörü', photo: '' },
+      { name: 'Nipel Uluca', role: 'Voleybol Antrenörü', photo: '' },
+      { name: 'İlayda Bulut', role: 'Yardımcı Antrenör', photo: '' },
+      { name: 'Ayşegül Yolu', role: 'Yardımcı Antrenör', photo: '' },
     ],
   },
   {
@@ -53,8 +53,8 @@ Yaş gruplarına uygun antrenman programlarımızla; teknik gelişim, fiziksel d
 
 Erken yaşta özgüvenli, mücadeleci ve sporcu kimliğine sahip bireyler yetiştirmeyi hedefliyoruz.`,
     trainers: [
-      { name: 'Mehmet Dinçer',       role: '3. Kademe Kıdemli Basketbol Antrenörü', photo: '' },
-      { name: 'Fatma Gülten Özdil',  role: '2. Kademe Basketbol Antrenörü', photo: '' },
+      { name: 'Mehmet Dinçer', role: '3. Kademe Kıdemli Basketbol Antrenörü', photo: '' },
+      { name: 'Fatma Gülten Özdil', role: '2. Kademe Basketbol Antrenörü', photo: '' },
     ],
   },
   {
@@ -94,7 +94,7 @@ Yaş gruplarına uygun antrenman programlarımızla; denge, koordinasyon, teknik
 
 Erken yaşta cesur, mücadeleci, özgüvenli ve sporcu kimliğine sahip bireyler yetiştirmeyi hedefliyoruz.`,
     trainers: [
-      { name: 'Musa Çimen',     role: '3. Kademe Kıdemli Paten Antrenörü', photo: '' },
+      { name: 'Musa Çimen', role: '3. Kademe Kıdemli Paten Antrenörü', photo: '' },
       { name: 'Ferhat Alpkaya', role: 'Yardımcı Antrenör', photo: '' },
     ],
   },

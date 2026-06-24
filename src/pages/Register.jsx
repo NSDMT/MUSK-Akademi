@@ -38,11 +38,11 @@ export default function Register() {
 
   const validate = () => {
     const e = {};
-    if (!form.childName.trim())  e.childName  = 'Sporcu adı gereklidir.';
+    if (!form.childName.trim()) e.childName = 'Sporcu adı gereklidir.';
     if (!form.childTc.trim() || !/^\d{11}$/.test(form.childTc.trim()))
       e.childTc = 'Geçerli bir 11 haneli TC kimlik numarası girin.';
-    if (!form.childBirthDate)    e.childBirthDate = 'Doğum tarihi gereklidir.';
-    if (!form.branch)            e.branch = 'Lütfen bir branş seçin.';
+    if (!form.childBirthDate) e.childBirthDate = 'Doğum tarihi gereklidir.';
+    if (!form.branch) e.branch = 'Lütfen bir branş seçin.';
     if (!form.parentName.trim()) e.parentName = 'Veli adı gereklidir.';
     if (!/^\d{10,11}$/.test(form.parentPhone.replace(/\s/g, '')))
       e.parentPhone = 'Geçerli bir telefon numarası girin.';
@@ -66,25 +66,25 @@ export default function Register() {
     setServerError('');
     try {
       await axios.post('/api/applications', {
-        parentName:     form.parentName,
-        parentPhone:    form.parentPhone,
-        parentEmail:    form.parentEmail,
-        childName:      form.childName,
+        parentName: form.parentName,
+        parentPhone: form.parentPhone,
+        parentEmail: form.parentEmail,
+        childName: form.childName,
         childBirthYear: new Date(form.childBirthDate).getFullYear(),
-        branch:         form.branch,
-        message:        form.message,
+        branch: form.branch,
+        message: form.message,
         /* extended */
-        childTc:        form.childTc,
+        childTc: form.childTc,
         childBirthDate: form.childBirthDate,
-        childHeight:    form.childHeight,
-        childWeight:    form.childWeight,
-        childBloodGroup:form.childBloodGroup,
-        childSchool:    form.childSchool,
-        childAddress:   form.childAddress,
-        motherName:     form.motherName,
-        fatherName:     form.fatherName,
-        motherJob:      form.motherJob,
-        fatherJob:      form.fatherJob,
+        childHeight: form.childHeight,
+        childWeight: form.childWeight,
+        childBloodGroup: form.childBloodGroup,
+        childSchool: form.childSchool,
+        childAddress: form.childAddress,
+        motherName: form.motherName,
+        fatherName: form.fatherName,
+        motherJob: form.motherJob,
+        fatherJob: form.fatherJob,
         emergencyPhone: form.emergencyPhone,
       });
       setSubmitted(true);

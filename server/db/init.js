@@ -177,6 +177,20 @@ function initDb() {
     );
   `);
 
+  // Sponsors tablosu
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS sponsors (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      website TEXT DEFAULT '',
+      logo_url TEXT DEFAULT '',
+      description TEXT DEFAULT '',
+      display_order INTEGER DEFAULT 0,
+      is_active INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+  `);
+
   // Seed admin user
   const existing = db.prepare('SELECT id FROM users WHERE email = ?').get('admin@muzafferugur.com');
   if (!existing) {
