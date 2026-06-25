@@ -111,8 +111,8 @@ export default function Register() {
             <strong>{form.childName}</strong> için <strong>{form.branch}</strong> branşında
             kayıt talebiniz başarıyla iletildi.
           </p>
-          <p>Antrenörlerimiz en kısa sürede <strong>{form.parentPhone}</strong> numaralı
-            telefonunuzdan sizi arayacaktır.</p>
+          <p>Başvurunuz incelendikten sonra en kısa sürede panel giriş bilgileriniz
+            <strong> {form.parentPhone}</strong> numaralı telefonunuza WhatsApp mesajı olarak iletilecektir.</p>
           <button className="btn-primary" onClick={() => { setForm(initialForm); setSubmitted(false); }}>
             Yeni Kayıt
           </button>
