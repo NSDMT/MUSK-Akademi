@@ -73,210 +73,210 @@ export default function Home() {
 
   return (
     <>
-    <div className="page-wrapper">
+      <div className="page-wrapper">
 
-      {/* ========== HERO SLIDER ========== */}
-      <section className="hero">
-        {SLIDES.map((slide, i) => (
-          <div
-            key={slide.src}
-            className={`hero__slide${i === slideIndex ? ' hero__slide--active' : ''}`}
-            style={{ backgroundImage: `url(${slide.src})` }}
-          />
-        ))}
-        <div className="hero__overlay" />
-        <div className="container hero__content">
-          <div className="hero__badge">Karaman'ın Spor Akademisi</div>
-          <h1 className="hero__title">
-            Geleceğin <span className="gold-text">Şampiyonlarını</span><br />
-            Bugünden Yetiştiriyoruz
-          </h1>
-          <p className="hero__desc">
-            MUSK Spor Kulübü olarak 7 farklı branşta uzman kadromuzla
-            çocuklarınızın fiziksel, zihinsel ve sosyal gelişimine katkı sağlıyoruz.
-          </p>
-          <div className="hero__actions">
-            <Link to="/kayit" className="btn-primary">Hemen Kaydol</Link>
-            <Link to="/hakkimizda" className="btn-outline">Bizi Tanıyın</Link>
-          </div>
-        </div>
-        {/* Slider dots */}
-        <div className="hero__dots">
-          {SLIDES.map((_, i) => (
-            <button
-              key={i}
-              className={`hero__dot${i === slideIndex ? ' hero__dot--active' : ''}`}
-              onClick={() => setSlideIndex(i)}
-              aria-label={`Slayt ${i + 1}`}
+        {/* ========== HERO SLIDER ========== */}
+        <section className="hero">
+          {SLIDES.map((slide, i) => (
+            <div
+              key={slide.src}
+              className={`hero__slide${i === slideIndex ? ' hero__slide--active' : ''}`}
+              style={{ backgroundImage: `url(${slide.src})` }}
             />
           ))}
-        </div>
-      </section>
-
-      {/* ========== STATS ========== */}
-      <section className="stats-bar">
-        <div className="container stats-bar__inner">
-          {stats.map(({ value, label }) => (
-            <div key={label} className="stats-bar__item">
-              <span className="stats-bar__value">{value}</span>
-              <span className="stats-bar__label">{label}</span>
+          <div className="hero__overlay" />
+          <div className="container hero__content">
+            <div className="hero__badge">Karaman'ın Spor Akademisi</div>
+            <h1 className="hero__title">
+              Geleceğin <span className="gold-text">Şampiyonlarını</span><br />
+              Bugünden Yetiştiriyoruz
+            </h1>
+            <p className="hero__desc">
+              MUSK Spor Kulübü olarak 7 farklı branşta uzman kadromuzla
+              çocuklarınızın fiziksel, zihinsel ve sosyal gelişimine katkı sağlıyoruz.
+            </p>
+            <div className="hero__actions">
+              <Link to="/kayit" className="btn-primary">Hemen Kaydol</Link>
+              <Link to="/hakkimizda" className="btn-outline">Bizi Tanıyın</Link>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ========== BRANCHES ========== */}
-      <section className="section branches-section">
-        <div className="container">
-          <p className="section-subtitle">Spor Alanlarımız</p>
-          <h2 className="section-title">Branşlarımız</h2>
-          <div className="section-divider" />
-          <div className="branches-grid">
-            {branches.map(({ icon, name, desc, to }) => (
-              <Link to={to} key={name} className="branch-card card">
-                <span className="branch-card__icon">{icon}</span>
-                <h3 className="branch-card__name">{name}</h3>
-                <p className="branch-card__desc">{desc}</p>
-                <span className="branch-card__more">İncele →</span>
-              </Link>
+          </div>
+          {/* Slider dots */}
+          <div className="hero__dots">
+            {SLIDES.map((_, i) => (
+              <button
+                key={i}
+                className={`hero__dot${i === slideIndex ? ' hero__dot--active' : ''}`}
+                onClick={() => setSlideIndex(i)}
+                aria-label={`Slayt ${i + 1}`}
+              />
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ========== WHY US ========== */}
-      <section className="section why-section">
-        <div className="container why-inner">
-          <div className="why-content">
-            <p className="section-subtitle" style={{ textAlign: 'left' }}>Tercih Sebebimiz</p>
-            <h2 className="section-title" style={{ textAlign: 'left' }}>Neden Biz?</h2>
-            <div className="section-divider" style={{ margin: '10px 0 40px' }} />
-            <div className="why-grid">
-              {whyUs.map(({ icon, text }) => (
-                <div key={text} className="why-item">
-                  <span className="why-item__icon">{icon}</span>
-                  <span>{text}</span>
-                </div>
-              ))}
-            </div>
-            <Link to="/hakkimizda" className="btn-primary" style={{ marginTop: '32px', display: 'inline-block' }}>
-              Daha Fazla Bilgi
-            </Link>
-          </div>
-          <div className="why-image">
-            <div className="why-image__placeholder">
-              <span>📸</span>
-              <p>Antrenman Fotoğrafı</p>
-              <small>why-photo.jpg</small>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== COACHES ========== */}
-      <section className="section coaches-section">
-        <div className="container">
-          <p className="section-subtitle">Uzman Kadromuz</p>
-          <h2 className="section-title">Antrenörlerimiz</h2>
-          <div className="section-divider" />
-          <div className="coaches-grid">
-            {coaches.map(c => (
-              <div
-                key={c.name}
-                className="coach-card card"
-                onClick={() => c.photo && setCoachModal(c)}
-                style={{ cursor: c.photo ? 'pointer' : 'default' }}
-              >
-                <div className="coach-card__avatar">
-                  {c.photo ? (
-                    <img src={c.photo} alt={c.name} className="coach-card__photo" />
-                  ) : (
-                    <span>{c.icon}</span>
-                  )}
-                </div>
-                <div className="coach-card__info">
-                  <h4 className="coach-card__name">{c.name}</h4>
-                  <span className="coach-card__branch">{c.branch}</span>
-                  <p className="coach-card__role">{c.role}</p>
-                </div>
+        {/* ========== STATS ========== */}
+        <section className="stats-bar">
+          <div className="container stats-bar__inner">
+            {stats.map(({ value, label }) => (
+              <div key={label} className="stats-bar__item">
+                <span className="stats-bar__value">{value}</span>
+                <span className="stats-bar__label">{label}</span>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ========== FOOTBALL HIGHLIGHT ========== */}
-      <section className="section academy-highlight">
-        <div className="container">
-          <div className="academy-highlight__inner">
-            <div className="academy-highlight__text">
-              <span className="academy-highlight__tag">⚽ Öne Çıkan</span>
-              <h2>Futbol Akademimiz</h2>
-              <p>
-                5-15 yaş arası çocuklarımıza profesyonel futbol eğitimi sunuyoruz.
-                Yaş gruplarına uygun, çocuk gelişimini destekleyen antrenman
-                programlarımızla; fiziksel, zihinsel ve sosyal gelişimi ön planda tutuyoruz.
-              </p>
-              <p>
-                Akademimizde yetişen sporcularımız, U-7'den itibaren U-18 ve A Takım
-                seviyesine kadar gelişim sürecine dahil olmakta; resmi müsabakalarda tüm
-                kategorilerde kulübümüzü başarıyla temsil etmektedir.
-              </p>
-              <Link to="/branslar#futbol" className="btn-primary">Futbol Akademisi</Link>
-            </div>
-            <div className="academy-highlight__image">
-              <div className="why-image__placeholder"><span>⚽</span><p>Futbol Antrenman</p><small>football.jpg</small></div>
+        {/* ========== BRANCHES ========== */}
+        <section className="section branches-section">
+          <div className="container">
+            <p className="section-subtitle">Spor Alanlarımız</p>
+            <h2 className="section-title">Branşlarımız</h2>
+            <div className="section-divider" />
+            <div className="branches-grid">
+              {branches.map(({ icon, name, desc, to }) => (
+                <Link to={to} key={name} className="branch-card card">
+                  <span className="branch-card__icon">{icon}</span>
+                  <h3 className="branch-card__name">{name}</h3>
+                  <p className="branch-card__desc">{desc}</p>
+                  <span className="branch-card__more">İncele →</span>
+                </Link>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ========== SPONSORS ========== */}
-      {sponsors.length > 0 && (
-        <section className="section sponsors-section">
+        {/* ========== WHY US ========== */}
+        <section className="section why-section">
+          <div className="container why-inner">
+            <div className="why-content">
+              <p className="section-subtitle" style={{ textAlign: 'left' }}>Tercih Sebebimiz</p>
+              <h2 className="section-title" style={{ textAlign: 'left' }}>Neden Biz?</h2>
+              <div className="section-divider" style={{ margin: '10px 0 40px' }} />
+              <div className="why-grid">
+                {whyUs.map(({ icon, text }) => (
+                  <div key={text} className="why-item">
+                    <span className="why-item__icon">{icon}</span>
+                    <span>{text}</span>
+                  </div>
+                ))}
+              </div>
+              <Link to="/hakkimizda" className="btn-primary" style={{ marginTop: '32px', display: 'inline-block' }}>
+                Daha Fazla Bilgi
+              </Link>
+            </div>
+            <div className="why-image">
+              <div className="why-image__placeholder">
+                <span>📸</span>
+                <p>Antrenman Fotoğrafı</p>
+                <small>why-photo.jpg</small>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ========== COACHES ========== */}
+        <section className="section coaches-section">
           <div className="container">
-            <p className="section-subtitle">Destekçilerimiz</p>
-            <h2 className="section-title">Sponsorlarımız</h2>
+            <p className="section-subtitle">Uzman Kadromuz</p>
+            <h2 className="section-title">Antrenörlerimiz</h2>
             <div className="section-divider" />
-            <div className="sponsors-grid">
-              {sponsors.map(s => (
-                <div key={s.id} className="sponsor-card card">
-                  {s.website
-                    ? <a href={s.website} target="_blank" rel="noopener noreferrer" className="sponsor-card__logo">
-                      {s.logo_url
-                        ? <img src={s.logo_url} alt={s.name} />
-                        : <><span>🏢</span><p>{s.name}</p></>}
-                    </a>
-                    : <div className="sponsor-card__logo">
-                      {s.logo_url
-                        ? <img src={s.logo_url} alt={s.name} />
-                        : <><span>🏢</span><p>{s.name}</p></>}
-                    </div>
-                  }
-                  {s.description && <small className="sponsor-card__desc">{s.description}</small>}
+            <div className="coaches-grid">
+              {coaches.map(c => (
+                <div
+                  key={c.name}
+                  className="coach-card card"
+                  onClick={() => c.photo && setCoachModal(c)}
+                  style={{ cursor: c.photo ? 'pointer' : 'default' }}
+                >
+                  <div className="coach-card__avatar">
+                    {c.photo ? (
+                      <img src={c.photo} alt={c.name} className="coach-card__photo" />
+                    ) : (
+                      <span>{c.icon}</span>
+                    )}
+                  </div>
+                  <div className="coach-card__info">
+                    <h4 className="coach-card__name">{c.name}</h4>
+                    <span className="coach-card__branch">{c.branch}</span>
+                    <p className="coach-card__role">{c.role}</p>
+                  </div>
                 </div>
               ))}
             </div>
-            <p className="sponsors-note">
-              Sponsorluğa başvurmak için <Link to="/iletisim">bizimle iletişime geçin</Link>.
-            </p>
           </div>
         </section>
-      )}
 
-      {/* ========== CTA ========== */}
-      <section className="cta-section">
-        <div className="container cta-section__inner">
-          <h2>Çocuğunuzun Geleceğine Bugün Yatırım Yapın</h2>
-          <p>Sporcu kayıt formunu doldurun, uzman antrenörlerimiz sizi arasın.</p>
-          <div className="cta-section__actions">
-            <Link to="/kayit" className="btn-primary">Sporcu Kaydı</Link>
-            <Link to="/iletisim" className="btn-outline">Bize Ulaşın</Link>
+        {/* ========== FOOTBALL HIGHLIGHT ========== */}
+        <section className="section academy-highlight">
+          <div className="container">
+            <div className="academy-highlight__inner">
+              <div className="academy-highlight__text">
+                <span className="academy-highlight__tag">⚽ Öne Çıkan</span>
+                <h2>Futbol Akademimiz</h2>
+                <p>
+                  5-15 yaş arası çocuklarımıza profesyonel futbol eğitimi sunuyoruz.
+                  Yaş gruplarına uygun, çocuk gelişimini destekleyen antrenman
+                  programlarımızla; fiziksel, zihinsel ve sosyal gelişimi ön planda tutuyoruz.
+                </p>
+                <p>
+                  Akademimizde yetişen sporcularımız, U-7'den itibaren U-18 ve A Takım
+                  seviyesine kadar gelişim sürecine dahil olmakta; resmi müsabakalarda tüm
+                  kategorilerde kulübümüzü başarıyla temsil etmektedir.
+                </p>
+                <Link to="/branslar#futbol" className="btn-primary">Futbol Akademisi</Link>
+              </div>
+              <div className="academy-highlight__image">
+                <div className="why-image__placeholder"><span>⚽</span><p>Futbol Antrenman</p><small>football.jpg</small></div>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-    </div>
+        {/* ========== SPONSORS ========== */}
+        {sponsors.length > 0 && (
+          <section className="section sponsors-section">
+            <div className="container">
+              <p className="section-subtitle">Destekçilerimiz</p>
+              <h2 className="section-title">Sponsorlarımız</h2>
+              <div className="section-divider" />
+              <div className="sponsors-grid">
+                {sponsors.map(s => (
+                  <div key={s.id} className="sponsor-card card">
+                    {s.website
+                      ? <a href={s.website} target="_blank" rel="noopener noreferrer" className="sponsor-card__logo">
+                        {s.logo_url
+                          ? <img src={s.logo_url} alt={s.name} />
+                          : <><span>🏢</span><p>{s.name}</p></>}
+                      </a>
+                      : <div className="sponsor-card__logo">
+                        {s.logo_url
+                          ? <img src={s.logo_url} alt={s.name} />
+                          : <><span>🏢</span><p>{s.name}</p></>}
+                      </div>
+                    }
+                    {s.description && <small className="sponsor-card__desc">{s.description}</small>}
+                  </div>
+                ))}
+              </div>
+              <p className="sponsors-note">
+                Sponsorluğa başvurmak için <Link to="/iletisim">bizimle iletişime geçin</Link>.
+              </p>
+            </div>
+          </section>
+        )}
+
+        {/* ========== CTA ========== */}
+        <section className="cta-section">
+          <div className="container cta-section__inner">
+            <h2>Çocuğunuzun Geleceğine Bugün Yatırım Yapın</h2>
+            <p>Sporcu kayıt formunu doldurun, uzman antrenörlerimiz sizi arasın.</p>
+            <div className="cta-section__actions">
+              <Link to="/kayit" className="btn-primary">Sporcu Kaydı</Link>
+              <Link to="/iletisim" className="btn-outline">Bize Ulaşın</Link>
+            </div>
+          </div>
+        </section>
+
+      </div>
 
       {/* ========== COACH MODAL ========== */}
       {coachModal && (

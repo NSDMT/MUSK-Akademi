@@ -11,32 +11,36 @@ router.get('/', authenticate, (req, res) => {
   const db = getDb();
   let students;
 
+  const base = `
+    SELECT s.*,
+           GROUP_CONCAT(g.name, ', ') AS group_names,
+           GROUP_CONCAT(CAST(g.id AS TEXT), ',') AS group_ids_str
+    FROM students s
+    LEFT JOIN student_groups sg ON s.id = sg.student_id
+    LEFT JOIN groups g ON sg.group_id = g.id
+  `;
+
   if (req.user.role === 'admin') {
     students = db.prepare(`
-      SELECT s.*, g.name AS group_name, b.name AS branch_name
-      FROM students s
-      LEFT JOIN groups g ON s.group_id = g.id
-      LEFT JOIN branches b ON g.branch_id = b.id
+      ${base}
       WHERE s.is_active = 1
+      GROUP BY s.id
       ORDER BY s.last_name, s.first_name
     `).all();
   } else if (req.user.role === 'antrenor') {
     students = db.prepare(`
-      SELECT s.*, g.name AS group_name, b.name AS branch_name
-      FROM students s
-      LEFT JOIN groups g ON s.group_id = g.id
-      LEFT JOIN branches b ON g.branch_id = b.id
-      WHERE s.is_active = 1 AND g.trainer_id = ?
+      ${base}
+      WHERE s.is_active = 1
+      GROUP BY s.id
+      HAVING SUM(CASE WHEN g.trainer_id = ? THEN 1 ELSE 0 END) > 0
       ORDER BY s.last_name, s.first_name
     `).all(req.user.id);
   } else {
     // veli
     students = db.prepare(`
-      SELECT s.*, g.name AS group_name, b.name AS branch_name
-      FROM students s
-      LEFT JOIN groups g ON s.group_id = g.id
-      LEFT JOIN branches b ON g.branch_id = b.id
+      ${base}
       WHERE s.is_active = 1 AND s.veli_user_id = ?
+      GROUP BY s.id
     `).all(req.user.id);
   }
 
@@ -47,11 +51,14 @@ router.get('/', authenticate, (req, res) => {
 router.get('/:id', authenticate, (req, res) => {
   const db = getDb();
   const student = db.prepare(`
-    SELECT s.*, g.name AS group_name, b.name AS branch_name, g.trainer_id AS group_trainer_id
+    SELECT s.*,
+           GROUP_CONCAT(g.name, ', ') AS group_names,
+           GROUP_CONCAT(CAST(g.id AS TEXT), ',') AS group_ids_str
     FROM students s
-    LEFT JOIN groups g ON s.group_id = g.id
-    LEFT JOIN branches b ON g.branch_id = b.id
+    LEFT JOIN student_groups sg ON s.id = sg.student_id
+    LEFT JOIN groups g ON sg.group_id = g.id
     WHERE s.id = ? AND s.is_active = 1
+    GROUP BY s.id
   `).get(req.params.id);
 
   if (!student) return res.status(404).json({ error: 'Öğrenci bulunamadı' });
@@ -62,8 +69,13 @@ router.get('/:id', authenticate, (req, res) => {
   }
 
   // Antrenör sadece kendi grubundaki öğrenciyi görebilir
-  if (req.user.role === 'antrenor' && student.group_trainer_id !== req.user.id) {
-    return res.status(403).json({ error: 'Bu öğrenciye erişim yetkiniz yok' });
+  if (req.user.role === 'antrenor') {
+    const membership = db.prepare(`
+      SELECT sg.id FROM student_groups sg
+      JOIN groups g ON sg.group_id = g.id
+      WHERE sg.student_id = ? AND g.trainer_id = ?
+    `).get(req.params.id, req.user.id);
+    if (!membership) return res.status(403).json({ error: 'Bu öğrenciye erişim yetkiniz yok' });
   }
 
   res.json(student);
@@ -85,7 +97,7 @@ const studentValidation = [
   body('blood_type').optional().trim(),
   body('address').optional().trim(),
   body('athlete_phone').optional().trim(),
-  body('group_id').optional({ nullable: true }),
+  body('group_ids').optional().isArray(),
   body('veli_user_id').optional({ nullable: true }),
   body('notes').optional().trim(),
 ];
@@ -101,9 +113,12 @@ router.post('/', authenticate, authorize('admin'), studentValidation, (req, res)
 
   const {
     first_name, last_name, tc, birth_date, parent_name,
-    school, foot, blood_type, group_id, address,
+    school, foot, blood_type, group_ids, address,
     athlete_phone, parent_phone, veli_user_id, notes,
   } = req.body;
+
+  const groupIdList = Array.isArray(group_ids) ? group_ids.map(Number).filter(Boolean) : [];
+  const primaryGroupId = groupIdList[0] || null;
 
   const result = db.prepare(`
     INSERT INTO students
@@ -113,11 +128,15 @@ router.post('/', authenticate, authorize('admin'), studentValidation, (req, res)
   `).run(
     first_name, last_name, tc, birth_date, parent_name,
     school || '', foot || '', blood_type || '',
-    group_id || null, address || '', athlete_phone || '',
+    primaryGroupId, address || '', athlete_phone || '',
     parent_phone, veli_user_id || null, notes || ''
   );
 
-  res.status(201).json({ id: result.lastInsertRowid });
+  const studentId = result.lastInsertRowid;
+  const insertSg = db.prepare('INSERT OR IGNORE INTO student_groups (student_id, group_id) VALUES (?, ?)');
+  for (const gid of groupIdList) insertSg.run(studentId, gid);
+
+  res.status(201).json({ id: studentId });
 });
 
 // PUT /api/students/:id
@@ -134,9 +153,12 @@ router.put('/:id', authenticate, authorize('admin'), studentValidation, (req, re
 
   const {
     first_name, last_name, tc, birth_date, parent_name,
-    school, foot, blood_type, group_id, address,
+    school, foot, blood_type, group_ids, address,
     athlete_phone, parent_phone, veli_user_id, notes,
   } = req.body;
+
+  const groupIdList = Array.isArray(group_ids) ? group_ids.map(Number).filter(Boolean) : [];
+  const primaryGroupId = groupIdList[0] || null;
 
   db.prepare(`
     UPDATE students SET
@@ -147,10 +169,15 @@ router.put('/:id', authenticate, authorize('admin'), studentValidation, (req, re
   `).run(
     first_name, last_name, tc, birth_date, parent_name,
     school || '', foot || '', blood_type || '',
-    group_id || null, address || '', athlete_phone || '',
+    primaryGroupId, address || '', athlete_phone || '',
     parent_phone, veli_user_id || null, notes || '',
     req.params.id
   );
+
+  // Sync student_groups junction table
+  db.prepare('DELETE FROM student_groups WHERE student_id = ?').run(req.params.id);
+  const insertSg = db.prepare('INSERT OR IGNORE INTO student_groups (student_id, group_id) VALUES (?, ?)');
+  for (const gid of groupIdList) insertSg.run(req.params.id, gid);
 
   res.json({ success: true });
 });

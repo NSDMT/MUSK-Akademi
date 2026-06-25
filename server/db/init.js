@@ -191,6 +191,49 @@ function initDb() {
     );
   `);
 
+  // student_groups junction table (many-to-many student ↔ group)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS student_groups (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      student_id INTEGER NOT NULL,
+      group_id INTEGER NOT NULL,
+      created_at TEXT DEFAULT (datetime('now')),
+      UNIQUE(student_id, group_id),
+      FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+      FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE
+    )
+  `);
+
+  // Migrate existing single group_id values into student_groups
+  db.exec(`
+    INSERT OR IGNORE INTO student_groups (student_id, group_id)
+    SELECT id, group_id FROM students WHERE group_id IS NOT NULL
+  `);
+
+  // Migrate dues UNIQUE constraint: (student_id, year, month) → (student_id, group_id, year, month)
+  // so a student in multiple groups can have separate dues per group
+  const duesMeta = db.prepare(`SELECT sql FROM sqlite_master WHERE type='table' AND name='dues'`).get();
+  if (duesMeta && !duesMeta.sql.includes('student_id, group_id, year, month')) {
+    db.exec(`CREATE TABLE IF NOT EXISTS dues_v2 (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      student_id INTEGER NOT NULL,
+      group_id INTEGER NOT NULL,
+      year INTEGER NOT NULL,
+      month INTEGER NOT NULL CHECK(month BETWEEN 1 AND 12),
+      amount INTEGER NOT NULL DEFAULT 0,
+      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','paid','waived','overdue')),
+      due_date TEXT DEFAULT '',
+      notes TEXT DEFAULT '',
+      created_at TEXT DEFAULT (datetime('now')),
+      UNIQUE(student_id, group_id, year, month),
+      FOREIGN KEY (student_id) REFERENCES students(id),
+      FOREIGN KEY (group_id) REFERENCES groups(id)
+    )`);
+    db.exec(`INSERT OR IGNORE INTO dues_v2 SELECT * FROM dues`);
+    db.exec(`DROP TABLE dues`);
+    db.exec(`ALTER TABLE dues_v2 RENAME TO dues`);
+  }
+
   // Seed admin user
   const existing = db.prepare('SELECT id FROM users WHERE email = ?').get('admin@muzafferugur.com');
   if (!existing) {

@@ -27,7 +27,10 @@ router.get('/', authenticate, authorize('admin', 'antrenor'), [
   }
 
   const students = db.prepare(
-    'SELECT * FROM students WHERE group_id = ? AND is_active = 1 ORDER BY last_name, first_name'
+    `SELECT s.* FROM students s
+     JOIN student_groups sg ON s.id = sg.student_id
+     WHERE sg.group_id = ? AND s.is_active = 1
+     ORDER BY s.last_name, s.first_name`
   ).all(scheduleItem.group_id);
 
   const existingAttendance = db.prepare(
@@ -138,14 +141,13 @@ router.get('/student/:id', authenticate, (req, res) => {
 
   // Antrenör sadece kendi grubundaki öğrencinin geçmişini görebilir
   if (req.user.role === 'antrenor') {
-    const student = db.prepare(`
-      SELECT g.trainer_id
-      FROM students s
-      LEFT JOIN groups g ON s.group_id = g.id
-      WHERE s.id = ? AND s.is_active = 1
-    `).get(req.params.id);
-
-    if (!student || student.trainer_id !== req.user.id) {
+    const membership = db.prepare(`
+      SELECT sg.id FROM student_groups sg
+      JOIN groups g ON sg.group_id = g.id
+      JOIN students s ON sg.student_id = s.id
+      WHERE sg.student_id = ? AND g.trainer_id = ? AND s.is_active = 1
+    `).get(req.params.id, req.user.id);
+    if (!membership) {
       return res.status(403).json({ error: 'Bu öğrenciye erişim yetkiniz yok' });
     }
   }

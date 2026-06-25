@@ -7,7 +7,7 @@ const FOOT_OPTIONS = ['sağ', 'sol', 'her ikisi'];
 
 const EMPTY = {
   first_name: '', last_name: '', tc: '', birth_date: '', parent_name: '',
-  school: '', foot: '', blood_type: '', group_id: '', address: '',
+  school: '', foot: '', blood_type: '', group_ids: [], address: '',
   athlete_phone: '', parent_phone: '', veli_user_id: '', notes: '',
 };
 
@@ -42,7 +42,8 @@ export default function AdminStudents() {
       first_name: s.first_name, last_name: s.last_name, tc: s.tc,
       birth_date: s.birth_date, parent_name: s.parent_name,
       school: s.school || '', foot: s.foot || '', blood_type: s.blood_type || '',
-      group_id: s.group_id || '', address: s.address || '',
+      group_ids: s.group_ids_str ? s.group_ids_str.split(',').map(Number) : [],
+      address: s.address || '',
       athlete_phone: s.athlete_phone || '', parent_phone: s.parent_phone,
       veli_user_id: s.veli_user_id || '', notes: s.notes || '',
     });
@@ -54,9 +55,9 @@ export default function AdminStudents() {
     e.preventDefault();
     setSaving(true);
     try {
-      const payload = { ...form, group_id: form.group_id || null, veli_user_id: form.veli_user_id || null };
+      const payload = { ...form, group_ids: form.group_ids, veli_user_id: form.veli_user_id || null };
       if (editId) await client.put(`/students/${editId}`, payload);
-      else        await client.post('/students', payload);
+      else await client.post('/students', payload);
       setModal(null);
       showAlert('success', editId ? 'Öğrenci güncellendi' : 'Öğrenci eklendi');
       load();
@@ -87,7 +88,7 @@ export default function AdminStudents() {
   );
   const filtered = students
     .filter(f)
-    .filter(s => !filterGroup || String(s.group_id) === filterGroup);
+    .filter(s => !filterGroup || (s.group_ids_str || '').split(',').includes(filterGroup));
 
   return (
     <PanelLayout>
@@ -138,7 +139,7 @@ export default function AdminStudents() {
                 <td>{s.birth_date}</td>
                 <td>{s.parent_name}</td>
                 <td>{s.parent_phone}</td>
-                <td>{s.group_name || <span style={{ color: '#555' }}>—</span>}</td>
+                <td>{s.group_names || <span style={{ color: '#555' }}>—</span>}</td>
                 <td>{s.blood_type || '—'}</td>
                 <td>
                   <div style={{ display: 'flex', gap: 6 }}>
@@ -181,12 +182,29 @@ export default function AdminStudents() {
                   </select>
                 </div>
 
-                <div className="form-field">
-                  <label>Grubu</label>
-                  <select value={form.group_id} onChange={e => setForm(f => ({ ...f, group_id: e.target.value }))}>
-                    <option value="">Grup Yok</option>
-                    {groups.map(g => <option key={g.id} value={g.id}>{g.name} ({g.branch_name})</option>)}
-                  </select>
+                <div className="form-field col-span-2">
+                  <label>Gruplar</label>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: 4 }}>
+                    {groups.map(g => (
+                      <label key={g.id} style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer', fontSize: '0.875rem', color: '#d0d0d0' }}>
+                        <input
+                          type="checkbox"
+                          checked={form.group_ids.includes(g.id)}
+                          onChange={e => {
+                            const id = g.id;
+                            setForm(f => ({
+                              ...f,
+                              group_ids: e.target.checked
+                                ? [...f.group_ids, id]
+                                : f.group_ids.filter(x => x !== id),
+                            }));
+                          }}
+                        />
+                        {g.name} ({g.branch_name})
+                      </label>
+                    ))}
+                    {groups.length === 0 && <span style={{ color: '#666', fontSize: '0.875rem' }}>Henüz grup eklenmemiş</span>}
+                  </div>
                 </div>
 
                 <div className="form-field">

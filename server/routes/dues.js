@@ -89,7 +89,9 @@ router.post('/generate', authenticate, authorize('admin'), [
   const finalAmount = amount !== undefined ? amount : (group.monthly_fee || 0);
 
   const students = db.prepare(
-    'SELECT id FROM students WHERE group_id = ? AND is_active = 1'
+    `SELECT s.id FROM students s
+     JOIN student_groups sg ON s.id = sg.student_id
+     WHERE sg.group_id = ? AND s.is_active = 1`
   ).all(group_id);
 
   if (students.length === 0) {

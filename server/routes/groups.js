@@ -11,7 +11,7 @@ router.get('/', authenticate, (req, res) => {
   const groups = db.prepare(`
     SELECT g.*, b.name AS branch_name,
            u.name AS trainer_name,
-           (SELECT COUNT(*) FROM students s WHERE s.group_id = g.id AND s.is_active = 1) AS student_count
+           (SELECT COUNT(*) FROM student_groups sg JOIN students s ON sg.student_id = s.id WHERE sg.group_id = g.id AND s.is_active = 1) AS student_count
     FROM groups g
     LEFT JOIN branches b ON g.branch_id = b.id
     LEFT JOIN users u ON g.trainer_id = u.id
@@ -90,7 +90,10 @@ router.delete('/:id', authenticate, authorize('admin'), (req, res) => {
 router.get('/:id/students', authenticate, (req, res) => {
   const db = getDb();
   const students = db.prepare(
-    'SELECT * FROM students WHERE group_id = ? AND is_active = 1 ORDER BY last_name, first_name'
+    `SELECT s.* FROM students s
+     JOIN student_groups sg ON s.id = sg.student_id
+     WHERE sg.group_id = ? AND s.is_active = 1
+     ORDER BY s.last_name, s.first_name`
   ).all(req.params.id);
   res.json(students);
 });

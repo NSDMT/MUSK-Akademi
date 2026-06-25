@@ -137,9 +137,9 @@ router.post('/:id/approve', authenticate, authorize('admin'), async (req, res) =
     birthValue,
     app.parent_name,
     app.parent_phone,
-    app.child_school   || '',
+    app.child_school || '',
     app.child_blood_group || '',
-    app.child_address  || '',
+    app.child_address || '',
     veliUserId,
     `Başvuru #${app.id} — Branş: ${app.branch}${app.message ? ' | Not: ' + app.message : ''}`
   );
