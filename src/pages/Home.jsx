@@ -58,6 +58,7 @@ const coaches = [
 export default function Home() {
   const [slideIndex, setSlideIndex] = useState(0);
   const [sponsors, setSponsors] = useState([]);
+  const [coachModal, setCoachModal] = useState(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -71,6 +72,7 @@ export default function Home() {
   }, []);
 
   return (
+    <>
     <div className="page-wrapper">
 
       {/* ========== HERO SLIDER ========== */}
@@ -179,7 +181,12 @@ export default function Home() {
           <div className="section-divider" />
           <div className="coaches-grid">
             {coaches.map(c => (
-              <div key={c.name} className="coach-card card">
+              <div
+                key={c.name}
+                className="coach-card card"
+                onClick={() => c.photo && setCoachModal(c)}
+                style={{ cursor: c.photo ? 'pointer' : 'default' }}
+              >
                 <div className="coach-card__avatar">
                   {c.photo ? (
                     <img src={c.photo} alt={c.name} className="coach-card__photo" />
@@ -270,6 +277,22 @@ export default function Home() {
       </section>
 
     </div>
+
+      {/* ========== COACH MODAL ========== */}
+      {coachModal && (
+        <div className="coach-modal-backdrop" onClick={() => setCoachModal(null)}>
+          <div className="coach-modal" onClick={e => e.stopPropagation()}>
+            <button className="coach-modal__close" onClick={() => setCoachModal(null)}>✕</button>
+            <img src={coachModal.photo} alt={coachModal.name} className="coach-modal__photo" />
+            <div className="coach-modal__info">
+              <h3 className="coach-modal__name">{coachModal.name}</h3>
+              <span className="coach-modal__branch">{coachModal.branch}</span>
+              <p className="coach-modal__role">{coachModal.role}</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
