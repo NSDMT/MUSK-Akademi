@@ -27,11 +27,14 @@ function initWhatsApp() {
     }),
     puppeteer: {
       headless: true,
+      executablePath: '/root/.cache/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome',
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
         '--disable-gpu',
+        '--disable-extensions',
+        '--single-process',
       ],
     },
   });
