@@ -127,7 +127,7 @@ router.post('/:id/approve', authenticate, authorize('admin'), async (req, res) =
   `).run(
     app.child_name.split(' ')[0],
     app.child_name.split(' ').slice(1).join(' ') || '-',
-    '00000000000',                    // TC sonradan admin doldurur
+    `APP_${app.id}`,                  // TC sonradan admin doldurur (benzersiz placeholder)
     `${app.child_birth_year}-01-01`,  // Tam tarih sonradan güncellenir
     app.parent_name,
     app.parent_phone,
