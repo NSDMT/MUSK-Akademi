@@ -94,8 +94,14 @@ async function sendSms(phone, message) {
   }
 
   try {
-    await waClient.sendMessage(chatId, message);
-    console.log(`[WhatsApp] ✓ Mesaj gönderildi → ${chatId}`);
+    // getNumberId ile numarayı doğrula ve gerçek chat ID'yi al (No LID for user hatasını önler)
+    const numberId = await waClient.getNumberId(normalized);
+    if (!numberId) {
+      console.warn(`[WhatsApp] Numara WhatsApp'ta bulunamadı → ${chatId}`);
+      return { success: false, error: 'Numara WhatsApp kullanmıyor' };
+    }
+    await waClient.sendMessage(numberId._serialized, message);
+    console.log(`[WhatsApp] ✓ Mesaj gönderildi → ${numberId._serialized}`);
     return { success: true };
   } catch (error) {
     console.error('[WhatsApp-ERROR]', error.message);
