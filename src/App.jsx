@@ -27,12 +27,15 @@ import AdminSchedule from './pages/panel/admin/Schedule';
 import AdminDues from './pages/panel/admin/Dues';
 import AdminApplications from './pages/panel/admin/Applications';
 import AdminSponsors from './pages/panel/admin/Sponsors';
+import AdminNews from './pages/panel/admin/News';
+import AdminGallery from './pages/panel/admin/Gallery';
 
 // Coach
 import CoachDashboard from './pages/panel/coach/Dashboard';
 
 // Parent
 import ParentDashboard from './pages/panel/parent/Dashboard';
+import ParentPassword from './pages/panel/parent/Password';
 import PaymentReturn from './pages/panel/PaymentReturn';
 
 function PublicSite() {
@@ -88,12 +91,24 @@ export default function App() {
             <ProtectedRoute roles={['admin']}><AdminSponsors /></ProtectedRoute>
           } />
 
+          <Route path="/panel/admin/news" element={
+            <ProtectedRoute roles={['admin']}><AdminNews /></ProtectedRoute>
+          } />
+
+          <Route path="/panel/admin/gallery" element={
+            <ProtectedRoute roles={['admin']}><AdminGallery /></ProtectedRoute>
+          } />
+
           <Route path="/panel/antrenor/dashboard" element={
             <ProtectedRoute roles={['antrenor', 'admin']}><CoachDashboard /></ProtectedRoute>
           } />
 
           <Route path="/panel/veli/dashboard" element={
             <ProtectedRoute roles={['veli', 'admin']}><ParentDashboard /></ProtectedRoute>
+          } />
+
+          <Route path="/panel/veli/sifre" element={
+            <ProtectedRoute roles={['veli', 'admin']}><ParentPassword /></ProtectedRoute>
           } />
 
           <Route path="/panel/payment-return" element={

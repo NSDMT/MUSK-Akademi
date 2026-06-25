@@ -191,6 +191,31 @@ function initDb() {
     );
   `);
 
+  // News and gallery tables
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS news (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'Genel',
+      summary TEXT DEFAULT '',
+      content TEXT DEFAULT '',
+      image_url TEXT DEFAULT '',
+      is_published INTEGER DEFAULT 1,
+      published_at TEXT DEFAULT (datetime('now')),
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS gallery_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      category TEXT NOT NULL,
+      caption TEXT DEFAULT '',
+      image_url TEXT NOT NULL,
+      display_order INTEGER DEFAULT 0,
+      is_active INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+  `);
+
   // student_groups junction table (many-to-many student ↔ group)
   db.exec(`
     CREATE TABLE IF NOT EXISTS student_groups (

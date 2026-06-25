@@ -26,7 +26,7 @@ router.get('/', authenticate, (req, res) => {
   } else if (req.user.role === 'antrenor') {
     schedule = db.prepare(q.replace('WHERE sc.is_active = 1', 'WHERE sc.is_active = 1 AND sc.trainer_id = ?')).all(req.user.id);
   } else {
-    // Veli: çocuğunun grubunun takvimi
+    // Veli: çocuğunun gruplarının takvimi (student_groups junction)
     schedule = db.prepare(`
       SELECT sc.*, g.name AS group_name, b.name AS branch_name, u.name AS trainer_name
       FROM schedule sc
@@ -34,7 +34,9 @@ router.get('/', authenticate, (req, res) => {
       JOIN branches b ON g.branch_id = b.id
       JOIN users u ON sc.trainer_id = u.id
       WHERE sc.is_active = 1 AND sc.group_id IN (
-        SELECT DISTINCT group_id FROM students WHERE veli_user_id = ? AND is_active = 1
+        SELECT DISTINCT sg.group_id FROM student_groups sg
+        JOIN students s ON sg.student_id = s.id
+        WHERE s.veli_user_id = ? AND s.is_active = 1
       )
       ORDER BY sc.day_of_week, sc.start_time
     `).all(req.user.id);

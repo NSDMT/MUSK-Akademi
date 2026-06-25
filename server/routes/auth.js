@@ -43,4 +43,29 @@ router.get('/me', authenticate, (req, res) => {
   res.json({ user: req.user });
 });
 
+// PUT /api/auth/change-password
+router.put('/change-password', authenticate, [
+  body('current_password').notEmpty().withMessage('Mevcut şifre gerekli'),
+  body('new_password')
+    .isLength({ min: 8 }).withMessage('Yeni şifre en az 8 karakter olmalı')
+    .matches(/[A-Z]/).withMessage('En az bir büyük harf içermeli')
+    .matches(/[a-z]/).withMessage('En az bir küçük harf içermeli')
+    .matches(/\d/).withMessage('En az bir rakam içermeli'),
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+  const { current_password, new_password } = req.body;
+  const db = getDb();
+
+  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+  if (!user || !bcrypt.compareSync(current_password, user.password_hash)) {
+    return res.status(401).json({ error: 'Mevcut şifre hatalı' });
+  }
+
+  const newHash = bcrypt.hashSync(new_password, 10);
+  db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(newHash, req.user.id);
+  res.json({ success: true });
+});
+
 module.exports = router;

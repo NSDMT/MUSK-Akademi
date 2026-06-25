@@ -12,12 +12,15 @@ const NAV = {
     { path: '/panel/admin/dues', label: 'Aidat Yönetimi', icon: '💰' },
     { path: '/panel/admin/applications', label: 'Başvurular', icon: '📋' },
     { path: '/panel/admin/sponsors', label: 'Sponsorlar', icon: '🏢' },
+    { path: '/panel/admin/news', label: 'Haberler', icon: '📰' },
+    { path: '/panel/admin/gallery', label: 'Galeri', icon: '🖼️' },
   ],
   antrenor: [
     { path: '/panel/antrenor/dashboard', label: 'Takvimim & Yoklama', icon: '📅' },
   ],
   veli: [
     { path: '/panel/veli/dashboard', label: 'Çocuğum & Aidat', icon: '👶' },
+    { path: '/panel/veli/sifre', label: 'Şifremi Değiştir', icon: '🔑' },
   ],
 };
 

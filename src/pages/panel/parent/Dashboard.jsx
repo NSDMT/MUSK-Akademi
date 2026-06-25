@@ -26,6 +26,7 @@ export default function ParentDashboard() {
   const [selected, setSelected]    = useState(null);
   const [history, setHistory]      = useState([]);
   const [dues, setDues]            = useState([]);
+  const [schedule, setSchedule]    = useState([]);
   const [loadingHist, setLoadingH] = useState(false);
 
   // Ödeme modal state
@@ -44,6 +45,7 @@ export default function ParentDashboard() {
       setStudents(res.data);
       if (res.data.length > 0) selectStudent(res.data[0]);
     });
+    client.get('/schedule').then(res => setSchedule(res.data)).catch(() => {});
   }, []);
 
   async function selectStudent(s) {
@@ -179,12 +181,8 @@ export default function ParentDashboard() {
               <div style={{ color: '#e0e0e0', fontWeight: 600, fontSize: '0.9rem' }}>{selected.school || '—'}</div>
             </div>
             <div>
-              <div style={{ fontSize: '0.7rem', color: '#555', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 3 }}>Grup</div>
-              <div style={{ color: '#e0e0e0', fontWeight: 600, fontSize: '0.9rem' }}>{selected.group_name || '—'}</div>
-            </div>
-            <div>
-              <div style={{ fontSize: '0.7rem', color: '#555', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 3 }}>Branş</div>
-              <div style={{ color: '#e0e0e0', fontWeight: 600, fontSize: '0.9rem' }}>{selected.branch_name || '—'}</div>
+              <div style={{ fontSize: '0.7rem', color: '#555', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 3 }}>Gruplar</div>
+              <div style={{ color: '#e0e0e0', fontWeight: 600, fontSize: '0.9rem' }}>{selected.group_names || '—'}</div>
             </div>
             <div>
               <div style={{ fontSize: '0.7rem', color: '#555', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 3 }}>Dominant Ayak</div>
@@ -340,6 +338,38 @@ export default function ParentDashboard() {
                   })}
                 </tbody>
               </table>
+            </div>
+          )}
+          {/* ===== ANTRENMAN TAKVİMİ ===== */}
+          {schedule.length > 0 && (
+            <div style={{ marginTop: 32 }}>
+              <h2 style={{ fontSize: '1rem', fontWeight: 700, color: '#ddd', marginBottom: 14 }}>
+                📅 Antrenman Takvimi
+              </h2>
+              <div className="panel-table-wrap">
+                <table className="panel-table">
+                  <thead>
+                    <tr><th>Gün</th><th>Grup</th><th>Branş</th><th>Saat</th><th>Yer</th><th>Antrenör</th></tr>
+                  </thead>
+                  <tbody>
+                    {[...schedule].sort((a, b) => {
+                      const order = [1,2,3,4,5,6,0];
+                      return order.indexOf(a.day_of_week) - order.indexOf(b.day_of_week);
+                    }).map(sc => (
+                      <tr key={sc.id}>
+                        <td style={{ fontWeight: 600, color: '#00b4d8' }}>
+                          {['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'][sc.day_of_week]}
+                        </td>
+                        <td>{sc.group_name}</td>
+                        <td>{sc.branch_name}</td>
+                        <td>{sc.start_time} – {sc.end_time}</td>
+                        <td>{sc.location || '—'}</td>
+                        <td>{sc.trainer_name}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </>

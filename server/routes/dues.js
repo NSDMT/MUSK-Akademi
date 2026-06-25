@@ -6,7 +6,7 @@ const { authenticate, authorize } = require('../middleware/auth');
 const router = express.Router();
 
 const MONTHS = ['', 'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-                'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+  'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
 
 // GET /api/dues — filtreleme: student_id, group_id, year, month, status
 router.get('/', authenticate, (req, res) => {
@@ -31,10 +31,10 @@ router.get('/', authenticate, (req, res) => {
   }
 
   if (student_id) { sql += ' AND d.student_id = ?'; params.push(student_id); }
-  if (group_id)   { sql += ' AND d.group_id = ?';   params.push(group_id); }
-  if (year)       { sql += ' AND d.year = ?';        params.push(year); }
-  if (month)      { sql += ' AND d.month = ?';       params.push(month); }
-  if (status)     { sql += ' AND d.status = ?';      params.push(status); }
+  if (group_id) { sql += ' AND d.group_id = ?'; params.push(group_id); }
+  if (year) { sql += ' AND d.year = ?'; params.push(year); }
+  if (month) { sql += ' AND d.month = ?'; params.push(month); }
+  if (status) { sql += ' AND d.status = ?'; params.push(status); }
 
   sql += ' ORDER BY d.year DESC, d.month DESC, s.last_name, s.first_name';
 
@@ -64,8 +64,8 @@ router.get('/summary', authenticate, authorize('admin'), [
   `;
   const params = [];
   if (group_id) { sql += ' AND d.group_id = ?'; params.push(group_id); }
-  if (year)     { sql += ' AND d.year = ?';     params.push(year); }
-  if (month)    { sql += ' AND d.month = ?';    params.push(month); }
+  if (year) { sql += ' AND d.year = ?'; params.push(year); }
+  if (month) { sql += ' AND d.month = ?'; params.push(month); }
 
   res.json(db.prepare(sql).get(...params));
 });
@@ -142,7 +142,7 @@ router.put('/:id', authenticate, authorize('admin'), [
   db.prepare('UPDATE dues SET status=?, amount=?, notes=? WHERE id=?').run(
     status ?? due.status,
     amount ?? due.amount,
-    notes  ?? due.notes,
+    notes ?? due.notes,
     due.id
   );
 

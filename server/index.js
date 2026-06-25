@@ -1,4 +1,5 @@
 require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const { initDb } = require('./db/init');
@@ -25,6 +26,9 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Serve uploaded images
+app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Veritabanını başlat
 initDb();
 
@@ -39,6 +43,9 @@ app.use('/api/dues', require('./routes/dues'));
 app.use('/api/payments', require('./routes/payments'));
 app.use('/api/applications', require('./routes/applications'));
 app.use('/api/sponsors', require('./routes/sponsors'));
+app.use('/api/news', require('./routes/news'));
+app.use('/api/gallery', require('./routes/gallery'));
+app.use('/api/upload', require('./routes/upload'));
 
 // 404
 app.use((req, res) => res.status(404).json({ error: 'Endpoint bulunamadı' }));
