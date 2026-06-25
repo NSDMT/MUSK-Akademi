@@ -11,6 +11,10 @@ if (!process.env.JWT_SECRET || process.env.JWT_SECRET.trim().length < 16) {
 
 const app = express();
 
+// Nginx reverse proxy arkasında çalıştığı için trust proxy gerekli
+// (express-rate-limit X-Forwarded-For hatasını önler)
+app.set('trust proxy', 1);
+
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',')
   : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'];
