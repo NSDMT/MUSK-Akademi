@@ -119,18 +119,27 @@ router.post('/:id/approve', authenticate, authorize('admin'), async (req, res) =
   ).run(app.parent_name, emailBase, hash, 'veli', app.parent_phone);
   const veliUserId = userResult.lastInsertRowid;
 
-  // Sporcu kaydı oluştur (temel bilgilerle)
+  // Sporcu kaydı oluştur — başvurudaki tüm bilgileri aktar
+  const tcValue = app.child_tc && app.child_tc.trim() ? app.child_tc.trim() : `APP_${app.id}`;
+  const birthValue = app.child_birth_date && app.child_birth_date.trim()
+    ? app.child_birth_date.trim()
+    : `${app.child_birth_year}-01-01`;
+
   const studentResult = db.prepare(`
     INSERT INTO students
-      (first_name, last_name, tc, birth_date, parent_name, parent_phone, veli_user_id, notes)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      (first_name, last_name, tc, birth_date, parent_name, parent_phone,
+       school, blood_type, address, veli_user_id, notes)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     app.child_name.split(' ')[0],
     app.child_name.split(' ').slice(1).join(' ') || '-',
-    `APP_${app.id}`,                  // TC sonradan admin doldurur (benzersiz placeholder)
-    `${app.child_birth_year}-01-01`,  // Tam tarih sonradan güncellenir
+    tcValue,
+    birthValue,
     app.parent_name,
     app.parent_phone,
+    app.child_school   || '',
+    app.child_blood_group || '',
+    app.child_address  || '',
     veliUserId,
     `Başvuru #${app.id} — Branş: ${app.branch}${app.message ? ' | Not: ' + app.message : ''}`
   );
