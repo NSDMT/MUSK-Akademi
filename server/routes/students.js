@@ -72,7 +72,11 @@ router.get('/:id', authenticate, (req, res) => {
 const studentValidation = [
   body('first_name').notEmpty().trim(),
   body('last_name').notEmpty().trim(),
-  body('tc').isLength({ min: 11, max: 11 }).withMessage('TC 11 haneli olmalı'),
+  body('tc').notEmpty().custom(val => {
+    // Gerçek TC: 11 rakam | Placeholder: APP_xxx
+    if (/^\d{11}$/.test(val) || /^APP_\d+$/.test(val)) return true;
+    throw new Error('TC 11 haneli rakam olmalı');
+  }),
   body('birth_date').notEmpty(),
   body('parent_name').notEmpty().trim(),
   body('parent_phone').notEmpty().trim(),
