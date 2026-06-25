@@ -6,7 +6,8 @@ export const branches = [
     name: 'Futbol',
     emoji: '⚽',
     ageRange: '5-15 yaş',
-    image: '/images/branch-futbol.jpg', // FOTOĞRAF: futbol branş görseli
+    image: '/categories/futbol.jpeg',
+    galleryCategory: 'Futbol',
     description: `5-15 yaş arası çocuklarımıza profesyonel futbol eğitimi sunuyoruz.
 Yaş gruplarına uygun, çocuk gelişimini destekleyen antrenman programlarımızla; fiziksel, zihinsel ve sosyal gelişimi ön planda tutuyoruz.
 
@@ -15,10 +16,10 @@ Erken yaşta disiplin, özgüven, takım ruhu ve sporcu kimliği kazandırmayı 
 Akademimizde yetişen sporcularımız, U-7'den itibaren U-18 ve A Takım seviyesine kadar gelişim sürecine dahil olmakta; resmi müsabakalarda tüm kategorilerde kulübümüzü başarıyla temsil etmektedir.`,
     highlight: '🏆 Geleceğin futbolcularını bugünden yetiştiriyoruz!',
     trainers: [
-      { name: 'Muzaffer Uğur', role: 'UEFA C Futbol Antrenörü / UEFA Çocuk Gelişim Antrenörü', photo: '/images/trainer-muzaffer.jpg' },
-      { name: 'Mümin Taş', role: 'UEFA C Futbol Antrenörü', photo: '' },
-      { name: 'Gökhan Turan', role: 'Futbol Antrenörü', photo: '' },
-      { name: 'Berkant Özyer', role: 'Yardımcı Antrenör', photo: '' },
+      { name: 'Muzaffer Uğur', role: 'UEFA C Futbol Antrenörü / UEFA Çocuk Gelişim Antrenörü', photo: '/images/trainers/muzaffer-ugur.jpeg' },
+      { name: 'Mümin Taş', role: 'UEFA C Futbol Antrenörü', photo: '/images/trainers/mumin-tas.jpeg' },
+      { name: 'Gökhan Turan', role: 'Futbol Antrenörü', photo: '/images/trainers/gokhan-turan.jpeg' },
+      { name: 'Berkant Özyer', role: 'Yardımcı Antrenör', photo: '/images/trainers/berkant-ozyer.jpeg' },
       { name: 'Selimhan Kaya', role: 'Yardımcı Antrenör', photo: '' },
     ],
   },
@@ -27,18 +28,19 @@ Akademimizde yetişen sporcularımız, U-7'den itibaren U-18 ve A Takım seviyes
     icon: '🏐',
     name: 'Voleybol',
     ageRange: '5-16 yaş',
-    image: '/images/branch-voleybol.jpg', // FOTOĞRAF: voleybol branş görseli
+    image: '/categories/voleybol.jpeg',
+    galleryCategory: 'Voleybol',
     description: `5-16 yaş arası çocuklarımıza profesyonel voleybol eğitimi sunuyoruz.
 Yaş gruplarına uygun, çocuk gelişimini destekleyen antrenman programlarımızla; fiziksel, zihinsel ve sosyal gelişimi ön planda tutuyoruz.
 
 Erken yaşta disiplin, özgüven, takım ruhu ve sporcu kimliği kazandırmayı hedefliyoruz.
 Geleceğin sporcularını yetiştirirken, çocuklarımızın mutlu, sağlıklı ve güçlü bireyler olarak yetişmesine katkı sağlıyoruz.`,
     trainers: [
-      { name: 'Tuğba Uğur', role: '3. Kademe Kıdemli Voleybol Antrenörü', photo: '/images/trainer-tugba.jpg' },
-      { name: 'Fatma Ceren Yılmaz', role: 'Voleybol Antrenörü', photo: '' },
-      { name: 'Şeval Akurt', role: 'Voleybol Antrenörü', photo: '' },
-      { name: 'Nipel Uluca', role: 'Voleybol Antrenörü', photo: '' },
-      { name: 'İlayda Bulut', role: 'Yardımcı Antrenör', photo: '' },
+      { name: 'Tuğba Uğur', role: '3. Kademe Kıdemli Voleybol Antrenörü', photo: '/images/trainers/tugba-ugur.jpeg' },
+      { name: 'Fatma Ceren Yılmaz', role: 'Voleybol Antrenörü', photo: '/images/trainers/ceren-yilmaz.jpeg' },
+      { name: 'Şeval Akurt', role: 'Voleybol Antrenörü', photo: '/images/trainers/sevval-akurt.jpeg' },
+      { name: 'Nipel Uluca', role: 'Voleybol Antrenörü', photo: '/images/trainers/nipel-uluca.jpeg' },
+      { name: 'İlayda Bulut', role: 'Yardımcı Antrenör', photo: '/images/trainers/ilayda-bulut.jpeg' },
       { name: 'Ayşegül Yolu', role: 'Yardımcı Antrenör', photo: '' },
     ],
   },
@@ -47,7 +49,8 @@ Geleceğin sporcularını yetiştirirken, çocuklarımızın mutlu, sağlıklı 
     icon: '🏀',
     name: 'Basketbol',
     ageRange: '5-16 yaş',
-    image: '/images/branch-basketbol.jpg', // FOTOĞRAF: basketbol branş görseli
+    image: '/categories/basketbol.jpeg',
+    galleryCategory: 'Basketbol',
     description: `5-16 yaş arası sporcularımıza profesyonel basketbol eğitimi sunuyoruz.
 Yaş gruplarına uygun antrenman programlarımızla; teknik gelişim, fiziksel dayanıklılık, disiplin ve takım ruhunu ön planda tutuyoruz.
 
@@ -62,13 +65,14 @@ Erken yaşta özgüvenli, mücadeleci ve sporcu kimliğine sahip bireyler yetiş
     icon: '🛼',
     name: 'Tekerlekli Paten',
     ageRange: 'Her yaş',
-    image: '/images/branch-paten.jpg', // FOTOĞRAF: paten branş görseli
+    image: '/categories/paten.jpeg',
+    galleryCategory: 'Tekerlekli Paten',
     description: `Sporcularımıza profesyonel tekerlekli paten eğitimi sunuyoruz.
 Yaş gruplarına uygun antrenman programlarımızla; denge, koordinasyon, teknik gelişim, fiziksel dayanıklılık, disiplin ve özgüveni ön planda tutuyoruz.
 
 Erken yaşta cesur, mücadeleci, özgüvenli ve sporcu kimliğine sahip bireyler yetiştirmeyi hedefliyoruz.`,
     trainers: [
-      { name: 'Tuğba Uğur', role: '2. Kademe Tekerlekli Paten Antrenörü', photo: '/images/trainer-tugba.jpg' },
+      { name: 'Tuğba Uğur', role: '2. Kademe Tekerlekli Paten Antrenörü', photo: '/images/trainers/tugba-ugur.jpeg' },
     ],
   },
   {
@@ -76,19 +80,22 @@ Erken yaşta cesur, mücadeleci, özgüvenli ve sporcu kimliğine sahip bireyler
     icon: '🏊',
     name: 'Yüzme',
     ageRange: 'Her yaş',
-    image: '/images/branch-yuzme.jpg', // FOTOĞRAF: yüzme branş görseli
+    image: '/categories/yüzme.jpeg',
+    galleryCategory: 'Yüzme',
     description: `Sporcularımıza profesyonel yüzme eğitimi sunuyoruz.
 Yaş gruplarına uygun antrenman programlarımızla; teknik gelişim, fiziksel dayanıklılık, su güvenliği, disiplin ve özgüveni ön planda tutuyoruz.
 
 Her yaşta güvenli ve profesyonel yüzme eğitimi alabilirsiniz.`,
-    trainers: [],
+    trainers: [
+      { name: 'Ceylan Sultan Koçak', role: '3. Kademe Kıdemli Yüzme Antrenörü', photo: '' },
+    ],
   },
   {
     id: 'tenis',
     icon: '🎾',
     name: 'Tenis',
     ageRange: 'Her yaş',
-    image: '/images/branch-tenis.jpg', // FOTOĞRAF: tenis branş görseli
+    image: '',
     description: `Sporcularımıza profesyonel tenis eğitimi sunuyoruz.
 Yaş gruplarına uygun antrenman programlarımızla; denge, koordinasyon, teknik gelişim, fiziksel dayanıklılık, disiplin ve özgüveni ön planda tutuyoruz.
 
@@ -103,7 +110,7 @@ Erken yaşta cesur, mücadeleci, özgüvenli ve sporcu kimliğine sahip bireyler
     icon: '♟️',
     name: 'Satranç',
     ageRange: 'Her yaş',
-    image: '/images/branch-satranc.jpg', // FOTOĞRAF: satranç branş görseli
+    image: '',
     description: `Sporcularımıza profesyonel satranç eğitimi sunuyoruz.
 Yaş gruplarına uygun eğitim programlarımızla; stratejik düşünme, dikkat gelişimi, problem çözme becerisi, disiplin ve özgüveni ön planda tutuyoruz.
 

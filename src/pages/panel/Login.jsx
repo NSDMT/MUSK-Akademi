@@ -19,7 +19,7 @@ export default function PanelLogin() {
       const res = await client.post('/auth/login', form);
       login(res.data.token, res.data.user);
       const role = res.data.user.role;
-      if (role === 'admin')    navigate('/panel/admin/dashboard');
+      if (role === 'admin') navigate('/panel/admin/dashboard');
       else if (role === 'antrenor') navigate('/panel/antrenor/dashboard');
       else navigate('/panel/veli/dashboard');
     } catch (err) {
@@ -33,7 +33,7 @@ export default function PanelLogin() {
     <div className="login-page">
       <div className="login-card">
         <div className="login-logo">
-          <img src="/images/logo.png" alt="Logo" onError={e => e.target.style.display='none'} />
+          <img src="/images/logo.png" alt="Logo" onError={e => e.target.style.display = 'none'} />
           <h1>MUSK Spor Kulübü</h1>
           <p>Yönetim Paneli</p>
         </div>

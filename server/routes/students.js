@@ -151,12 +151,12 @@ router.put('/:id', authenticate, authorize('admin'), studentValidation, (req, re
   res.json({ success: true });
 });
 
-// DELETE /api/students/:id (soft delete)
+// DELETE /api/students/:id (hard delete)
 router.delete('/:id', authenticate, authorize('admin'), (req, res) => {
   const db = getDb();
-  const student = db.prepare('SELECT id FROM students WHERE id = ? AND is_active = 1').get(req.params.id);
+  const student = db.prepare('SELECT id FROM students WHERE id = ?').get(req.params.id);
   if (!student) return res.status(404).json({ error: 'Öğrenci bulunamadı' });
-  db.prepare('UPDATE students SET is_active = 0 WHERE id = ?').run(req.params.id);
+  db.prepare('DELETE FROM students WHERE id = ?').run(req.params.id);
   res.json({ success: true });
 });
 

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './Gallery.css';
 
 const categories = ['Tümü', 'Futbol', 'Voleybol', 'Basketbol', 'Tekerlekli Paten', 'Yüzme'];
@@ -37,7 +38,13 @@ const galleryItems = [
 ];
 
 export default function Gallery() {
-  const [filter, setFilter] = useState('Tümü');
+  const location = useLocation();
+  const [filter, setFilter] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    const kat = params.get('kategori');
+    if (kat && categories.includes(kat)) return kat;
+    return 'Tümü';
+  });
   const [lightbox, setLightbox] = useState(null);
 
   const filtered = filter === 'Tümü' ? galleryItems : galleryItems.filter(g => g.category === filter);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { branches } from '../data/branches';
 import './Branches.css';
 
@@ -55,13 +55,24 @@ function BranchSection({ branch }) {
             )}
           </div>
 
-          {/* FOTOĞRAF: her branş için public/images/branch-[id].jpg ekleyin */}
+          {/* Branch Image + Gallery Link */}
           <div className="branch-section__image">
-            <div className="branch-section__img-placeholder">
-              <span>{branch.icon}</span>
-              <p>{branch.name} Görseli</p>
-              <small>branch-{branch.id}.jpg</small>
-            </div>
+            {branch.image ? (
+              <img src={branch.image} alt={branch.name} className="branch-section__img" />
+            ) : (
+              <div className="branch-section__img-placeholder">
+                <span>{branch.icon}</span>
+                <p>{branch.name} Görseli</p>
+              </div>
+            )}
+            {branch.galleryCategory && (
+              <Link
+                to={`/galeri?kategori=${encodeURIComponent(branch.galleryCategory)}`}
+                className="branch-gallery-btn"
+              >
+                📷 Galerimize Git
+              </Link>
+            )}
           </div>
         </div>
       </div>

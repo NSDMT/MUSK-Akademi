@@ -81,16 +81,15 @@ router.put('/:id', ...adminOnly, [
   res.json({ success: true });
 });
 
-// DELETE /api/users/:id (soft delete)
+// DELETE /api/users/:id (hard delete)
 router.delete('/:id', ...adminOnly, (req, res) => {
   const db = getDb();
   const user = db.prepare('SELECT id FROM users WHERE id = ?').get(req.params.id);
   if (!user) return res.status(404).json({ error: 'Kullanıcı bulunamadı' });
-  // Kendi hesabını silemesin
   if (parseInt(req.params.id) === req.user.id) {
     return res.status(400).json({ error: 'Kendi hesabınızı silemezsiniz' });
   }
-  db.prepare('UPDATE users SET is_active = 0 WHERE id = ?').run(req.params.id);
+  db.prepare('DELETE FROM users WHERE id = ?').run(req.params.id);
   res.json({ success: true });
 });
 

@@ -34,22 +34,25 @@ const whyUs = [
 const stats = [
   { value: '7+', label: 'Branş' },
   { value: '200+', label: 'Sporcu' },
-  { value: '10+', label: 'Antrenör' },
+  { value: '14+', label: 'Antrenör' },
   { value: '2023', label: 'Kuruluş Yılı' },
 ];
 
 const coaches = [
-  { name: 'Muzaffer Uğur', branch: 'Futbol', role: 'UEFA C / Çocuk Gelişim Antrenörü', icon: '⚽' },
-  { name: 'Gökhan Turan', branch: 'Futbol', role: 'Futbol Antrenörü', icon: '⚽' },
-  { name: 'Mümin Taş', branch: 'Futbol', role: 'UEFA C Futbol Antrenörü', icon: '⚽' },
-  { name: 'Tuğba Uğur', branch: 'Voleybol & Paten', role: '3. Kademe Voleybol / Paten Antrenörü', icon: '🏐' },
-  { name: 'Fatma Ceren Yılmaz', branch: 'Voleybol', role: 'Voleybol Antrenörü', icon: '🏐' },
-  { name: 'Şeval Akurt', branch: 'Voleybol', role: 'Voleybol Antrenörü', icon: '🏐' },
-  { name: 'Nipel Uluca', branch: 'Voleybol', role: 'Voleybol Antrenörü', icon: '🏐' },
-  { name: 'Mehmet Dinçer', branch: 'Basketbol', role: '3. Kademe Basketbol Antrenörü', icon: '🏀' },
-  { name: 'Fatma Gülten Özdil', branch: 'Basketbol', role: '2. Kademe Basketbol Antrenörü', icon: '🏀' },
-  { name: 'Musa Çimen', branch: 'Tenis', role: '3. Kademe Paten Antrenörü', icon: '🎾' },
-  { name: 'Beyza Ünüvar', branch: 'Satranç', role: '2. Kademe Satranç Antrenörü', icon: '♟️' },
+  { name: 'Muzaffer Uğur', branch: 'Futbol', role: 'UEFA C / Çocuk Gelişim Antrenörü', icon: '⚽', photo: '/images/trainers/muzaffer-ugur.jpeg' },
+  { name: 'Gökhan Turan', branch: 'Futbol', role: 'Futbol Antrenörü', icon: '⚽', photo: '/images/trainers/gokhan-turan.jpeg' },
+  { name: 'Mümin Taş', branch: 'Futbol', role: 'UEFA C Futbol Antrenörü', icon: '⚽', photo: '/images/trainers/mumin-tas.jpeg' },
+  { name: 'Berkant Özyer', branch: 'Futbol', role: 'Yardımcı Antrenör', icon: '⚽', photo: '/images/trainers/berkant-ozyer.jpeg' },
+  { name: 'Tuğba Uğur', branch: 'Voleybol & Paten', role: '3. Kademe Voleybol / Paten Antrenörü', icon: '🏐', photo: '/images/trainers/tugba-ugur.jpeg' },
+  { name: 'Fatma Ceren Yılmaz', branch: 'Voleybol', role: 'Voleybol Antrenörü', icon: '🏐', photo: '/images/trainers/ceren-yilmaz.jpeg' },
+  { name: 'Şeval Akurt', branch: 'Voleybol', role: 'Voleybol Antrenörü', icon: '🏐', photo: '/images/trainers/sevval-akurt.jpeg' },
+  { name: 'Nipel Uluca', branch: 'Voleybol', role: 'Voleybol Antrenörü', icon: '🏐', photo: '/images/trainers/nipel-uluca.jpeg' },
+  { name: 'İlayda Bulut', branch: 'Voleybol', role: 'Yardımcı Antrenör', icon: '🏐', photo: '/images/trainers/ilayda-bulut.jpeg' },
+  { name: 'Mehmet Dinçer', branch: 'Basketbol', role: '3. Kademe Basketbol Antrenörü', icon: '🏀', photo: '' },
+  { name: 'Fatma Gülten Özdil', branch: 'Basketbol', role: '2. Kademe Basketbol Antrenörü', icon: '🏀', photo: '' },
+  { name: 'Ceylan Sultan Koçak', branch: 'Yüzme', role: '3. Kademe Kıdemli Yüzme Antrenörü', icon: '🏄', photo: '' },
+  { name: 'Musa Çimen', branch: 'Tenis', role: '3. Kademe Paten Antrenörü', icon: '🎾', photo: '' },
+  { name: 'Beyza Ünüvar', branch: 'Satranç', role: '2. Kademe Satranç Antrenörü', icon: '♟️', photo: '' },
 ];
 
 export default function Home() {
@@ -178,7 +181,11 @@ export default function Home() {
             {coaches.map(c => (
               <div key={c.name} className="coach-card card">
                 <div className="coach-card__avatar">
-                  <span>{c.icon}</span>
+                  {c.photo ? (
+                    <img src={c.photo} alt={c.name} className="coach-card__photo" />
+                  ) : (
+                    <span>{c.icon}</span>
+                  )}
                 </div>
                 <div className="coach-card__info">
                   <h4 className="coach-card__name">{c.name}</h4>

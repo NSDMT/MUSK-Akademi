@@ -44,9 +44,15 @@ export default function AdminUsers() {
     } finally { setSaving(false); }
   }
 
-  async function handleToggle(u) {
-    await client.put(`/users/${u.id}`, { is_active: !u.is_active });
-    load();
+  async function handleDelete(u) {
+    if (!confirm(`"${u.name}" kullanıcısını kalıcı olarak silmek istiyor musunuz?`)) return;
+    try {
+      await client.delete(`/users/${u.id}`);
+      showAlert('success', 'Kullanıcı silindi');
+      load();
+    } catch (err) {
+      showAlert('error', err.response?.data?.error || 'Silme hatası');
+    }
   }
 
   function showAlert(type, msg) { setAlert({ type, msg }); setTimeout(() => setAlert(null), 3000); }
@@ -92,12 +98,7 @@ export default function AdminUsers() {
                 <td>
                   <div style={{ display: 'flex', gap: 6 }}>
                     <button className="btn-panel btn-panel-sm btn-ghost" onClick={() => openEdit(u)}>Düzenle</button>
-                    <button
-                      className={`btn-panel btn-panel-sm ${u.is_active ? 'btn-danger' : 'btn-ghost'}`}
-                      onClick={() => handleToggle(u)}
-                    >
-                      {u.is_active ? 'Pasifleştir' : 'Aktifleştir'}
-                    </button>
+                    <button className="btn-panel btn-panel-sm btn-danger" onClick={() => handleDelete(u)}>Sil</button>
                   </div>
                 </td>
               </tr>

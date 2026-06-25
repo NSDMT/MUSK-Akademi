@@ -29,9 +29,9 @@ export default function About() {
             </div>
           </div>
           <div className="about-intro__text">
-            <p className="section-subtitle" style={{textAlign:'left'}}>Biz Kimiz?</p>
-            <h2 className="section-title" style={{textAlign:'left'}}>MUSK Spor Kulübü</h2>
-            <div className="section-divider" style={{margin:'10px 0 28px'}} />
+            <p className="section-subtitle" style={{ textAlign: 'left' }}>Biz Kimiz?</p>
+            <h2 className="section-title" style={{ textAlign: 'left' }}>MUSK Spor Kulübü</h2>
+            <div className="section-divider" style={{ margin: '10px 0 28px' }} />
             <p>
               MUSK Spor Kulübü, <strong>2023 yılından bu yana</strong> Karaman'da sporun
               gelişimine katkı sağlamak amacıyla faaliyet göstermektedir.
@@ -47,7 +47,7 @@ export default function About() {
             </p>
             <p>
               Geniş branş yelpazesi ve güçlü eğitim kadrosuyla <strong>Karaman'ın en büyük spor
-              akademilerinden biri</strong> olarak sporcularımıza kaliteli ve disiplinli bir eğitim
+                akademilerinden biri</strong> olarak sporcularımıza kaliteli ve disiplinli bir eğitim
               sunuyoruz.
             </p>
           </div>
@@ -113,7 +113,7 @@ export default function About() {
         <div className="container founder-inner">
           {/* FOTOĞRAF: kurucu fotoğrafı için public/images/founder.jpg ekleyin */}
           <div className="founder-image">
-            <div className="why-image__placeholder" style={{height:'320px'}}>
+            <div className="why-image__placeholder" style={{ height: '320px' }}>
               <span>👤</span>
               <p>Kurucu Fotoğrafı</p>
               <small>founder.jpg</small>
