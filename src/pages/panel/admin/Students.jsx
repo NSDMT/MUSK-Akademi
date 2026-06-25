@@ -160,7 +160,7 @@ export default function AdminStudents() {
               <div className="form-grid">
                 <Field label="Adı *" required value={form.first_name} onChange={v => setForm(f => ({ ...f, first_name: v }))} />
                 <Field label="Soyadı *" required value={form.last_name} onChange={v => setForm(f => ({ ...f, last_name: v }))} />
-                <Field label="TC Kimlik No *" required value={form.tc} onChange={v => setForm(f => ({ ...f, tc: v }))} maxLength={11} />
+                <Field label="TC Kimlik No *" required value={form.tc} onChange={v => setForm(f => ({ ...f, tc: v.replace(/\D/g, '') }))} maxLength={11} inputMode="numeric" />
                 <Field label="Doğum Tarihi *" required type="date" value={form.birth_date} onChange={v => setForm(f => ({ ...f, birth_date: v }))} />
                 <Field label="Anne/Baba Adı *" required value={form.parent_name} onChange={v => setForm(f => ({ ...f, parent_name: v }))} />
                 <Field label="Okulu" value={form.school} onChange={v => setForm(f => ({ ...f, school: v }))} />
@@ -197,8 +197,8 @@ export default function AdminStudents() {
                   </select>
                 </div>
 
-                <Field label="Sporcu Telefonu" value={form.athlete_phone} onChange={v => setForm(f => ({ ...f, athlete_phone: v }))} />
-                <Field label="Veli Telefonu *" required value={form.parent_phone} onChange={v => setForm(f => ({ ...f, parent_phone: v }))} />
+                <Field label="Sporcu Telefonu" value={form.athlete_phone} onChange={v => setForm(f => ({ ...f, athlete_phone: v.replace(/\D/g, '') }))} maxLength={11} inputMode="numeric" />
+                <Field label="Veli Telefonu *" required value={form.parent_phone} onChange={v => setForm(f => ({ ...f, parent_phone: v.replace(/\D/g, '') }))} maxLength={11} inputMode="numeric" />
                 <Field label="Adres" value={form.address} onChange={v => setForm(f => ({ ...f, address: v }))} className="col-span-2" />
                 <Field label="Notlar" value={form.notes} onChange={v => setForm(f => ({ ...f, notes: v }))} className="col-span-2" />
               </div>
@@ -214,7 +214,7 @@ export default function AdminStudents() {
   );
 }
 
-function Field({ label, required, type = 'text', value, onChange, className, maxLength }) {
+function Field({ label, required, type = 'text', value, onChange, className, maxLength, inputMode }) {
   return (
     <div className={`form-field${className ? ' ' + className : ''}`}>
       <label>{label}</label>
@@ -223,6 +223,7 @@ function Field({ label, required, type = 'text', value, onChange, className, max
         required={required}
         value={value}
         maxLength={maxLength}
+        inputMode={inputMode}
         onChange={e => onChange(e.target.value)}
       />
     </div>

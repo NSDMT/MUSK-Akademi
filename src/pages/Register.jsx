@@ -52,9 +52,11 @@ export default function Register() {
     return e;
   };
 
+  const numericFields = ['childTc', 'parentPhone', 'emergencyPhone'];
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    const filtered = numericFields.includes(name) ? value.replace(/\D/g, '') : value;
+    setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : filtered }));
     setErrors(prev => ({ ...prev, [name]: undefined }));
   };
 
@@ -148,7 +150,7 @@ export default function Register() {
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="childTc">TC Kimlik No *</label>
-                  <input id="childTc" name="childTc" type="text" maxLength={11}
+                  <input id="childTc" name="childTc" type="text" maxLength={11} inputMode="numeric"
                     value={form.childTc} onChange={handleChange}
                     placeholder="11 haneli TC no"
                     className={errors.childTc ? 'error' : ''} />
@@ -256,7 +258,7 @@ export default function Register() {
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="parentPhone">İletişim Telefonu *</label>
-                  <input id="parentPhone" name="parentPhone" type="tel"
+                  <input id="parentPhone" name="parentPhone" type="tel" maxLength={11}
                     value={form.parentPhone} onChange={handleChange}
                     placeholder="05XX XXX XX XX"
                     className={errors.parentPhone ? 'error' : ''} />
@@ -264,7 +266,7 @@ export default function Register() {
                 </div>
                 <div className="form-group">
                   <label htmlFor="emergencyPhone">Acil Durum Telefonu</label>
-                  <input id="emergencyPhone" name="emergencyPhone" type="tel"
+                  <input id="emergencyPhone" name="emergencyPhone" type="tel" maxLength={11}
                     value={form.emergencyPhone} onChange={handleChange}
                     placeholder="05XX XXX XX XX" />
                 </div>
