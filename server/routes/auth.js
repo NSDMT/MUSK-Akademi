@@ -27,7 +27,7 @@ router.post('/login', loginLimiter, [
   const { email, password } = req.body;
   const db = getDb();
 
-  const user = db.prepare('SELECT * FROM users WHERE email = ? AND is_active = 1').get(email);
+  const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
   if (!user || !bcrypt.compareSync(password, user.password_hash)) {
     return res.status(401).json({ error: 'E-posta veya şifre hatalı' });
   }

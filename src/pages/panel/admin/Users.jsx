@@ -35,7 +35,7 @@ export default function AdminUsers() {
       const payload = { ...form };
       if (editId && !payload.password) delete payload.password;
       if (editId) await client.put(`/users/${editId}`, payload);
-      else        await client.post('/users', payload);
+      else await client.post('/users', payload);
       setModal(null);
       showAlert('success', editId ? 'Kullanıcı güncellendi' : 'Kullanıcı eklendi');
       load();
@@ -84,17 +84,16 @@ export default function AdminUsers() {
         <table className="panel-table">
           <thead>
             <tr>
-              <th>Ad</th><th>E-posta</th><th>Rol</th><th>Telefon</th><th>Durum</th><th></th>
+              <th>Ad</th><th>E-posta</th><th>Rol</th><th>Telefon</th><th></th>
             </tr>
           </thead>
           <tbody>
             {filtered.map(u => (
-              <tr key={u.id} style={{ opacity: u.is_active ? 1 : 0.4 }}>
+              <tr key={u.id}>
                 <td style={{ fontWeight: 600, color: '#f0f0f0' }}>{u.name}</td>
                 <td>{u.email}</td>
                 <td><span className={`badge badge-${u.role}`}>{ROLE_LABEL[u.role]}</span></td>
                 <td>{u.phone || '—'}</td>
-                <td><span style={{ color: u.is_active ? '#81c784' : '#ef9a9a', fontSize: '0.8rem' }}>{u.is_active ? 'Aktif' : 'Pasif'}</span></td>
                 <td>
                   <div style={{ display: 'flex', gap: 6 }}>
                     <button className="btn-panel btn-panel-sm btn-ghost" onClick={() => openEdit(u)}>Düzenle</button>

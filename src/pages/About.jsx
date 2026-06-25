@@ -22,11 +22,7 @@ export default function About() {
         <div className="container about-intro">
           {/* FOTOĞRAF: kulüp/tesis görseli için public/images/about-team.jpg ekleyin */}
           <div className="about-intro__image">
-            <div className="why-image__placeholder">
-              <span>🏟️</span>
-              <p>Kulüp / Tesis Görseli</p>
-              <small>about-team.jpg</small>
-            </div>
+            <img src="/images/kurucu.jpeg" alt="Muzaffer Uğur" className="about-intro__img" />
           </div>
           <div className="about-intro__text">
             <p className="section-subtitle" style={{ textAlign: 'left' }}>Biz Kimiz?</p>
@@ -113,11 +109,7 @@ export default function About() {
         <div className="container founder-inner">
           {/* FOTOĞRAF: kurucu fotoğrafı için public/images/founder.jpg ekleyin */}
           <div className="founder-image">
-            <div className="why-image__placeholder" style={{ height: '320px' }}>
-              <span>👤</span>
-              <p>Kurucu Fotoğrafı</p>
-              <small>founder.jpg</small>
-            </div>
+            <img src="/images/kurucu.jpeg" alt="Muzaffer Uğur" className="founder-photo" />
           </div>
           <div className="founder-text">
             <span className="founder-text__tag">Kulüp Kurucusu</span>
