@@ -16,7 +16,7 @@ const branches = [
   { icon: '⚽', name: 'Futbol', desc: '5-15 yaş arası profesyonel futbol eğitimi', to: '/branslar#futbol' },
   { icon: '🏐', name: 'Voleybol', desc: '5-16 yaş arası profesyonel voleybol eğitimi', to: '/branslar#voleybol' },
   { icon: '🏀', name: 'Basketbol', desc: '5-16 yaş arası profesyonel basketbol eğitimi', to: '/branslar#basketbol' },
-  { icon: '⛸️', name: 'Tekerlekli Paten', desc: 'Denge, koordinasyon ve teknik gelişim eğitimi', to: '/branslar#paten' },
+  { icon: '🛼', name: 'Tekerlekli Paten', desc: 'Denge, koordinasyon ve teknik gelişim eğitimi', to: '/branslar#paten' },
   { icon: '🏊', name: 'Yüzme', desc: 'Profesyonel yüzme eğitimi', to: '/branslar#yuzme' },
   { icon: '🎾', name: 'Tenis', desc: 'Profesyonel tenis eğitimi', to: '/branslar#tenis' },
   { icon: '♟️', name: 'Satranç', desc: 'Stratejik düşünme ve problem çözme eğitimi', to: '/branslar#satranc' },

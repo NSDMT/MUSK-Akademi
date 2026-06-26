@@ -62,7 +62,7 @@ Erken yaşta özgüvenli, mücadeleci ve sporcu kimliğine sahip bireyler yetiş
   },
   {
     id: 'paten',
-    icon: '⛸️',
+    icon: '🛼',
     name: 'Tekerlekli Paten',
     ageRange: 'Her yaş',
     image: '/categories/paten.jpeg',
