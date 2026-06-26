@@ -116,6 +116,7 @@ export default function AdminGroups() {
       </div>
 
       {modal === 'form' && (
+        <div className="modal-backdrop" onClick={() => setModal(null)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <h2 className="modal__title">{editId ? 'Grup Düzenle' : 'Yeni Grup'}</h2>
             <form onSubmit={handleSubmit}>
