@@ -1,16 +1,16 @@
 ﻿import { useState, useEffect } from 'react';
 import './News.css';
 
-const CATEGORIES = ['TÃ¼mÃ¼', 'Genel', 'Futbol', 'Voleybol', 'Basketbol', 'Tekerlekli Paten', 'YÃ¼zme', 'SatranÃ§', 'Tenis'];
+const CATEGORIES = ['Tümü', 'Genel', 'Futbol', 'Voleybol', 'Basketbol', 'Tekerlekli Paten', 'Yüzme', 'Satranç', 'Tenis'];
 const API = import.meta.env.VITE_API_URL || '/api';
 
 export default function News() {
-  const [filter, setFilter] = useState('TÃ¼mÃ¼');
+  const [filter, setFilter] = useState('Tümü');
   const [newsData, setNewsData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const url = filter === 'TÃ¼mÃ¼'
+    const url = filter === 'Tümü'
       ? `${API}/news`
       : `${API}/news?category=${encodeURIComponent(filter)}`;
     setLoading(true);
@@ -30,7 +30,7 @@ export default function News() {
     <div className="page-wrapper">
       <div className="page-hero">
         <h1>Haberler & Duyurular</h1>
-        <p>KulÃ¼bÃ¼mÃ¼zden en gÃ¼ncel haberler</p>
+        <p>Kulübümüzden en güncel haberler</p>
       </div>
 
       {/* Category Filter */}
@@ -52,9 +52,9 @@ export default function News() {
       <section className="section">
         <div className="container">
           {loading ? (
-            <p className="news-empty">YÃ¼kleniyor...</p>
+            <p className="news-empty">Yükleniyor...</p>
           ) : newsData.length === 0 ? (
-            <p className="news-empty">Bu kategoride henÃ¼z haber bulunmamaktadÄ±r.</p>
+            <p className="news-empty">Bu kategoride henüz haber bulunmamaktadır.</p>
           ) : (
             <div className="news-grid">
               {newsData.map(news => (
@@ -63,7 +63,7 @@ export default function News() {
                     {news.image_url ? (
                       <img src={news.image_url} alt={news.title} className="news-card__img" loading="lazy" />
                     ) : (
-                      <div className="news-card__img-placeholder"><span>ğŸ“°</span></div>
+                      <div className="news-card__img-placeholder"><span>📰</span></div>
                     )}
                   </div>
                   <div className="news-card__body">
@@ -78,7 +78,7 @@ export default function News() {
                         className="news-card__btn btn-outline"
                         onClick={() => alert(news.content)}
                       >
-                        DevamÄ±nÄ± Oku
+                        Devamını Oku
                       </button>
                     )}
                   </div>

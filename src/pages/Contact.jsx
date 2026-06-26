@@ -54,6 +54,8 @@ export default function Contact() {
               <div>
                 <h4>Telefon</h4>
                 <a href="tel:+905459699677">+90 545 969 96 77</a>
+                <br />
+                <a href="tel:+905425822413">+90 542 582 24 13</a>
               </div>
             </div>
             <div className="card contact-info__card">

@@ -313,7 +313,7 @@ export default function Register() {
               <h3>📋 Kayıt Süreci</h3>
               <ol className="register-info__steps">
                 <li><span>1</span> Formu doldurun ve gönderin</li>
-                <li><span>2</span> Antrenörümüz sizi arasın</li>
+                <li><span>2</span> Başvurunuz onaylandıktan sonra sisteme giriş bilgileriniz WhatsApp mesajı ile iletilir</li>
                 <li><span>3</span> Deneme antrenmanına katılın</li>
                 <li><span>4</span> Lisans işlemleriniz tamamlansın</li>
               </ol>

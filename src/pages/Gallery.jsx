@@ -2,7 +2,7 @@
 import { useLocation } from 'react-router-dom';
 import './Gallery.css';
 
-const ALL_CATEGORIES = ['TÃ¼mÃ¼', 'Futbol', 'Voleybol', 'Basketbol', 'Tekerlekli Paten', 'YÃ¼zme', 'SatranÃ§', 'Tenis', 'Genel'];
+const ALL_CATEGORIES = ['Tümü', 'Futbol', 'Voleybol', 'Basketbol', 'Tekerlekli Paten', 'Yüzme', 'Satranç', 'Tenis', 'Genel'];
 const API = import.meta.env.VITE_API_URL || '/api';
 
 export default function Gallery() {
@@ -11,14 +11,14 @@ export default function Gallery() {
     const params = new URLSearchParams(location.search);
     const kat = params.get('kategori');
     if (kat && ALL_CATEGORIES.includes(kat)) return kat;
-    return 'TÃ¼mÃ¼';
+    return 'Tümü';
   });
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState(null);
 
   useEffect(() => {
-    const url = filter === 'TÃ¼mÃ¼'
+    const url = filter === 'Tümü'
       ? `${API}/gallery`
       : `${API}/gallery?category=${encodeURIComponent(filter)}`;
     setLoading(true);
@@ -41,7 +41,7 @@ export default function Gallery() {
     <div className="page-wrapper">
       <div className="page-hero">
         <h1>Galeri</h1>
-        <p>KulÃ¼bÃ¼mÃ¼zden kareler</p>
+        <p>Kulübümüzden kareler</p>
       </div>
 
       {/* Filter */}
@@ -63,9 +63,9 @@ export default function Gallery() {
       <section className="section">
         <div className="container">
           {loading ? (
-            <p style={{ color: '#888', padding: '32px 0' }}>YÃ¼kleniyor...</p>
+            <p style={{ color: '#888', padding: '32px 0' }}>Yükleniyor...</p>
           ) : items.length === 0 ? (
-            <p style={{ color: '#888', padding: '32px 0' }}>Bu kategoride henÃ¼z fotoÄŸraf yok.</p>
+            <p style={{ color: '#888', padding: '32px 0' }}>Bu kategoride henüz fotoğraf yok.</p>
           ) : (
             <div className="gallery-grid">
               {items.map((item) => (
