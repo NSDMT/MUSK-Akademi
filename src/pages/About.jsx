@@ -29,22 +29,22 @@ export default function About() {
             <h2 className="section-title" style={{ textAlign: 'left' }}>MUSK Spor Kulübü</h2>
             <div className="section-divider" style={{ margin: '10px 0 28px' }} />
             <p>
-              MUSK Spor Kulübü, <strong>2023 yılından bu yana</strong> Karaman'da sporun
-              gelişimine katkı sağlamak amacıyla faaliyet göstermektedir.
+              20 Temmuz 1997 doğumlu olan Muzaffer Uğur, 2019 yılında <strong>Selçuk Üniversitesi Spor Bilimleri Fakültesi'nden</strong> mezun olmuştur. Sporun yalnızca fiziksel bir aktivite değil; disiplin, karakter, özgüven ve yaşam kültürü kazandıran önemli bir eğitim aracı olduğuna inanarak antrenörlük kariyerini bu anlayış üzerine inşa etmiştir.
             </p>
             <p>
-              Amacımız; çocuklarımızın ve gençlerimizin fiziksel, zihinsel ve sosyal gelişimini
-              destekleyerek onları hem sporcu hem de güçlü bireyler olarak yetiştirmektir.
+              17 yıllık aktif lisanslı sporculuk geçmişine sahip olan Muzaffer Uğur, edindiği saha deneyimini akademik bilgisiyle birleştirerek çocukların ve gençlerin gelişimine katkı sağlamayı amaçlamaktadır. Sporcuların sadece müsabakalara değil, hayata da en iyi şekilde hazırlanması için modern antrenman yöntemlerini, bilimsel yaklaşımı ve eğitim odaklı çalışmaları esas almaktadır.
             </p>
             <p>
-              Kulübümüz bünyesinde futbol, voleybol, basketbol, tekerlekli paten, yüzme, tenis
-              ve satranç branşlarının yanı sıra BESYO ve POMEM hazırlık eğitimleri başta olmak
-              üzere birçok alanda aktif olarak hizmet verilmektedir.
+              <strong>UEFA C Futbol Antrenörü</strong> ve <strong>UEFA Çocuk Gelişim Antrenörü</strong> belgelerine sahip olan Muzaffer Uğur; aynı zamanda <strong>1. Kademe Hentbol Antrenörü</strong> ve <strong>1. Kademe Floor Curling Antrenörüdür.</strong> Farklı branşlardaki bilgi ve deneyimi sayesinde çocukların yaş gruplarına uygun, güvenli ve gelişim odaklı antrenman programları hazırlamaktadır.
             </p>
             <p>
-              Geniş branş yelpazesi ve güçlü eğitim kadrosuyla <strong>Karaman'ın en büyük spor
-                akademilerinden biri</strong> olarak sporcularımıza kaliteli ve disiplinli bir eğitim
-              sunuyoruz.
+              Kurucusu olduğu <strong>Muzaffer Uğur Spor Kulübü</strong> bünyesinde yüzlerce çocuğun sporla tanışmasına öncülük etmiş, onların fiziksel, zihinsel ve sosyal gelişimlerine katkı sağlamıştır. Temel hedefi; spor ahlakına sahip, özgüveni yüksek, disiplinli, sağlıklı ve başarılı bireyler yetiştirirken, yetenekli sporcuları da Türk sporuna kazandırmaktır.
+            </p>
+            <p>
+              Mesleğini büyük bir tutkuyla sürdüren Muzaffer Uğur, kendisini sürekli geliştirmeyi ilke edinmiş; eğitimlere katılarak, güncel antrenman metotlarını takip ederek ve spor bilimindeki yenilikleri uygulamalarına yansıtarak her geçen gün daha donanımlı bir antrenör olmayı hedeflemektedir.
+            </p>
+            <p style={{ fontStyle: 'italic', color: '#c9a84c', marginTop: 8 }}>
+              "Spora aşık, gelişime açık." anlayışıyla çıktığı bu yolda, geleceğin başarılı sporcularını ve örnek bireylerini yetiştirmek için aynı azim ve kararlılıkla çalışmalarına devam etmektedir.
             </p>
           </div>
         </div>

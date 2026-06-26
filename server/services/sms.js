@@ -73,7 +73,7 @@ function initWhatsApp() {
     if (!isReady) {
       console.warn('[WhatsApp] 5 dk içinde bağlantı kurulamadı, yeniden başlatılıyor...');
       initStarted = false;
-      try { waClient.destroy().catch(() => {}); } catch {}
+      try { waClient.destroy().catch(() => { }); } catch { }
       initWhatsApp();
     }
   }, 5 * 60 * 1000);

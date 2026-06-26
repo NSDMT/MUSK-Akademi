@@ -51,7 +51,7 @@ export default function AdminGroups() {
     try {
       const payload = { ...form, trainer_id: form.trainer_id || null, branch_id: parseInt(form.branch_id), monthly_fee: form.monthly_fee !== '' ? parseInt(form.monthly_fee) : 0 };
       if (editId) await client.put(`/groups/${editId}`, payload);
-      else        await client.post('/groups', payload);
+      else await client.post('/groups', payload);
       setModal(null);
       showAlert('success', editId ? 'Grup güncellendi' : 'Grup eklendi');
       load();
