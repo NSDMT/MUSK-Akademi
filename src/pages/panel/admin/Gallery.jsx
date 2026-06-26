@@ -7,14 +7,14 @@ const CATEGORIES = ['Futbol', 'Voleybol', 'Basketbol', 'Tekerlekli Paten', 'Yüz
 const EMPTY = { category: 'Genel', caption: '', image_url: '', display_order: 0, is_active: 1 };
 
 export default function AdminGallery() {
-  const [items, setItems]   = useState([]);
-  const [modal, setModal]   = useState(false);
-  const [form, setForm]     = useState(EMPTY);
+  const [items, setItems] = useState([]);
+  const [modal, setModal] = useState(false);
+  const [form, setForm] = useState(EMPTY);
   const [editId, setEditId] = useState(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [filterCat, setFilterCat] = useState('');
-  const [alert, setAlert]   = useState(null);
+  const [alert, setAlert] = useState(null);
 
   useEffect(() => { load(); }, []);
 
@@ -23,7 +23,7 @@ export default function AdminGallery() {
     setItems(res.data);
   }
 
-  function openAdd()   { setForm(EMPTY); setEditId(null); setModal(true); }
+  function openAdd() { setForm(EMPTY); setEditId(null); setModal(true); }
   function openEdit(g) {
     setForm({ category: g.category, caption: g.caption, image_url: g.image_url, display_order: g.display_order, is_active: g.is_active });
     setEditId(g.id);
@@ -49,7 +49,7 @@ export default function AdminGallery() {
     try {
       const payload = { ...form, display_order: Number(form.display_order), is_active: Number(form.is_active) };
       if (editId) await client.put(`/gallery/${editId}`, payload);
-      else        await client.post('/gallery', payload);
+      else await client.post('/gallery', payload);
       setModal(false);
       showAlert('success', editId ? 'Güncellendi.' : 'Fotoğraf eklendi.');
       load();

@@ -13,6 +13,7 @@ export default function AdminGroups() {
   const [editId, setEditId] = useState(null);
   const [saving, setSaving] = useState(false);
   const [alert, setAlert] = useState(null);
+  const [studentsModal, setStudentsModal] = useState(null); // { groupName, list }
 
   useEffect(() => { load(); }, []);
 
@@ -24,7 +25,17 @@ export default function AdminGroups() {
     ]);
     setGroups(g.data);
     setBranches(b.data);
-    setTrainers(u.data.filter(u => u.role === 'antrenor'));
+    // Antrenör ve Admin rolü olabilir (klüp sahibi antrenör de olabilir)
+    setTrainers(u.data.filter(u => u.role === 'antrenor' || u.role === 'admin'));
+  }
+
+  async function openStudents(g) {
+    try {
+      const res = await client.get(`/groups/${g.id}/students`);
+      setStudentsModal({ groupName: g.name, list: res.data });
+    } catch {
+      showAlert('error', 'Öğrenciler yüklenemedi');
+    }
   }
 
   function openAdd() { setForm(EMPTY); setEditId(null); setModal('form'); }
@@ -82,7 +93,15 @@ export default function AdminGroups() {
                 <td>{g.trainer_name || <span style={{ color: '#555' }}>—</span>}</td>
                 <td>{g.age_range || '—'}</td>
                 <td style={{ color: '#c9a84c', fontWeight: 700 }}>{g.monthly_fee ? `${g.monthly_fee} ₺` : '—'}</td>
-                <td><span style={{ color: '#c9a84c', fontWeight: 700 }}>{g.student_count}</span></td>
+                <td>
+                  <button
+                    onClick={() => openStudents(g)}
+                    style={{ background: 'none', border: 'none', color: '#00b4d8', fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem' }}
+                    title="Gruptaki öğrencileri gör"
+                  >
+                    {g.student_count} kişi
+                  </button>
+                </td>
                 <td>
                   <div style={{ display: 'flex', gap: 6 }}>
                     <button className="btn-panel btn-panel-sm btn-ghost" onClick={() => openEdit(g)}>Düzenle</button>
@@ -97,7 +116,6 @@ export default function AdminGroups() {
       </div>
 
       {modal === 'form' && (
-        <div className="modal-backdrop" onClick={() => setModal(null)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <h2 className="modal__title">{editId ? 'Grup Düzenle' : 'Yeni Grup'}</h2>
             <form onSubmit={handleSubmit}>
@@ -138,6 +156,40 @@ export default function AdminGroups() {
                 <button type="submit" className="btn-panel" disabled={saving}>{saving ? 'Kaydediliyor...' : 'Kaydet'}</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Öğrenci Listesi Modalı */}
+      {studentsModal && (
+        <div className="modal-backdrop" onClick={() => setStudentsModal(null)}>
+          <div className="modal modal--lg" onClick={e => e.stopPropagation()}>
+            <h2 className="modal__title">👦 {studentsModal.groupName} — Öğrenciler</h2>
+            {studentsModal.list.length === 0 ? (
+              <p style={{ color: '#666', marginTop: 12 }}>Bu grupta henüz öğrenci yok.</p>
+            ) : (
+              <div className="panel-table-wrap">
+                <table className="panel-table">
+                  <thead>
+                    <tr><th>#</th><th>Ad Soyad</th><th>Doğum Tarihi</th><th>Veli</th><th>Veli Tel</th></tr>
+                  </thead>
+                  <tbody>
+                    {studentsModal.list.map((s, i) => (
+                      <tr key={s.id}>
+                        <td style={{ color: '#555' }}>{i + 1}</td>
+                        <td style={{ fontWeight: 600, color: '#f0f0f0' }}>{s.first_name} {s.last_name}</td>
+                        <td>{s.birth_date || '—'}</td>
+                        <td>{s.parent_name}</td>
+                        <td>{s.parent_phone}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            <div className="form-actions">
+              <button className="btn-panel btn-ghost" onClick={() => setStudentsModal(null)}>Kapat</button>
+            </div>
           </div>
         </div>
       )}

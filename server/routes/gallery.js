@@ -60,11 +60,11 @@ router.put('/:id', authenticate, authorize('admin'), [
   db.prepare(
     'UPDATE gallery_items SET category=?, caption=?, image_url=?, display_order=?, is_active=? WHERE id=?'
   ).run(
-    category      ?? item.category,
-    caption       ?? item.caption,
-    image_url     ?? item.image_url,
+    category ?? item.category,
+    caption ?? item.caption,
+    image_url ?? item.image_url,
     display_order ?? item.display_order,
-    is_active     ?? item.is_active,
+    is_active ?? item.is_active,
     item.id
   );
   res.json({ success: true });

@@ -71,11 +71,11 @@ router.put('/:id', authenticate, authorize('admin'), [
   db.prepare(`
     UPDATE news SET title=?, category=?, summary=?, content=?, image_url=?, is_published=? WHERE id=?
   `).run(
-    title       ?? item.title,
-    category    ?? item.category,
-    summary     ?? item.summary,
-    content     ?? item.content,
-    image_url   ?? item.image_url,
+    title ?? item.title,
+    category ?? item.category,
+    summary ?? item.summary,
+    content ?? item.content,
+    image_url ?? item.image_url,
     is_published ?? item.is_published,
     item.id
   );

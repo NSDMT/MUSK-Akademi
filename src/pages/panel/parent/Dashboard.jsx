@@ -4,39 +4,39 @@ import { useAuth } from '../../../context/AuthContext';
 import client from '../../../api/client';
 
 const ATT_MAP = {
-  present: { label: 'Geldi',     color: '#4caf50', bg: 'rgba(76,175,80,0.12)'   },
-  absent:  { label: 'Gelmedi',   color: '#f44336', bg: 'rgba(244,67,54,0.12)'   },
-  late:    { label: 'Geç Geldi', color: '#ff9800', bg: 'rgba(255,152,0,0.12)'   },
-  excused: { label: 'İzinli',    color: '#9e9e9e', bg: 'rgba(158,158,158,0.12)' },
+  present: { label: 'Geldi', color: '#4caf50', bg: 'rgba(76,175,80,0.12)' },
+  absent: { label: 'Gelmedi', color: '#f44336', bg: 'rgba(244,67,54,0.12)' },
+  late: { label: 'Geç Geldi', color: '#ff9800', bg: 'rgba(255,152,0,0.12)' },
+  excused: { label: 'İzinli', color: '#9e9e9e', bg: 'rgba(158,158,158,0.12)' },
 };
 
 const DUE_STATUS = {
-  pending: { label: 'Bekliyor',  color: '#ff9800', bg: 'rgba(255,152,0,0.12)'   },
-  paid:    { label: 'Ödendi',    color: '#4caf50', bg: 'rgba(76,175,80,0.12)'   },
-  waived:  { label: 'Muaf',      color: '#9e9e9e', bg: 'rgba(158,158,158,0.12)' },
-  overdue: { label: 'Gecikmiş',  color: '#f44336', bg: 'rgba(244,67,54,0.12)'   },
+  pending: { label: 'Bekliyor', color: '#ff9800', bg: 'rgba(255,152,0,0.12)' },
+  paid: { label: 'Ödendi', color: '#4caf50', bg: 'rgba(76,175,80,0.12)' },
+  waived: { label: 'Muaf', color: '#9e9e9e', bg: 'rgba(158,158,158,0.12)' },
+  overdue: { label: 'Gecikmiş', color: '#f44336', bg: 'rgba(244,67,54,0.12)' },
 };
 
 const MONTHS = ['', 'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-                'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+  'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
 
 export default function ParentDashboard() {
   const { user } = useAuth();
-  const [students, setStudents]    = useState([]);
-  const [selected, setSelected]    = useState(null);
-  const [history, setHistory]      = useState([]);
-  const [dues, setDues]            = useState([]);
-  const [schedule, setSchedule]    = useState([]);
+  const [students, setStudents] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [dues, setDues] = useState([]);
+  const [schedule, setSchedule] = useState([]);
   const [loadingHist, setLoadingH] = useState(false);
 
   // Ödeme modal state
-  const [payModal, setPayModal]       = useState(false);
-  const [selectedDues, setSelDues]    = useState([]);
-  const [payerName,  setPayerName]    = useState(user?.name  || '');
-  const [payerEmail, setPayerEmail]   = useState(user?.email || '');
-  const [payerPhone, setPayerPhone]   = useState(user?.phone || '');
-  const [paying, setPaying]           = useState(false);
-  const [payAlert, setPayAlert]       = useState(null);
+  const [payModal, setPayModal] = useState(false);
+  const [selectedDues, setSelDues] = useState([]);
+  const [payerName, setPayerName] = useState(user?.name || '');
+  const [payerEmail, setPayerEmail] = useState(user?.email || '');
+  const [payerPhone, setPayerPhone] = useState(user?.phone || '');
+  const [paying, setPaying] = useState(false);
+  const [payAlert, setPayAlert] = useState(null);
   const [checkoutHtml, setCheckoutHtml] = useState('');
   const checkoutRef = useRef(null);
 
@@ -45,7 +45,7 @@ export default function ParentDashboard() {
       setStudents(res.data);
       if (res.data.length > 0) selectStudent(res.data[0]);
     });
-    client.get('/schedule').then(res => setSchedule(res.data)).catch(() => {});
+    client.get('/schedule').then(res => setSchedule(res.data)).catch(() => { });
   }, []);
 
   async function selectStudent(s) {
@@ -68,8 +68,8 @@ export default function ParentDashboard() {
     setPayAlert(null);
     try {
       const res = await client.post('/payments/initiate', {
-        dues_ids:    selectedDues,
-        payer_name:  payerName,
+        dues_ids: selectedDues,
+        payer_name: payerName,
         payer_email: payerEmail,
         payer_phone: payerPhone,
       });
@@ -119,7 +119,7 @@ export default function ParentDashboard() {
     }
   }, [checkoutHtml]);
 
-  const pendingDues  = dues.filter(d => d.status === 'pending' || d.status === 'overdue');
+  const pendingDues = dues.filter(d => d.status === 'pending' || d.status === 'overdue');
   const totalPending = pendingDues.reduce((s, d) => s + d.amount, 0);
   const totalSelected = dues.filter(d => selectedDues.includes(d.id)).reduce((s, d) => s + d.amount, 0);
 
@@ -353,12 +353,12 @@ export default function ParentDashboard() {
                   </thead>
                   <tbody>
                     {[...schedule].sort((a, b) => {
-                      const order = [1,2,3,4,5,6,0];
+                      const order = [1, 2, 3, 4, 5, 6, 0];
                       return order.indexOf(a.day_of_week) - order.indexOf(b.day_of_week);
                     }).map(sc => (
                       <tr key={sc.id}>
                         <td style={{ fontWeight: 600, color: '#00b4d8' }}>
-                          {['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'][sc.day_of_week]}
+                          {['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'][sc.day_of_week]}
                         </td>
                         <td>{sc.group_name}</td>
                         <td>{sc.branch_name}</td>

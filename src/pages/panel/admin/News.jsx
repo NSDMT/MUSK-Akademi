@@ -7,13 +7,13 @@ const CATEGORIES = ['Genel', 'Futbol', 'Voleybol', 'Basketbol', 'Tekerlekli Pate
 const EMPTY = { title: '', category: 'Genel', summary: '', content: '', image_url: '', is_published: 1 };
 
 export default function AdminNews() {
-  const [items, setItems]   = useState([]);
-  const [modal, setModal]   = useState(false);
-  const [form, setForm]     = useState(EMPTY);
+  const [items, setItems] = useState([]);
+  const [modal, setModal] = useState(false);
+  const [form, setForm] = useState(EMPTY);
   const [editId, setEditId] = useState(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [alert, setAlert]   = useState(null);
+  const [alert, setAlert] = useState(null);
 
   useEffect(() => { load(); }, []);
 
@@ -22,8 +22,8 @@ export default function AdminNews() {
     setItems(res.data);
   }
 
-  function openAdd()    { setForm(EMPTY); setEditId(null); setModal(true); }
-  function openEdit(n)  {
+  function openAdd() { setForm(EMPTY); setEditId(null); setModal(true); }
+  function openEdit(n) {
     setForm({
       title: n.title, category: n.category, summary: n.summary,
       content: n.content, image_url: n.image_url, is_published: n.is_published,
@@ -51,7 +51,7 @@ export default function AdminNews() {
     try {
       const payload = { ...form, is_published: Number(form.is_published) };
       if (editId) await client.put(`/news/${editId}`, payload);
-      else        await client.post('/news', payload);
+      else await client.post('/news', payload);
       setModal(false);
       showAlert('success', editId ? 'Haber güncellendi.' : 'Haber eklendi.');
       load();

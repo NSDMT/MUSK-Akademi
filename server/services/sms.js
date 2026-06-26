@@ -67,6 +67,16 @@ function initWhatsApp() {
     initStarted = false;
     // Puppeteer eksikse veya hata varsa mock modda devam et
   });
+
+  // Eğer 5 dakika içinde ready olmazsa yeniden başlat
+  setTimeout(() => {
+    if (!isReady) {
+      console.warn('[WhatsApp] 5 dk içinde bağlantı kurulamadı, yeniden başlatılıyor...');
+      initStarted = false;
+      try { waClient.destroy().catch(() => {}); } catch {}
+      initWhatsApp();
+    }
+  }, 5 * 60 * 1000);
 }
 
 // Uygulama başlarken WhatsApp'ı başlat

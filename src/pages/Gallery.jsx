@@ -13,7 +13,7 @@ export default function Gallery() {
     if (kat && ALL_CATEGORIES.includes(kat)) return kat;
     return 'TÃ¼mÃ¼';
   });
-  const [items, setItems]     = useState([]);
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState(null);
 
@@ -29,10 +29,10 @@ export default function Gallery() {
   }, [filter]);
 
   // derive available categories from fetched data for filter tabs
-  const openLightbox  = item  => setLightbox(item);
-  const closeLightbox = ()   => setLightbox(null);
-  const navLightbox   = dir  => {
-    const idx  = items.findIndex(g => g.id === lightbox.id);
+  const openLightbox = item => setLightbox(item);
+  const closeLightbox = () => setLightbox(null);
+  const navLightbox = dir => {
+    const idx = items.findIndex(g => g.id === lightbox.id);
     const next = (idx + dir + items.length) % items.length;
     setLightbox(items[next]);
   };
