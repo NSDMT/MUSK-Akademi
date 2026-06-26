@@ -164,11 +164,7 @@ export default function Home() {
               </Link>
             </div>
             <div className="why-image">
-              <div className="why-image__placeholder">
-                <span>📸</span>
-                <p>Antrenman Fotoğrafı</p>
-                <small>why-photo.jpg</small>
-              </div>
+              <img src="/categories/futbol.jpeg" alt="Antrenman" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }} />
             </div>
           </div>
         </section>
@@ -225,7 +221,7 @@ export default function Home() {
                 <Link to="/branslar#futbol" className="btn-primary">Futbol Akademisi</Link>
               </div>
               <div className="academy-highlight__image">
-                <div className="why-image__placeholder"><span>⚽</span><p>Futbol Antrenman</p><small>football.jpg</small></div>
+                <img src="/categories/futbol.jpeg" alt="Futbol Akademisi" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }} />
               </div>
             </div>
           </div>
