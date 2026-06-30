@@ -12,6 +12,7 @@ import News from './pages/News';
 import Gallery from './pages/Gallery';
 import Register from './pages/Register';
 import Contact from './pages/Contact';
+import Athletes from './pages/Athletes';
 import './pages/Home.css';
 
 // Panel
@@ -50,6 +51,7 @@ function PublicSite() {
         <Route path="/galeri" element={<Gallery />} />
         <Route path="/kayit" element={<Register />} />
         <Route path="/iletisim" element={<Contact />} />
+        <Route path="/sporcularimiz" element={<Athletes />} />
       </Routes>
       <Footer />
     </>

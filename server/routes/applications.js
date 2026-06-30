@@ -91,33 +91,36 @@ router.post('/:id/approve', authenticate, authorize('admin'), async (req, res) =
   const emailBase = app.parent_email ||
     `veli_${app.parent_phone.replace(/\D/g, '')}@muzafferugur.com`;
 
-  // E-posta çakışma kontrolü
-  const dupEmail = db.prepare('SELECT id FROM users WHERE email = ?').get(emailBase);
-  if (dupEmail) {
-    return res.status(409).json({
-      error: `Bu e-posta (${emailBase}) zaten kayıtlı. Başvuru sahibine başka e-posta almasını isteyin.`,
-    });
+  // Mevcut veli hesabı var mı kontrol et
+  const existingUser = db.prepare('SELECT id FROM users WHERE email = ?').get(emailBase);
+
+  let veliUserId;
+  let rawPassword = null;
+  let isNewUser = false;
+
+  if (existingUser) {
+    // Aynı velinin 2. (veya daha fazla) çocuğu — mevcut hesaba bağla
+    veliUserId = existingUser.id;
+  } else {
+    // Yeni veli hesabı oluştur
+    isNewUser = true;
+    const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const lower = 'abcdefghjkmnpqrstuvwxyz';
+    const digits = '23456789';
+    const rand = (set) => set[crypto.randomInt(set.length)];
+    rawPassword = [
+      rand(upper), rand(upper), rand(upper),
+      rand(lower), rand(lower), rand(lower),
+      rand(digits), rand(digits), rand(digits),
+      '@',
+    ].sort(() => crypto.randomInt(3) - 1).join('');
+
+    const hash = bcrypt.hashSync(rawPassword, 10);
+    const userResult = db.prepare(
+      'INSERT INTO users (name, email, password_hash, role, phone) VALUES (?, ?, ?, ?, ?)'
+    ).run(app.parent_name, emailBase, hash, 'veli', app.parent_phone);
+    veliUserId = userResult.lastInsertRowid;
   }
-
-  // Rastgele güçlü şifre üret: 3 büyük + 3 küçük + 3 rakam + @ = 10 karakter
-  const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-  const lower = 'abcdefghjkmnpqrstuvwxyz';
-  const digits = '23456789';
-  const rand = (set) => set[crypto.randomInt(set.length)];
-  const rawPassword = [
-    rand(upper), rand(upper), rand(upper),
-    rand(lower), rand(lower), rand(lower),
-    rand(digits), rand(digits), rand(digits),
-    '@',
-  ].sort(() => crypto.randomInt(3) - 1).join('');
-
-  const hash = bcrypt.hashSync(rawPassword, 10);
-
-  // Veli kullanıcısı oluştur
-  const userResult = db.prepare(
-    'INSERT INTO users (name, email, password_hash, role, phone) VALUES (?, ?, ?, ?, ?)'
-  ).run(app.parent_name, emailBase, hash, 'veli', app.parent_phone);
-  const veliUserId = userResult.lastInsertRowid;
 
   // Sporcu kaydı oluştur — başvurudaki tüm bilgileri aktar
   const tcValue = app.child_tc && app.child_tc.trim() ? app.child_tc.trim() : `APP_${app.id}`;
@@ -150,22 +153,38 @@ router.post('/:id/approve', authenticate, authorize('admin'), async (req, res) =
   `).run(app.id);
 
   // WhatsApp mesajı gönder
-  const msg =
-    `Sayın ${app.parent_name},\n\n` +
-    `Muzaffer Uğur Spor Kulübü'ne "${app.branch}" branşı için yaptığınız başvuru onaylanmıştır.\n\n` +
-    `Veli paneline giriş bilgileriniz:\n` +
-    `🌐 https://musksporkulübü.com/panel/login\n` +
-    `📧 E-posta: ${emailBase}\n` +
-    `🔑 Şifre: ${rawPassword}\n\n` +
-    `İlk girişte şifrenizi değiştirmenizi öneririz.\n` +
-    `İyi günler dileriz!`;
-
   let wpSent = false;
-  try {
-    const smsResult = await sendSms(app.parent_phone, msg);
-    wpSent = smsResult.success;
-  } catch (e) {
-    console.error('[Applications] WP gönderilemedi:', e.message);
+  if (isNewUser && rawPassword) {
+    const msg =
+      `Sayın ${app.parent_name},\n\n` +
+      `Muzaffer Uğur Spor Kulübü'ne "${app.branch}" branşı için yaptığınız başvuru onaylanmıştır.\n\n` +
+      `Veli paneline giriş bilgileriniz:\n` +
+      `🌐 https://musksporkulübü.com/panel/login\n` +
+      `📧 E-posta: ${emailBase}\n` +
+      `🔑 Şifre: ${rawPassword}\n\n` +
+      `İlk girişte şifrenizi değiştirmenizi öneririz.\n` +
+      `İyi günler dileriz!`;
+    try {
+      const smsResult = await sendSms(app.parent_phone, msg);
+      wpSent = smsResult.success;
+    } catch (e) {
+      console.error('[Applications] WP gönderilemedi:', e.message);
+    }
+  } else {
+    // Mevcut veliye — sadece yeni çocuğun eklendiğini bildir
+    const msg =
+      `Sayın ${app.parent_name},\n\n` +
+      `"${app.child_name}" adlı sporcunuzun "${app.branch}" branşı için yaptığınız başvuru onaylanmıştır.\n\n` +
+      `Mevcut veli hesabınızla panele giriş yapabilirsiniz:\n` +
+      `🌐 https://musksporkulübü.com/panel/login\n` +
+      `📧 E-posta: ${emailBase}\n\n` +
+      `İyi günler dileriz!`;
+    try {
+      const smsResult = await sendSms(app.parent_phone, msg);
+      wpSent = smsResult.success;
+    } catch (e) {
+      console.error('[Applications] WP gönderilemedi:', e.message);
+    }
   }
 
   res.json({
@@ -174,6 +193,7 @@ router.post('/:id/approve', authenticate, authorize('admin'), async (req, res) =
     studentId: studentResult.lastInsertRowid,
     email: emailBase,
     password: rawPassword,
+    isExistingUser: !isNewUser,
     wpSent,
   });
 });

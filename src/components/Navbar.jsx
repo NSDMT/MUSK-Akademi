@@ -6,6 +6,7 @@ const navLinks = [
   { to: '/', label: 'Ana Sayfa' },
   { to: '/hakkimizda', label: 'Hakkımızda' },
   { to: '/branslar', label: 'Branşlarımız' },
+  { to: '/sporcularimiz', label: 'Sporcularımız' },
   { to: '/haberler', label: 'Haberler' },
   { to: '/galeri', label: 'Galeri' },
   { to: '/kayit', label: 'Sporcu Kaydı' },

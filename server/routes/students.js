@@ -182,6 +182,24 @@ router.put('/:id', authenticate, authorize('admin'), studentValidation, (req, re
   res.json({ success: true });
 });
 
+// GET /api/students/public — Herkese açık sporcu listesi (sadece ad, branş)
+router.get('/public', (req, res) => {
+  const db = getDb();
+  const students = db.prepare(`
+    SELECT s.first_name, s.last_name,
+           GROUP_CONCAT(DISTINCT b.name) AS branches,
+           GROUP_CONCAT(DISTINCT g.name) AS groups
+    FROM students s
+    LEFT JOIN student_groups sg ON s.id = sg.student_id
+    LEFT JOIN groups g ON sg.group_id = g.id
+    LEFT JOIN branches b ON g.branch_id = b.id
+    WHERE s.is_active = 1
+    GROUP BY s.id
+    ORDER BY s.first_name, s.last_name
+  `).all();
+  res.json(students);
+});
+
 // DELETE /api/students/:id (hard delete)
 router.delete('/:id', authenticate, authorize('admin'), (req, res) => {
   const db = getDb();

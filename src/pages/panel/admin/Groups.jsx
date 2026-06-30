@@ -83,7 +83,7 @@ export default function AdminGroups() {
       <div className="panel-table-wrap">
         <table className="panel-table">
           <thead>
-            <tr><th>Grup Adı</th><th>Branş</th><th>Antrenör</th><th>Yaş Grubu</th><th>Öğrenci</th><th></th></tr>
+            <tr><th>Grup Adı</th><th>Branş</th><th>Antrenör</th><th>Yaş Grubu</th><th>Aylık Aidat</th><th>Öğrenciler</th><th></th></tr>
           </thead>
           <tbody>
             {groups.map(g => (
@@ -96,10 +96,11 @@ export default function AdminGroups() {
                 <td>
                   <button
                     onClick={() => openStudents(g)}
-                    style={{ background: 'none', border: 'none', color: '#00b4d8', fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem' }}
+                    className="btn-panel btn-panel-sm"
+                    style={{ minWidth: 90 }}
                     title="Gruptaki öğrencileri gör"
                   >
-                    {g.student_count} kişi
+                    👦 {g.student_count} Öğrenci
                   </button>
                 </td>
                 <td>

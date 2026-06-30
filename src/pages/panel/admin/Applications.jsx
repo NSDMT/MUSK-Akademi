@@ -39,7 +39,10 @@ export default function AdminApplications() {
     try {
       const res = await client.post(`/applications/${app.id}/approve`);
       setDetail(res.data);
-      showAlert('success', `Hesap oluşturuldu. ${res.data.wpSent ? 'WhatsApp bildirimi gönderildi.' : 'WhatsApp gönderilemedi — bilgileri manuel iletin.'}`);
+      const msg = res.data.isExistingUser
+        ? `Sporcu eklendi, mevcut veli hesabına bağlandı. ${res.data.wpSent ? 'WhatsApp bildirimi gönderildi.' : ''}`
+        : `Hesap oluşturuldu. ${res.data.wpSent ? 'WhatsApp bildirimi gönderildi.' : 'WhatsApp gönderilemedi — bilgileri manuel iletin.'}`;
+      showAlert('success', msg);
       load();
     } catch (err) {
       showAlert('error', err.response?.data?.error || 'Onaylama başarısız');
@@ -86,14 +89,19 @@ export default function AdminApplications() {
           background: '#1a3a1a', border: '1px solid #4ade80', borderRadius: 10,
           padding: 20, marginBottom: 20, fontSize: '0.9rem', lineHeight: 1.7,
         }}>
-          <strong style={{ color: '#4ade80', fontSize: '1rem' }}>✅ Hesap Oluşturuldu</strong>
+          <strong style={{ color: '#4ade80', fontSize: '1rem' }}>
+            {detail.isExistingUser ? '✅ Sporcu Eklendi' : '✅ Hesap Oluşturuldu'}
+          </strong>
           <br />
           <span style={{ color: '#ccc' }}>
             E-posta: <strong style={{ color: '#fff' }}>{detail.email}</strong>
+            {!detail.isExistingUser && (
+              <>&nbsp;&nbsp;|&nbsp;&nbsp;Şifre: <strong style={{ color: '#fbbf24' }}>{detail.password}</strong></>
+            )}
             &nbsp;&nbsp;|&nbsp;&nbsp;
-            Şifre: <strong style={{ color: '#fbbf24' }}>{detail.password}</strong>
-            &nbsp;&nbsp;|&nbsp;&nbsp;
-            {detail.wpSent ? '📱 WhatsApp gönderildi' : '⚠️ WhatsApp gönderilemedi — bilgileri manuel iletin'}
+            {detail.isExistingUser
+              ? 'Mevcut veli hesabına bağlandı'
+              : (detail.wpSent ? '📱 WhatsApp gönderildi' : '⚠️ WhatsApp gönderilemedi — bilgileri manuel iletin')}
           </span>
           <button
             onClick={() => setDetail(null)}
