@@ -11,6 +11,12 @@ router.get('/', authenticate, (req, res) => {
   const groups = db.prepare(`
     SELECT g.*, b.name AS branch_name,
            u.name AS trainer_name,
+           (SELECT GROUP_CONCAT(u2.name, ', ')
+            FROM group_trainers gt JOIN users u2 ON gt.user_id = u2.id
+            WHERE gt.group_id = g.id) AS trainer_names,
+           (SELECT GROUP_CONCAT(CAST(gt2.user_id AS TEXT), ',')
+            FROM group_trainers gt2
+            WHERE gt2.group_id = g.id) AS trainer_ids_str,
            (SELECT COUNT(*) FROM student_groups sg JOIN students s ON sg.student_id = s.id WHERE sg.group_id = g.id AND s.is_active = 1) AS student_count
     FROM groups g
     LEFT JOIN branches b ON g.branch_id = b.id
@@ -30,6 +36,7 @@ router.get('/branches', authenticate, (req, res) => {
 router.post('/', authenticate, authorize('admin'), [
   body('name').notEmpty().trim(),
   body('branch_id').isInt({ min: 1 }),
+  body('trainer_ids').optional().isArray(),
   body('trainer_id').optional({ nullable: true }).isInt(),
   body('age_range').optional().trim(),
   body('description').optional().trim(),
@@ -38,18 +45,30 @@ router.post('/', authenticate, authorize('admin'), [
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  const { name, branch_id, trainer_id, age_range, description, monthly_fee } = req.body;
+  const { name, branch_id, trainer_ids, trainer_id, age_range, description, monthly_fee } = req.body;
   const db = getDb();
+
+  // trainer_ids array takes priority; fall back to single trainer_id for backward compat
+  const trainerList = Array.isArray(trainer_ids) ? trainer_ids.map(Number).filter(Boolean)
+    : (trainer_id ? [Number(trainer_id)] : []);
+  const primaryTrainer = trainerList[0] || null;
+
   const result = db.prepare(
     'INSERT INTO groups (name, branch_id, trainer_id, age_range, description, monthly_fee) VALUES (?,?,?,?,?,?)'
-  ).run(name, branch_id, trainer_id || null, age_range || '', description || '', monthly_fee || 0);
-  res.status(201).json({ id: result.lastInsertRowid });
+  ).run(name, branch_id, primaryTrainer, age_range || '', description || '', monthly_fee || 0);
+
+  const gid = result.lastInsertRowid;
+  const ins = db.prepare('INSERT OR IGNORE INTO group_trainers (group_id, user_id) VALUES (?, ?)');
+  for (const uid of trainerList) ins.run(gid, uid);
+
+  res.status(201).json({ id: gid });
 });
 
 // PUT /api/groups/:id
 router.put('/:id', authenticate, authorize('admin'), [
   body('name').optional().notEmpty().trim(),
   body('branch_id').optional().isInt({ min: 1 }),
+  body('trainer_ids').optional().isArray(),
   body('trainer_id').optional({ nullable: true }),
   body('age_range').optional().trim(),
   body('description').optional().trim(),
@@ -62,18 +81,39 @@ router.put('/:id', authenticate, authorize('admin'), [
   const group = db.prepare('SELECT * FROM groups WHERE id = ?').get(req.params.id);
   if (!group) return res.status(404).json({ error: 'Grup bulunamadı' });
 
-  const { name, branch_id, trainer_id, age_range, description, monthly_fee } = req.body;
-  db.prepare(
-    'UPDATE groups SET name=?, branch_id=?, trainer_id=?, age_range=?, description=?, monthly_fee=? WHERE id=?'
-  ).run(
-    name ?? group.name,
-    branch_id ?? group.branch_id,
-    trainer_id !== undefined ? (trainer_id || null) : group.trainer_id,
-    age_range ?? group.age_range,
-    description ?? group.description,
-    monthly_fee !== undefined ? monthly_fee : group.monthly_fee,
-    group.id
-  );
+  const { name, branch_id, trainer_ids, trainer_id, age_range, description, monthly_fee } = req.body;
+
+  // Sync group_trainers if trainer_ids provided
+  if (Array.isArray(trainer_ids)) {
+    const trainerList = trainer_ids.map(Number).filter(Boolean);
+    const primaryTrainer = trainerList[0] || null;
+    db.prepare('DELETE FROM group_trainers WHERE group_id = ?').run(group.id);
+    const ins = db.prepare('INSERT OR IGNORE INTO group_trainers (group_id, user_id) VALUES (?, ?)');
+    for (const uid of trainerList) ins.run(group.id, uid);
+    db.prepare(
+      'UPDATE groups SET name=?, branch_id=?, trainer_id=?, age_range=?, description=?, monthly_fee=? WHERE id=?'
+    ).run(
+      name ?? group.name,
+      branch_id ?? group.branch_id,
+      primaryTrainer,
+      age_range ?? group.age_range,
+      description ?? group.description,
+      monthly_fee !== undefined ? monthly_fee : group.monthly_fee,
+      group.id
+    );
+  } else {
+    db.prepare(
+      'UPDATE groups SET name=?, branch_id=?, trainer_id=?, age_range=?, description=?, monthly_fee=? WHERE id=?'
+    ).run(
+      name ?? group.name,
+      branch_id ?? group.branch_id,
+      trainer_id !== undefined ? (trainer_id || null) : group.trainer_id,
+      age_range ?? group.age_range,
+      description ?? group.description,
+      monthly_fee !== undefined ? monthly_fee : group.monthly_fee,
+      group.id
+    );
+  }
   res.json({ success: true });
 });
 

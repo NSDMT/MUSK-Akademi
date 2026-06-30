@@ -229,6 +229,24 @@ function initDb() {
     )
   `);
 
+  // group_trainers junction table (many-to-many group ↔ trainer)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS group_trainers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      group_id INTEGER NOT NULL,
+      user_id INTEGER NOT NULL,
+      UNIQUE(group_id, user_id),
+      FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )
+  `);
+
+  // Migrate existing trainer_id values into group_trainers
+  db.exec(`
+    INSERT OR IGNORE INTO group_trainers (group_id, user_id)
+    SELECT id, trainer_id FROM groups WHERE trainer_id IS NOT NULL
+  `);
+
   // Migrate existing single group_id values into student_groups
   db.exec(`
     INSERT OR IGNORE INTO student_groups (student_id, group_id)

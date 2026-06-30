@@ -349,7 +349,7 @@ export default function ParentDashboard() {
               <div className="panel-table-wrap">
                 <table className="panel-table">
                   <thead>
-                    <tr><th>Gün</th><th>Grup</th><th>Branş</th><th>Saat</th><th>Yer</th><th>Antrenör</th></tr>
+                    <tr><th>Gün</th><th>Grup</th><th>Branş</th><th>Saat</th><th>Yer</th><th>Antrenör(ler)</th></tr>
                   </thead>
                   <tbody>
                     {[...schedule].sort((a, b) => {
@@ -364,7 +364,7 @@ export default function ParentDashboard() {
                         <td>{sc.branch_name}</td>
                         <td>{sc.start_time} – {sc.end_time}</td>
                         <td>{sc.location || '—'}</td>
-                        <td>{sc.trainer_name}</td>
+                        <td>{sc.all_trainer_names || sc.trainer_name}</td>
                       </tr>
                     ))}
                   </tbody>

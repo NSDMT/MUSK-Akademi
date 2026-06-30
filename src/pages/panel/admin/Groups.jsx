@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import PanelLayout from '../../../components/PanelLayout';
 import client from '../../../api/client';
 
-const EMPTY = { name: '', branch_id: '', trainer_id: '', age_range: '', description: '', monthly_fee: '' };
+const EMPTY = { name: '', branch_id: '', trainer_ids: [], age_range: '', description: '', monthly_fee: '' };
 
 export default function AdminGroups() {
   const [groups, setGroups] = useState([]);
@@ -40,7 +40,8 @@ export default function AdminGroups() {
 
   function openAdd() { setForm(EMPTY); setEditId(null); setModal('form'); }
   function openEdit(g) {
-    setForm({ name: g.name, branch_id: g.branch_id, trainer_id: g.trainer_id || '', age_range: g.age_range || '', description: g.description || '', monthly_fee: g.monthly_fee ?? '' });
+    const ids = g.trainer_ids_str ? g.trainer_ids_str.split(',').map(Number).filter(Boolean) : [];
+    setForm({ name: g.name, branch_id: g.branch_id, trainer_ids: ids, age_range: g.age_range || '', description: g.description || '', monthly_fee: g.monthly_fee ?? '' });
     setEditId(g.id);
     setModal('form');
   }
@@ -49,7 +50,7 @@ export default function AdminGroups() {
     e.preventDefault();
     setSaving(true);
     try {
-      const payload = { ...form, trainer_id: form.trainer_id || null, branch_id: parseInt(form.branch_id), monthly_fee: form.monthly_fee !== '' ? parseInt(form.monthly_fee) : 0 };
+      const payload = { ...form, trainer_ids: form.trainer_ids, branch_id: parseInt(form.branch_id), monthly_fee: form.monthly_fee !== '' ? parseInt(form.monthly_fee) : 0 };
       if (editId) await client.put(`/groups/${editId}`, payload);
       else await client.post('/groups', payload);
       setModal(null);
@@ -83,14 +84,14 @@ export default function AdminGroups() {
       <div className="panel-table-wrap">
         <table className="panel-table">
           <thead>
-            <tr><th>Grup Adı</th><th>Branş</th><th>Antrenör</th><th>Yaş Grubu</th><th>Aylık Aidat</th><th>Öğrenciler</th><th></th></tr>
+            <tr><th>Grup Adı</th><th>Branş</th><th>Antrenör(ler)</th><th>Yaş Grubu</th><th>Aylık Aidat</th><th>Öğrenciler</th><th></th></tr>
           </thead>
           <tbody>
             {groups.map(g => (
               <tr key={g.id}>
                 <td style={{ fontWeight: 600, color: '#f0f0f0' }}>{g.name}</td>
                 <td>{g.branch_name}</td>
-                <td>{g.trainer_name || <span style={{ color: '#555' }}>—</span>}</td>
+                <td>{g.trainer_names || <span style={{ color: '#555' }}>—</span>}</td>
                 <td>{g.age_range || '—'}</td>
                 <td style={{ color: '#c9a84c', fontWeight: 700 }}>{g.monthly_fee ? `${g.monthly_fee} ₺` : '—'}</td>
                 <td>
@@ -133,12 +134,24 @@ export default function AdminGroups() {
                     {branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
                   </select>
                 </div>
-                <div className="form-field">
-                  <label>Antrenör</label>
-                  <select value={form.trainer_id} onChange={e => setForm(f => ({ ...f, trainer_id: e.target.value }))}>
-                    <option value="">Antrenör Yok</option>
-                    {trainers.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-                  </select>
+                <div className="form-field col-span-2">
+                  <label>Antrenörler</label>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 4 }}>
+                    {trainers.map(t => (
+                      <label key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', padding: '4px 10px', borderRadius: 8, border: `1px solid ${form.trainer_ids.includes(t.id) ? '#00b4d8' : '#333'}`, background: form.trainer_ids.includes(t.id) ? 'rgba(0,180,216,0.1)' : 'transparent' }}>
+                        <input
+                          type="checkbox"
+                          checked={form.trainer_ids.includes(t.id)}
+                          onChange={e => {
+                            if (e.target.checked) setForm(f => ({ ...f, trainer_ids: [...f.trainer_ids, t.id] }));
+                            else setForm(f => ({ ...f, trainer_ids: f.trainer_ids.filter(id => id !== t.id) }));
+                          }}
+                        />
+                        {t.name}
+                      </label>
+                    ))}
+                    {trainers.length === 0 && <span style={{ color: '#666' }}>Antrenör bulunamadı</span>}
+                  </div>
                 </div>
                 <div className="form-field">
                   <label>Yaş Aralığı</label>

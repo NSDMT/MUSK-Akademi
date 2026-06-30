@@ -28,7 +28,10 @@ router.get('/', authenticate, (req, res) => {
   } else {
     // Veli: çocuğunun gruplarının takvimi (student_groups junction)
     schedule = db.prepare(`
-      SELECT sc.*, g.name AS group_name, b.name AS branch_name, u.name AS trainer_name
+      SELECT sc.*, g.name AS group_name, b.name AS branch_name, u.name AS trainer_name,
+             (SELECT GROUP_CONCAT(u2.name, ', ')
+              FROM group_trainers gt JOIN users u2 ON gt.user_id = u2.id
+              WHERE gt.group_id = g.id) AS all_trainer_names
       FROM schedule sc
       JOIN groups g ON sc.group_id = g.id
       JOIN branches b ON g.branch_id = b.id
