@@ -53,8 +53,19 @@ router.get('/public', (req, res) => {
   const db = getDb();
   const students = db.prepare(`
     SELECT s.first_name, s.last_name,
-           GROUP_CONCAT(DISTINCT b.name) AS branches,
-           GROUP_CONCAT(DISTINCT g.name) AS groups
+           COALESCE(
+             GROUP_CONCAT(DISTINCT b.name),
+             CASE
+               WHEN s.notes LIKE '%Branş: Futbol%' THEN 'Futbol'
+               WHEN s.notes LIKE '%Branş: Voleybol%' THEN 'Voleybol'
+               WHEN s.notes LIKE '%Branş: Basketbol%' THEN 'Basketbol'
+               WHEN s.notes LIKE '%Branş: Tekerlekli Paten%' THEN 'Tekerlekli Paten'
+               WHEN s.notes LIKE '%Branş: Yüzme%' THEN 'Yüzme'
+               WHEN s.notes LIKE '%Branş: Tenis%' THEN 'Tenis'
+               WHEN s.notes LIKE '%Branş: Satranç%' THEN 'Satranç'
+               ELSE NULL
+             END
+           ) AS branches
     FROM students s
     LEFT JOIN student_groups sg ON s.id = sg.student_id
     LEFT JOIN groups g ON sg.group_id = g.id
