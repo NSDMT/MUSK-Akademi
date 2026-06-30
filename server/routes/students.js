@@ -47,6 +47,25 @@ router.get('/', authenticate, (req, res) => {
   res.json(students);
 });
 
+// GET /api/students/public — Herkese açık sporcu listesi (sadece ad, branş)
+// DIKKAT: /:id rotasından ÖNCE tanımlanmalı
+router.get('/public', (req, res) => {
+  const db = getDb();
+  const students = db.prepare(`
+    SELECT s.first_name, s.last_name,
+           GROUP_CONCAT(DISTINCT b.name) AS branches,
+           GROUP_CONCAT(DISTINCT g.name) AS groups
+    FROM students s
+    LEFT JOIN student_groups sg ON s.id = sg.student_id
+    LEFT JOIN groups g ON sg.group_id = g.id
+    LEFT JOIN branches b ON g.branch_id = b.id
+    WHERE s.is_active = 1
+    GROUP BY s.id
+    ORDER BY s.first_name, s.last_name
+  `).all();
+  res.json(students);
+});
+
 // GET /api/students/:id
 router.get('/:id', authenticate, (req, res) => {
   const db = getDb();
@@ -180,24 +199,6 @@ router.put('/:id', authenticate, authorize('admin'), studentValidation, (req, re
   for (const gid of groupIdList) insertSg.run(req.params.id, gid);
 
   res.json({ success: true });
-});
-
-// GET /api/students/public — Herkese açık sporcu listesi (sadece ad, branş)
-router.get('/public', (req, res) => {
-  const db = getDb();
-  const students = db.prepare(`
-    SELECT s.first_name, s.last_name,
-           GROUP_CONCAT(DISTINCT b.name) AS branches,
-           GROUP_CONCAT(DISTINCT g.name) AS groups
-    FROM students s
-    LEFT JOIN student_groups sg ON s.id = sg.student_id
-    LEFT JOIN groups g ON sg.group_id = g.id
-    LEFT JOIN branches b ON g.branch_id = b.id
-    WHERE s.is_active = 1
-    GROUP BY s.id
-    ORDER BY s.first_name, s.last_name
-  `).all();
-  res.json(students);
 });
 
 // DELETE /api/students/:id (hard delete)
