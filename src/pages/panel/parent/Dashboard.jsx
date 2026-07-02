@@ -352,13 +352,10 @@ export default function ParentDashboard() {
                     <tr><th>Gün</th><th>Grup</th><th>Branş</th><th>Saat</th><th>Yer</th><th>Antrenör(ler)</th></tr>
                   </thead>
                   <tbody>
-                    {[...schedule].sort((a, b) => {
-                      const order = [1, 2, 3, 4, 5, 6, 0];
-                      return order.indexOf(a.day_of_week) - order.indexOf(b.day_of_week);
-                    }).map(sc => (
+                    {[...schedule].sort((a, b) => a.day_of_week - b.day_of_week).map(sc => (
                       <tr key={sc.id}>
                         <td style={{ fontWeight: 600, color: '#00b4d8' }}>
-                          {['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'][sc.day_of_week]}
+                          {['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'][sc.day_of_week]}
                         </td>
                         <td>{sc.group_name}</td>
                         <td>{sc.branch_name}</td>

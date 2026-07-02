@@ -46,9 +46,14 @@ router.get('/', authenticate, authorize('admin', 'antrenor'), [
     student_id: s.id,
     first_name: s.first_name,
     last_name: s.last_name,
+    birth_date: s.birth_date,
+    school: s.school,
+    blood_type: s.blood_type,
+    athlete_phone: s.athlete_phone,
+    parent_name: s.parent_name,
     parent_phone: s.parent_phone,
-    status: attendanceMap[s.id]?.status || null,
     notes: attendanceMap[s.id]?.notes || '',
+    status: attendanceMap[s.id]?.status || null,
     sms_sent: attendanceMap[s.id]?.sms_sent || 0,
   }));
 

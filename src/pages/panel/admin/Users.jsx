@@ -40,7 +40,9 @@ export default function AdminUsers() {
       showAlert('success', editId ? 'Kullanıcı güncellendi' : 'Kullanıcı eklendi');
       load();
     } catch (err) {
-      showAlert('error', err.response?.data?.error || 'Kayıt hatası');
+      const data = err.response?.data;
+      const msg = data?.error || (data?.errors?.length ? data.errors[0].msg : null) || 'Kayıt hatası';
+      showAlert('error', msg);
     } finally { setSaving(false); }
   }
 
@@ -129,6 +131,7 @@ export default function AdminUsers() {
                     onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
                     placeholder={editId ? 'Değiştirmek için girin' : ''}
                   />
+                  {!editId && <small style={{ color: '#888', marginTop: 4, display: 'block' }}>En az 8 karakter, büyük harf, küçük harf ve rakam içermeli. Örn: Spor2024!</small>}
                 </div>
                 <div className="form-field">
                   <label>Rol *</label>

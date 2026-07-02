@@ -25,6 +25,15 @@ export default function Navbar() {
 
   const closeMenu = () => setMenuOpen(false);
 
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
   return (
     <nav className={`navbar${scrolled ? ' navbar--scrolled' : ''}`}>
       <div className="navbar__inner container">

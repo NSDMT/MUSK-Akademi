@@ -17,19 +17,19 @@ function today() {
 
 export default function CoachDashboard() {
   const [schedule, setSchedule]       = useState([]);
+  const [students, setStudents]       = useState([]);
   const [activeSession, setActive]    = useState(null);
+  const [view, setView]               = useState('schedule'); // 'schedule' | 'students'
   const [date, setDate]               = useState(today());
   const [attendance, setAttendance]   = useState([]); // [{ student_id, status, notes, ... }]
   const [saving, setSaving]           = useState(false);
   const [alert, setAlert]             = useState(null);
   const [smsResults, setSmsResults]   = useState([]);
 
-  useEffect(() => { load(); }, []);
-
-  async function load() {
-    const res = await client.get('/schedule');
-    setSchedule(res.data);
-  }
+  useEffect(() => {
+    client.get('/schedule').then(res => setSchedule(res.data));
+    client.get('/students').then(res => setStudents(res.data));
+  }, []);
 
   async function openSession(session, selectedDate) {
     setActive(session);
@@ -77,18 +77,29 @@ export default function CoachDashboard() {
         <>
           <div className="panel-header">
             <div>
-              <h1 className="panel-title">Takvimim</h1>
-              <p className="panel-subtitle">Bir derse tıklayarak yoklama alın</p>
+              <h1 className="panel-title">{view === 'schedule' ? 'Takvimim' : 'Sporcularım'}</h1>
+              <p className="panel-subtitle">{view === 'schedule' ? 'Bir derse tıklayarak yoklama alın' : `${students.length} sporcu`}</p>
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                className={`btn-panel${view === 'schedule' ? '' : ' btn-ghost'}`}
+                onClick={() => setView('schedule')}
+              >📅 Takvim</button>
+              <button
+                className={`btn-panel${view === 'students' ? '' : ' btn-ghost'}`}
+                onClick={() => setView('students')}
+              >👦 Sporcularım</button>
             </div>
           </div>
 
-          {schedule.length === 0 && (
+          {schedule.length === 0 && view === 'schedule' && (
             <div className="empty-state">
               <div style={{ fontSize: '3rem' }}>📅</div>
               <p>Size atanmış ders bulunamadı</p>
             </div>
           )}
 
+          {view === 'schedule' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             {byDay.map(day => day.items.length === 0 ? null : (
               <div key={day.name}>
@@ -135,6 +146,54 @@ export default function CoachDashboard() {
               </div>
             ))}
           </div>
+          )}
+
+          {view === 'students' && (
+            students.length === 0 ? (
+              <div className="empty-state">
+                <div style={{ fontSize: '3rem' }}>👦</div>
+                <p>Grubunuzda öğrenci bulunamadı</p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {students.map(s => {
+                  const age = s.birth_date ? new Date().getFullYear() - parseInt(s.birth_date.slice(0, 4)) : null;
+                  return (
+                    <div key={s.id} style={{
+                      background: '#161616',
+                      border: '1px solid rgba(255,255,255,0.07)',
+                      borderRadius: 10,
+                      padding: '14px 18px',
+                    }}>
+                      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'flex-start' }}>
+                        <div style={{ flex: '1 1 200px' }}>
+                          <div style={{ fontWeight: 700, color: '#f0f0f0', fontSize: '1rem' }}>{s.first_name} {s.last_name}</div>
+                          <div style={{ fontSize: '0.78rem', color: '#888', marginTop: 3 }}>
+                            {s.group_names || '—'} {s.blood_type ? `· Kan Grubu: ${s.blood_type}` : ''}
+                          </div>
+                        </div>
+                        <div style={{ flex: '1 1 180px', fontSize: '0.82rem', color: '#bbb', display: 'flex', flexDirection: 'column', gap: 3 }}>
+                          {age !== null && <span>🎂 {s.birth_date} ({age} yaş)</span>}
+                          {s.school && <span>🏫 {s.school}</span>}
+                          {s.foot && <span>⚽ Dominant: {s.foot}</span>}
+                        </div>
+                        <div style={{ flex: '1 1 180px', fontSize: '0.82rem', color: '#bbb', display: 'flex', flexDirection: 'column', gap: 3 }}>
+                          <span>👨‍👧 Veli: {s.parent_name}</span>
+                          <span>📞 {s.parent_phone}</span>
+                          {s.athlete_phone && <span>📱 Sporcu: {s.athlete_phone}</span>}
+                        </div>
+                        {s.notes && (
+                          <div style={{ flex: '1 1 100%', fontSize: '0.78rem', color: '#666', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 8, marginTop: 4 }}>
+                            📝 {s.notes}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )
+          )}
         </>
       ) : (
         <>
@@ -208,7 +267,14 @@ export default function CoachDashboard() {
               }}>
                 <div style={{ minWidth: 180 }}>
                   <div style={{ fontWeight: 600, color: '#f0f0f0' }}>{r.first_name} {r.last_name}</div>
-                  <div style={{ fontSize: '0.75rem', color: '#555', marginTop: 2 }}>Veli: {r.parent_phone}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#555', marginTop: 2 }}>
+                    {r.birth_date ? `${r.birth_date} · ` : ''}{r.parent_name} ({r.parent_phone})
+                  </div>
+                  {(r.school || r.blood_type) && (
+                    <div style={{ fontSize: '0.72rem', color: '#444', marginTop: 1 }}>
+                      {r.school && `🏫 ${r.school}`}{r.school && r.blood_type ? ' · ' : ''}{r.blood_type && `🩸 ${r.blood_type}`}
+                    </div>
+                  )}
                 </div>
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                   {STATUS_OPTS.map(opt => (
