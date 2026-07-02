@@ -42,6 +42,9 @@ router.get('/', authenticate, authorize('admin', 'antrenor'), [
     attendanceMap[a.student_id] = a;
   }
 
+  const sessionNoteRow = db.prepare('SELECT note FROM session_notes WHERE schedule_id=? AND date=?')
+    .get(schedule_id, date);
+
   const result = students.map(s => ({
     student_id: s.id,
     first_name: s.first_name,
@@ -57,7 +60,7 @@ router.get('/', authenticate, authorize('admin', 'antrenor'), [
     sms_sent: attendanceMap[s.id]?.sms_sent || 0,
   }));
 
-  res.json(result);
+  res.json({ students: result, session_note: sessionNoteRow?.note || '' });
 });
 
 // POST /api/attendance/bulk
@@ -140,6 +143,47 @@ router.post('/bulk', authenticate, authorize('admin', 'antrenor'), [
   res.json({ success: true, smsResults });
 });
 
+// POST /api/attendance/session-note — antrenör ders notu kaydeder
+router.post('/session-note', authenticate, authorize('admin', 'antrenor'), [
+  body('schedule_id').isInt({ min: 1 }),
+  body('date').matches(/^\d{4}-\d{2}-\d{2}$/),
+  body('note').isString().trim(),
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+  const { schedule_id, date, note } = req.body;
+  const db = getDb();
+
+  const scheduleItem = db.prepare('SELECT * FROM schedule WHERE id = ?').get(schedule_id);
+  if (!scheduleItem) return res.status(404).json({ error: 'Ders bulunamadı' });
+  if (req.user.role === 'antrenor' && scheduleItem.trainer_id !== req.user.id) {
+    return res.status(403).json({ error: 'Bu derse erişim yetkiniz yok' });
+  }
+
+  db.prepare(`
+    INSERT INTO session_notes (schedule_id, date, note, created_by, updated_at)
+    VALUES (?, ?, ?, ?, datetime('now'))
+    ON CONFLICT(schedule_id, date) DO UPDATE SET note=excluded.note, updated_at=excluded.updated_at
+  `).run(schedule_id, date, note.trim(), req.user.id);
+
+  res.json({ success: true });
+});
+
+// GET /api/attendance/session-note?schedule_id=X&date=Y
+router.get('/session-note', authenticate, [
+  query('schedule_id').isInt({ min: 1 }),
+  query('date').matches(/^\d{4}-\d{2}-\d{2}$/),
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+  const db = getDb();
+  const row = db.prepare('SELECT note FROM session_notes WHERE schedule_id=? AND date=?')
+    .get(req.query.schedule_id, req.query.date);
+  res.json({ note: row?.note || '' });
+});
+
 // GET /api/attendance/student/:id  — yoklama geçmişi
 router.get('/student/:id', authenticate, (req, res) => {
   const db = getDb();
@@ -167,11 +211,13 @@ router.get('/student/:id', authenticate, (req, res) => {
 
   const history = db.prepare(`
     SELECT a.*, sc.start_time, sc.end_time, sc.location,
-           g.name AS group_name, b.name AS branch_name
+           g.name AS group_name, b.name AS branch_name,
+           sn.note AS session_note
     FROM attendance a
     JOIN schedule sc ON a.schedule_id = sc.id
     JOIN groups g ON sc.group_id = g.id
     JOIN branches b ON g.branch_id = b.id
+    LEFT JOIN session_notes sn ON sn.schedule_id = a.schedule_id AND sn.date = a.date
     WHERE a.student_id = ?
     ORDER BY a.date DESC
     LIMIT 100

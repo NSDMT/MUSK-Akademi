@@ -313,7 +313,7 @@ export default function ParentDashboard() {
             <div className="panel-table-wrap">
               <table className="panel-table">
                 <thead>
-                  <tr><th>Tarih</th><th>Branş</th><th>Grup</th><th>Saat</th><th>Durum</th></tr>
+                  <tr><th>Tarih</th><th>Branş</th><th>Grup</th><th>Saat</th><th>Durum</th><th>Ders Notu</th></tr>
                 </thead>
                 <tbody>
                   {history.map(h => {
@@ -332,6 +332,9 @@ export default function ParentDashboard() {
                           }}>
                             {st.label}
                           </span>
+                        </td>
+                        <td style={{ fontSize: '0.8rem', color: h.session_note ? '#ccc' : '#444', fontStyle: h.session_note ? 'normal' : 'italic', maxWidth: 220 }}>
+                          {h.session_note || '—'}
                         </td>
                       </tr>
                     );

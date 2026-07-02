@@ -5,10 +5,10 @@ import client from '../../../api/client';
 const DAYS = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'];
 
 const STATUS_OPTS = [
-  { key: 'present', label: 'Geldi',    color: '#4caf50' },
-  { key: 'absent',  label: 'Gelmedi',  color: '#f44336' },
-  { key: 'late',    label: 'Geç Geldi',color: '#ff9800' },
-  { key: 'excused', label: 'İzinli',   color: '#9e9e9e' },
+  { key: 'present', label: 'Geldi', color: '#4caf50' },
+  { key: 'absent', label: 'Gelmedi', color: '#f44336' },
+  { key: 'late', label: 'Geç Geldi', color: '#ff9800' },
+  { key: 'excused', label: 'İzinli', color: '#9e9e9e' },
 ];
 
 function today() {
@@ -16,15 +16,17 @@ function today() {
 }
 
 export default function CoachDashboard() {
-  const [schedule, setSchedule]       = useState([]);
-  const [students, setStudents]       = useState([]);
-  const [activeSession, setActive]    = useState(null);
-  const [view, setView]               = useState('schedule'); // 'schedule' | 'students'
-  const [date, setDate]               = useState(today());
-  const [attendance, setAttendance]   = useState([]); // [{ student_id, status, notes, ... }]
-  const [saving, setSaving]           = useState(false);
-  const [alert, setAlert]             = useState(null);
-  const [smsResults, setSmsResults]   = useState([]);
+  const [schedule, setSchedule] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [activeSession, setActive] = useState(null);
+  const [view, setView] = useState('schedule'); // 'schedule' | 'students'
+  const [date, setDate] = useState(today());
+  const [attendance, setAttendance] = useState([]); // [{ student_id, status, notes, ... }]
+  const [sessionNote, setSessionNote] = useState('');
+  const [savingNote, setSavingNote] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [alert, setAlert] = useState(null);
+  const [smsResults, setSmsResults] = useState([]);
 
   useEffect(() => {
     client.get('/schedule').then(res => setSchedule(res.data));
@@ -40,7 +42,8 @@ export default function CoachDashboard() {
 
   async function loadAttendance(scheduleId, d) {
     const res = await client.get(`/attendance?schedule_id=${scheduleId}&date=${d}`);
-    setAttendance(res.data.map(r => ({ ...r, status: r.status || 'present' })));
+    setAttendance((res.data.students || []).map(r => ({ ...r, status: r.status || 'present' })));
+    setSessionNote(res.data.session_note || '');
   }
 
   function setStatus(studentId, status) {
@@ -60,6 +63,16 @@ export default function CoachDashboard() {
     } finally { setSaving(false); }
   }
 
+  async function saveNote() {
+    setSavingNote(true);
+    try {
+      await client.post('/attendance/session-note', { schedule_id: activeSession.id, date, note: sessionNote });
+      showAlert('success', 'Ders notu kaydedildi');
+    } catch {
+      showAlert('error', 'Not kaydedilemedi');
+    } finally { setSavingNote(false); }
+  }
+
   function showAlert(type, msg) { setAlert({ type, msg }); setTimeout(() => setAlert(null), 4000); }
 
   const byDay = DAYS.map((name, idx) => ({
@@ -69,7 +82,7 @@ export default function CoachDashboard() {
   }));
 
   const presentCount = attendance.filter(r => r.status === 'present' || r.status === 'late').length;
-  const absentCount  = attendance.filter(r => r.status === 'absent').length;
+  const absentCount = attendance.filter(r => r.status === 'absent').length;
 
   return (
     <PanelLayout>
@@ -100,52 +113,52 @@ export default function CoachDashboard() {
           )}
 
           {view === 'schedule' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            {byDay.map(day => day.items.length === 0 ? null : (
-              <div key={day.name}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-                  <span className="day-badge">{day.name}</span>
-                  <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {day.items.map(s => (
-                    <button
-                      key={s.id}
-                      onClick={() => openSession(s)}
-                      style={{
-                        background: '#161616',
-                        border: '1px solid rgba(201,168,76,0.15)',
-                        borderRadius: 10,
-                        padding: '14px 18px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 16,
-                        textAlign: 'left',
-                        transition: 'border-color 0.15s',
-                        width: '100%',
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.borderColor = '#c9a84c'}
-                      onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(201,168,76,0.15)'}
-                    >
-                      <div style={{ fontWeight: 700, color: '#c9a84c', fontSize: '1.1rem', minWidth: 110 }}>
-                        {s.start_time} – {s.end_time}
-                      </div>
-                      <div>
-                        <div style={{ fontWeight: 600, color: '#f0f0f0' }}>{s.group_name}</div>
-                        <div style={{ fontSize: '0.8rem', color: '#666', marginTop: 2 }}>
-                          {s.branch_name}{s.location ? ` · ${s.location}` : ''}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {byDay.map(day => day.items.length === 0 ? null : (
+                <div key={day.name}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                    <span className="day-badge">{day.name}</span>
+                    <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {day.items.map(s => (
+                      <button
+                        key={s.id}
+                        onClick={() => openSession(s)}
+                        style={{
+                          background: '#161616',
+                          border: '1px solid rgba(201,168,76,0.15)',
+                          borderRadius: 10,
+                          padding: '14px 18px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 16,
+                          textAlign: 'left',
+                          transition: 'border-color 0.15s',
+                          width: '100%',
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.borderColor = '#c9a84c'}
+                        onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(201,168,76,0.15)'}
+                      >
+                        <div style={{ fontWeight: 700, color: '#c9a84c', fontSize: '1.1rem', minWidth: 110 }}>
+                          {s.start_time} – {s.end_time}
                         </div>
-                      </div>
-                      <div style={{ marginLeft: 'auto', color: '#555', fontSize: '0.8rem' }}>
-                        Yoklama Al →
-                      </div>
-                    </button>
-                  ))}
+                        <div>
+                          <div style={{ fontWeight: 600, color: '#f0f0f0' }}>{s.group_name}</div>
+                          <div style={{ fontSize: '0.8rem', color: '#666', marginTop: 2 }}>
+                            {s.branch_name}{s.location ? ` · ${s.location}` : ''}
+                          </div>
+                        </div>
+                        <div style={{ marginLeft: 'auto', color: '#555', fontSize: '0.8rem' }}>
+                          Yoklama Al →
+                        </div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
           )}
 
           {view === 'students' && (
@@ -313,6 +326,33 @@ export default function CoachDashboard() {
               ))}
             </div>
           )}
+
+          {/* Ders Notu */}
+          <div style={{ marginTop: 28, background: '#161616', border: '1px solid rgba(201,168,76,0.15)', borderRadius: 10, padding: '16px 18px' }}>
+            <div style={{ fontWeight: 700, color: '#c9a84c', marginBottom: 10, fontSize: '0.9rem' }}>
+              📝 Ders Notu
+            </div>
+            <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: 10 }}>
+              Bugün neler çalışıldı? Veliler bu notu antrenman geçmişinde görebilir.
+            </p>
+            <textarea
+              value={sessionNote}
+              onChange={e => setSessionNote(e.target.value)}
+              placeholder="Örn: Bugün pas ve şut egzersizleri yapıldı. Oyuncular kondisyon çalışması yaptı..."
+              rows={3}
+              style={{
+                width: '100%', boxSizing: 'border-box',
+                background: '#0d0d0d', border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 8, padding: '10px 12px', color: '#eee',
+                fontSize: '0.875rem', resize: 'vertical', outline: 'none',
+              }}
+            />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
+              <button className="btn-panel" onClick={saveNote} disabled={savingNote}>
+                {savingNote ? 'Kaydediliyor...' : '💾 Notu Kaydet'}
+              </button>
+            </div>
+          </div>
         </>
       )}
     </PanelLayout>

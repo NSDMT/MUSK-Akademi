@@ -229,6 +229,21 @@ function initDb() {
     )
   `);
 
+  // session_notes: antrenörün her antrenman için yazdığı not
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS session_notes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      schedule_id INTEGER NOT NULL,
+      date TEXT NOT NULL,
+      note TEXT NOT NULL DEFAULT '',
+      created_by INTEGER,
+      updated_at TEXT DEFAULT (datetime('now')),
+      UNIQUE(schedule_id, date),
+      FOREIGN KEY (schedule_id) REFERENCES schedule(id) ON DELETE CASCADE,
+      FOREIGN KEY (created_by) REFERENCES users(id)
+    )
+  `);
+
   // group_trainers junction table (many-to-many group ↔ trainer)
   db.exec(`
     CREATE TABLE IF NOT EXISTS group_trainers (
