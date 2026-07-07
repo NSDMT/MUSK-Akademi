@@ -14,6 +14,7 @@ const NAV = {
     { path: '/panel/admin/sponsors', label: 'Sponsorlar', icon: '🏢' },
     { path: '/panel/admin/news', label: 'Haberler', icon: '📰' },
     { path: '/panel/admin/gallery', label: 'Galeri', icon: '🖼️' },
+    { path: '/panel/antrenor/dashboard', label: 'Yoklama Al', icon: '✅' },
   ],
   antrenor: [
     { path: '/panel/antrenor/dashboard', label: 'Takvimim & Yoklama', icon: '📅' },
