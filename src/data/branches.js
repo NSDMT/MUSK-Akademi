@@ -20,7 +20,6 @@ Akademimizde yetişen sporcularımız, U-7'den itibaren U-18 ve A Takım seviyes
       { name: 'Mümin Taş', role: 'UEFA C Futbol Antrenörü', photo: '/images/trainers/mumin-tas.jpeg' },
       { name: 'Gökhan Turan', role: 'Futbol Antrenörü', photo: '/images/trainers/gokhan-turan.jpeg' },
       { name: 'Berkant Özyer', role: 'Yardımcı Antrenör', photo: '/images/trainers/berkant-ozyer.jpeg' },
-      { name: 'Selimhan Kaya', role: 'Yardımcı Antrenör', photo: '' },
     ],
   },
   {
@@ -41,7 +40,6 @@ Geleceğin sporcularını yetiştirirken, çocuklarımızın mutlu, sağlıklı 
       { name: 'Şeval Akurt', role: 'Voleybol Antrenörü', photo: '/images/trainers/sevval-akurt.jpeg' },
       { name: 'Nipel Uluca', role: 'Voleybol Antrenörü', photo: '/images/trainers/nipel-uluca.jpeg' },
       { name: 'İlayda Bulut', role: 'Yardımcı Antrenör', photo: '/images/trainers/ilayda-bulut.jpeg' },
-      { name: 'Ayşegül Yolu', role: 'Yardımcı Antrenör', photo: '' },
     ],
   },
   {
