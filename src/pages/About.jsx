@@ -1,5 +1,12 @@
 import './About.css';
 
+const clubDesc = [
+  'Karaman MUSK Spor Akademi, 2023 yılında çocuklarımızın ve gençlerimizin sporla tanışmasını, sağlıklı bireyler olarak yetişmesini ve yeteneklerini en üst seviyeye taşımasını hedefleyerek kurulmuştur.',
+  'Kulübümüzde Futbol, Voleybol, Basketbol, Tekerlekli Paten, Yüzme, Tenis ve Satranç branşlarında eğitim verilmektedir. Alanında uzman, federasyon onaylı ve lisanslı antrenör kadromuzla sporcularımıza yaş ve gelişim düzeylerine uygun, bilimsel temellere dayalı antrenman programları sunuyoruz.',
+  'Karaman MUSK Spor Akademi olarak hedefimiz; yalnızca başarılı sporcular yetiştirmek değil, aynı zamanda özgüvenli, disiplinli, sorumluluk sahibi, takım ruhunu benimseyen ve spor ahlakına bağlı bireyler yetiştirmektir. Sporcularımızın teknik, fiziksel, zihinsel ve sosyal gelişimlerini bütüncül bir eğitim anlayışıyla destekliyor, her çocuğun potansiyelini ortaya çıkarmayı amaçlıyoruz.',
+  'Modern eğitim anlayışımız, güçlü antrenör kadromuz ve güvenli spor ortamımızla çocuklarımızın hayallerine ulaşmalarına rehberlik ediyor; onları geleceğin başarılı sporcuları ve örnek bireyleri olarak yetiştiriyoruz.',
+];
+
 const values = [
   { icon: '🏆', title: 'Başarı', desc: 'Sporcularımızı ulusal ve uluslararası arenada temsil edecek düzeye taşıyoruz.' },
   { icon: '❤️', title: 'Tutku', desc: 'Sporun bir yaşam biçimi haline gelmesi için çalışıyoruz.' },
@@ -16,6 +23,21 @@ export default function About() {
         <h1>Hakkımızda</h1>
         <p>Karaman'ın Spor Akademisi – 2023'ten Bugüne</p>
       </div>
+
+      {/* KULÜP HAKKINDA */}
+      <section className="section">
+        <div className="container" style={{ maxWidth: 820 }}>
+          <p className="section-subtitle" style={{ textAlign: 'center' }}>Kulübümüz</p>
+          <h2 className="section-title" style={{ textAlign: 'center' }}>Karaman MUSK Spor Akademi</h2>
+          <div className="section-divider" />
+          {clubDesc.map((p, i) => (
+            <p key={i} style={{ marginBottom: 18, lineHeight: 1.85, color: '#ccc' }}>{p}</p>
+          ))}
+          <p style={{ fontStyle: 'italic', color: '#c9a84c', marginTop: 24, textAlign: 'center', fontSize: '1.05rem' }}>
+            "Karaman'ın Çocukları" anlayışıyla çıktığımız bu yolda, sporu bir yaşam biçimi haline getirerek Karaman'da sporun gelişimine katkı sağlamaya ve geleceğin şampiyonlarını yetiştirmeye kararlılıkla devam ediyoruz.
+          </p>
+        </div>
+      </section>
 
       {/* BİZ KİMİZ */}
       <section className="section">

@@ -144,7 +144,7 @@ router.post('/', authenticate, authorize('admin'), studentValidation, (req, res)
   const {
     first_name, last_name, tc, birth_date, parent_name,
     school, foot, blood_type, group_ids, address,
-    athlete_phone, parent_phone, veli_user_id, notes,
+    athlete_phone, parent_phone, veli_user_id, notes, photo_url,
   } = req.body;
 
   const groupIdList = Array.isArray(group_ids) ? group_ids.map(Number).filter(Boolean) : [];
@@ -153,13 +153,13 @@ router.post('/', authenticate, authorize('admin'), studentValidation, (req, res)
   const result = db.prepare(`
     INSERT INTO students
       (first_name, last_name, tc, birth_date, parent_name, school, foot, blood_type,
-       group_id, address, athlete_phone, parent_phone, veli_user_id, notes)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+       group_id, address, athlete_phone, parent_phone, veli_user_id, notes, photo_url)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
   `).run(
     first_name, last_name, tc, birth_date, parent_name,
     school || '', foot || '', blood_type || '',
     primaryGroupId, address || '', athlete_phone || '',
-    parent_phone, veli_user_id || null, notes || ''
+    parent_phone, veli_user_id || null, notes || '', photo_url || ''
   );
 
   const studentId = result.lastInsertRowid;
@@ -184,7 +184,7 @@ router.put('/:id', authenticate, authorize('admin'), studentValidation, (req, re
   const {
     first_name, last_name, tc, birth_date, parent_name,
     school, foot, blood_type, group_ids, address,
-    athlete_phone, parent_phone, veli_user_id, notes,
+    athlete_phone, parent_phone, veli_user_id, notes, photo_url,
   } = req.body;
 
   const groupIdList = Array.isArray(group_ids) ? group_ids.map(Number).filter(Boolean) : [];
@@ -194,13 +194,13 @@ router.put('/:id', authenticate, authorize('admin'), studentValidation, (req, re
     UPDATE students SET
       first_name=?, last_name=?, tc=?, birth_date=?, parent_name=?,
       school=?, foot=?, blood_type=?, group_id=?, address=?,
-      athlete_phone=?, parent_phone=?, veli_user_id=?, notes=?
+      athlete_phone=?, parent_phone=?, veli_user_id=?, notes=?, photo_url=?
     WHERE id=?
   `).run(
     first_name, last_name, tc, birth_date, parent_name,
     school || '', foot || '', blood_type || '',
     primaryGroupId, address || '', athlete_phone || '',
-    parent_phone, veli_user_id || null, notes || '',
+    parent_phone, veli_user_id || null, notes || '', photo_url || '',
     req.params.id
   );
 

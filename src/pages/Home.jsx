@@ -38,27 +38,9 @@ const stats = [
   { value: '2023', label: 'Kuruluş Yılı' },
 ];
 
-const coaches = [
-  { name: 'Muzaffer Uğur', branch: 'Futbol', role: 'UEFA C / Çocuk Gelişim Antrenörü', icon: '⚽', photo: '/images/trainers/muzaffer-ugur.jpeg' },
-  { name: 'Gökhan Turan', branch: 'Futbol', role: 'Futbol Antrenörü', icon: '⚽', photo: '/images/trainers/gokhan-turan.jpeg' },
-  { name: 'Mümin Taş', branch: 'Futbol', role: 'UEFA C Futbol Antrenörü', icon: '⚽', photo: '/images/trainers/mumin-tas.jpeg' },
-  { name: 'Berkant Özyer', branch: 'Futbol', role: 'Yardımcı Antrenör', icon: '⚽', photo: '/images/trainers/berkant-ozyer.jpeg' },
-  { name: 'Tuğba Uğur', branch: 'Voleybol & Paten', role: '3. Kademe Voleybol / Paten Antrenörü', icon: '🏐', photo: '/images/trainers/tugba-ugur.jpeg' },
-  { name: 'Fatma Ceren Yılmaz', branch: 'Voleybol', role: 'Voleybol Antrenörü', icon: '🏐', photo: '/images/trainers/ceren-yilmaz.jpeg' },
-  { name: 'Şeval Akurt', branch: 'Voleybol', role: 'Voleybol Antrenörü', icon: '🏐', photo: '/images/trainers/sevval-akurt.jpeg' },
-  { name: 'Nipel Uluca', branch: 'Voleybol', role: 'Voleybol Antrenörü', icon: '🏐', photo: '/images/trainers/nipel-uluca.jpeg' },
-  { name: 'İlayda Bulut', branch: 'Voleybol', role: 'Yardımcı Antrenör', icon: '🏐', photo: '/images/trainers/ilayda-bulut.jpeg' },
-  { name: 'Mehmet Dinçer', branch: 'Basketbol', role: '3. Kademe Basketbol Antrenörü', icon: '🏀', photo: '' },
-  { name: 'Fatma Gülten Özdil', branch: 'Basketbol', role: '2. Kademe Basketbol Antrenörü', icon: '🏀', photo: '' },
-  { name: 'Ceylan Sultan Koçak', branch: 'Yüzme', role: '3. Kademe Kıdemli Yüzme Antrenörü', icon: '🏄', photo: '' },
-  { name: 'Musa Çimen', branch: 'Tenis', role: '3. Kademe Paten Antrenörü', icon: '🎾', photo: '' },
-  { name: 'Beyza Ünüvar', branch: 'Satranç', role: '2. Kademe Satranç Antrenörü', icon: '♟️', photo: '' },
-];
-
 export default function Home() {
   const [slideIndex, setSlideIndex] = useState(0);
   const [sponsors, setSponsors] = useState([]);
-  const [coachModal, setCoachModal] = useState(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -169,35 +151,17 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ========== COACHES ========== */}
+        {/* ========== COACHES CTA ========== */}
         <section className="section coaches-section">
-          <div className="container">
+          <div className="container" style={{ textAlign: 'center' }}>
             <p className="section-subtitle">Uzman Kadromuz</p>
             <h2 className="section-title">Antrenörlerimiz</h2>
             <div className="section-divider" />
-            <div className="coaches-grid">
-              {coaches.map(c => (
-                <div
-                  key={c.name}
-                  className="coach-card card"
-                  onClick={() => c.photo && setCoachModal(c)}
-                  style={{ cursor: c.photo ? 'pointer' : 'default' }}
-                >
-                  <div className="coach-card__avatar">
-                    {c.photo ? (
-                      <img src={c.photo} alt={c.name} className="coach-card__photo" />
-                    ) : (
-                      <span>{c.icon}</span>
-                    )}
-                  </div>
-                  <div className="coach-card__info">
-                    <h4 className="coach-card__name">{c.name}</h4>
-                    <span className="coach-card__branch">{c.branch}</span>
-                    <p className="coach-card__role">{c.role}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <p style={{ color: '#aaa', maxWidth: 560, margin: '0 auto 32px', lineHeight: 1.7 }}>
+              Alanında uzman, federasyon onaylı ve lisanslı antrenör kadromuzla
+              sporcularımıza yaş ve gelişim düzeylerine uygun antrenman programları sunuyoruz.
+            </p>
+            <Link to="/antrenorlerimiz" className="btn-primary">Tüm Antrenörlerimizi Gör</Link>
           </div>
         </section>
 
@@ -273,21 +237,6 @@ export default function Home() {
         </section>
 
       </div>
-
-      {/* ========== COACH MODAL ========== */}
-      {coachModal && (
-        <div className="coach-modal-backdrop" onClick={() => setCoachModal(null)}>
-          <div className="coach-modal" onClick={e => e.stopPropagation()}>
-            <button className="coach-modal__close" onClick={() => setCoachModal(null)}>✕</button>
-            <img src={coachModal.photo} alt={coachModal.name} className="coach-modal__photo" />
-            <div className="coach-modal__info">
-              <h3 className="coach-modal__name">{coachModal.name}</h3>
-              <span className="coach-modal__branch">{coachModal.branch}</span>
-              <p className="coach-modal__role">{coachModal.role}</p>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }

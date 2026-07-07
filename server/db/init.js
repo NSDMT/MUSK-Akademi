@@ -101,6 +101,8 @@ function initDb() {
 
   // --- Migrations (idempotent) ---
   try { db.exec('ALTER TABLE groups ADD COLUMN monthly_fee INTEGER DEFAULT 0'); } catch { }
+  try { db.exec("ALTER TABLE students ADD COLUMN photo_url TEXT DEFAULT ''"); } catch { }
+  try { db.exec("ALTER TABLE students ADD COLUMN photo_url TEXT DEFAULT ''"); } catch { }
 
   // Applications extended fields migration
   const newCols = [

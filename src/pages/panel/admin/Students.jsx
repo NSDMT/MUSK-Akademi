@@ -8,7 +8,7 @@ const FOOT_OPTIONS = ['sağ', 'sol', 'her ikisi'];
 const EMPTY = {
   first_name: '', last_name: '', tc: '', birth_date: '', parent_name: '',
   school: '', foot: '', blood_type: '', group_ids: [], address: '',
-  athlete_phone: '', parent_phone: '', veli_user_id: '', notes: '',
+  athlete_phone: '', parent_phone: '', veli_user_id: '', notes: '', photo_url: '',
 };
 
 export default function AdminStudents() {
@@ -21,6 +21,7 @@ export default function AdminStudents() {
   const [form, setForm] = useState(EMPTY);
   const [editId, setEditId] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [alert, setAlert] = useState(null);
 
   useEffect(() => { load(); }, []);
@@ -46,6 +47,7 @@ export default function AdminStudents() {
       address: s.address || '',
       athlete_phone: s.athlete_phone || '', parent_phone: s.parent_phone,
       veli_user_id: s.veli_user_id || '', notes: s.notes || '',
+      photo_url: s.photo_url || '',
     });
     setEditId(s.id);
     setModal('form');
@@ -65,6 +67,20 @@ export default function AdminStudents() {
       showAlert('error', err.response?.data?.error || 'Kayıt hatası');
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function uploadPhoto(file) {
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const res = await client.post('/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      setForm(f => ({ ...f, photo_url: res.data.url }));
+    } catch {
+      showAlert('error', 'Fotoğraf yüklenemedi');
+    } finally {
+      setUploading(false);
     }
   }
 
@@ -118,6 +134,7 @@ export default function AdminStudents() {
         <table className="panel-table">
           <thead>
             <tr>
+              <th>Foto</th>
               <th>Ad Soyad</th>
               <th>TC</th>
               <th>Doğum Tarihi</th>
@@ -134,6 +151,12 @@ export default function AdminStudents() {
             )}
             {filtered.map(s => (
               <tr key={s.id}>
+                <td>
+                  {s.photo_url
+                    ? <img src={s.photo_url} alt="" style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', border: '1px solid #333' }} />
+                    : <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#222', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', color: '#555' }}>—</div>
+                  }
+                </td>
                 <td style={{ fontWeight: 600, color: '#f0f0f0' }}>{s.first_name} {s.last_name}</td>
                 <td style={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{s.tc}</td>
                 <td>{s.birth_date}</td>
@@ -219,6 +242,29 @@ export default function AdminStudents() {
                 <Field label="Veli Telefonu *" required value={form.parent_phone} onChange={v => setForm(f => ({ ...f, parent_phone: v.replace(/\D/g, '') }))} maxLength={11} inputMode="numeric" />
                 <Field label="Adres" value={form.address} onChange={v => setForm(f => ({ ...f, address: v }))} className="col-span-2" />
                 <Field label="Notlar" value={form.notes} onChange={v => setForm(f => ({ ...f, notes: v }))} className="col-span-2" />
+                <div className="form-field col-span-2">
+                  <label>Fotoğraf</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 4 }}>
+                    {form.photo_url && (
+                      <img src={form.photo_url} alt="Sporcu" style={{ width: 60, height: 60, borderRadius: '50%', objectFit: 'cover', border: '2px solid #333' }} />
+                    )}
+                    <div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        id="student-photo"
+                        style={{ display: 'none' }}
+                        onChange={e => e.target.files[0] && uploadPhoto(e.target.files[0])}
+                      />
+                      <label htmlFor="student-photo" className="btn-panel btn-ghost" style={{ cursor: 'pointer', display: 'inline-block' }}>
+                        {uploading ? 'Yükleniyor...' : form.photo_url ? '📷 Fotoğrafı Değiştir' : '📷 Fotoğraf Yükle'}
+                      </label>
+                      {form.photo_url && (
+                        <button type="button" className="btn-panel btn-danger btn-panel-sm" style={{ marginLeft: 8 }} onClick={() => setForm(f => ({ ...f, photo_url: '' }))}>Sil</button>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="form-actions">
                 <button type="button" className="btn-panel btn-ghost" onClick={() => setModal(null)}>İptal</button>
