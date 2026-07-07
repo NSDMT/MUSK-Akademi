@@ -145,6 +145,7 @@ router.post('/', authenticate, authorize('admin'), studentValidation, (req, res)
     first_name, last_name, tc, birth_date, parent_name,
     school, foot, blood_type, group_ids, address,
     athlete_phone, parent_phone, veli_user_id, notes, photo_url,
+    height, weight, emergency_phone, mother_name, father_name, mother_job, father_job,
   } = req.body;
 
   const groupIdList = Array.isArray(group_ids) ? group_ids.map(Number).filter(Boolean) : [];
@@ -153,13 +154,16 @@ router.post('/', authenticate, authorize('admin'), studentValidation, (req, res)
   const result = db.prepare(`
     INSERT INTO students
       (first_name, last_name, tc, birth_date, parent_name, school, foot, blood_type,
-       group_id, address, athlete_phone, parent_phone, veli_user_id, notes, photo_url)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+       group_id, address, athlete_phone, parent_phone, veli_user_id, notes, photo_url,
+       height, weight, emergency_phone, mother_name, father_name, mother_job, father_job)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
   `).run(
     first_name, last_name, tc, birth_date, parent_name,
     school || '', foot || '', blood_type || '',
     primaryGroupId, address || '', athlete_phone || '',
-    parent_phone, veli_user_id || null, notes || '', photo_url || ''
+    parent_phone, veli_user_id || null, notes || '', photo_url || '',
+    height || '', weight || '', emergency_phone || '',
+    mother_name || '', father_name || '', mother_job || '', father_job || ''
   );
 
   const studentId = result.lastInsertRowid;
@@ -185,6 +189,7 @@ router.put('/:id', authenticate, authorize('admin'), studentValidation, (req, re
     first_name, last_name, tc, birth_date, parent_name,
     school, foot, blood_type, group_ids, address,
     athlete_phone, parent_phone, veli_user_id, notes, photo_url,
+    height, weight, emergency_phone, mother_name, father_name, mother_job, father_job,
   } = req.body;
 
   const groupIdList = Array.isArray(group_ids) ? group_ids.map(Number).filter(Boolean) : [];
@@ -194,13 +199,16 @@ router.put('/:id', authenticate, authorize('admin'), studentValidation, (req, re
     UPDATE students SET
       first_name=?, last_name=?, tc=?, birth_date=?, parent_name=?,
       school=?, foot=?, blood_type=?, group_id=?, address=?,
-      athlete_phone=?, parent_phone=?, veli_user_id=?, notes=?, photo_url=?
+      athlete_phone=?, parent_phone=?, veli_user_id=?, notes=?, photo_url=?,
+      height=?, weight=?, emergency_phone=?, mother_name=?, father_name=?, mother_job=?, father_job=?
     WHERE id=?
   `).run(
     first_name, last_name, tc, birth_date, parent_name,
     school || '', foot || '', blood_type || '',
     primaryGroupId, address || '', athlete_phone || '',
     parent_phone, veli_user_id || null, notes || '', photo_url || '',
+    height || '', weight || '', emergency_phone || '',
+    mother_name || '', father_name || '', mother_job || '', father_job || '',
     req.params.id
   );
 

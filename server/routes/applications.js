@@ -131,8 +131,9 @@ router.post('/:id/approve', authenticate, authorize('admin'), async (req, res) =
   const studentResult = db.prepare(`
     INSERT INTO students
       (first_name, last_name, tc, birth_date, parent_name, parent_phone,
-       school, blood_type, address, veli_user_id, notes)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       school, blood_type, address, veli_user_id, notes,
+       height, weight, emergency_phone, mother_name, father_name, mother_job, father_job)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     app.child_name.split(' ')[0],
     app.child_name.split(' ').slice(1).join(' ') || '-',
@@ -144,7 +145,14 @@ router.post('/:id/approve', authenticate, authorize('admin'), async (req, res) =
     app.child_blood_group || '',
     app.child_address || '',
     veliUserId,
-    `Başvuru #${app.id} — Branş: ${app.branch}${app.message ? ' | Not: ' + app.message : ''}`
+    `Başvuru #${app.id} — Branş: ${app.branch}${app.message ? ' | Not: ' + app.message : ''}`,
+    app.child_height || '',
+    app.child_weight || '',
+    app.emergency_phone || '',
+    app.mother_name || '',
+    app.father_name || '',
+    app.mother_job || '',
+    app.father_job || ''
   );
 
   // Başvuruyu onayla

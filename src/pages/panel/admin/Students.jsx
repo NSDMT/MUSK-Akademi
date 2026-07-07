@@ -9,6 +9,8 @@ const EMPTY = {
   first_name: '', last_name: '', tc: '', birth_date: '', parent_name: '',
   school: '', foot: '', blood_type: '', group_ids: [], address: '',
   athlete_phone: '', parent_phone: '', veli_user_id: '', notes: '', photo_url: '',
+  height: '', weight: '', emergency_phone: '', mother_name: '', father_name: '',
+  mother_job: '', father_job: '',
 };
 
 export default function AdminStudents() {
@@ -48,6 +50,10 @@ export default function AdminStudents() {
       athlete_phone: s.athlete_phone || '', parent_phone: s.parent_phone,
       veli_user_id: s.veli_user_id || '', notes: s.notes || '',
       photo_url: s.photo_url || '',
+      height: s.height || '', weight: s.weight || '',
+      emergency_phone: s.emergency_phone || '',
+      mother_name: s.mother_name || '', father_name: s.father_name || '',
+      mother_job: s.mother_job || '', father_job: s.father_job || '',
     });
     setEditId(s.id);
     setModal('form');
@@ -240,6 +246,13 @@ export default function AdminStudents() {
 
                 <Field label="Sporcu Telefonu" value={form.athlete_phone} onChange={v => setForm(f => ({ ...f, athlete_phone: v.replace(/\D/g, '') }))} maxLength={11} inputMode="numeric" />
                 <Field label="Veli Telefonu *" required value={form.parent_phone} onChange={v => setForm(f => ({ ...f, parent_phone: v.replace(/\D/g, '') }))} maxLength={11} inputMode="numeric" />
+                <Field label="Acil Durum Telefonu" value={form.emergency_phone} onChange={v => setForm(f => ({ ...f, emergency_phone: v.replace(/\D/g, '') }))} maxLength={11} inputMode="numeric" />
+                <Field label="Boy (cm)" value={form.height} onChange={v => setForm(f => ({ ...f, height: v }))} inputMode="numeric" />
+                <Field label="Kilo (kg)" value={form.weight} onChange={v => setForm(f => ({ ...f, weight: v }))} inputMode="numeric" />
+                <Field label="Anne Adı Soyadı" value={form.mother_name} onChange={v => setForm(f => ({ ...f, mother_name: v }))} />
+                <Field label="Anne Mesleği" value={form.mother_job} onChange={v => setForm(f => ({ ...f, mother_job: v }))} />
+                <Field label="Baba Adı Soyadı" value={form.father_name} onChange={v => setForm(f => ({ ...f, father_name: v }))} />
+                <Field label="Baba Mesleği" value={form.father_job} onChange={v => setForm(f => ({ ...f, father_job: v }))} />
                 <Field label="Adres" value={form.address} onChange={v => setForm(f => ({ ...f, address: v }))} className="col-span-2" />
                 <Field label="Notlar" value={form.notes} onChange={v => setForm(f => ({ ...f, notes: v }))} className="col-span-2" />
                 <div className="form-field col-span-2">
