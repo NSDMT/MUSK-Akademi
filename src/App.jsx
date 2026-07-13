@@ -31,6 +31,7 @@ import AdminApplications from './pages/panel/admin/Applications';
 import AdminSponsors from './pages/panel/admin/Sponsors';
 import AdminNews from './pages/panel/admin/News';
 import AdminGallery from './pages/panel/admin/Gallery';
+import AdminTrainers from './pages/panel/admin/Trainers';
 
 // Coach
 import CoachDashboard from './pages/panel/coach/Dashboard';
@@ -101,6 +102,10 @@ export default function App() {
 
           <Route path="/panel/admin/gallery" element={
             <ProtectedRoute roles={['admin']}><AdminGallery /></ProtectedRoute>
+          } />
+
+          <Route path="/panel/admin/trainers" element={
+            <ProtectedRoute roles={['admin']}><AdminTrainers /></ProtectedRoute>
           } />
 
           <Route path="/panel/antrenor/dashboard" element={

@@ -200,6 +200,21 @@ function initDb() {
     );
   `);
 
+  // Trainers table (public trainers page + admin CRUD)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS trainers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      branch TEXT NOT NULL,
+      role TEXT DEFAULT '',
+      photo_url TEXT DEFAULT '',
+      bio TEXT DEFAULT '',
+      display_order INTEGER DEFAULT 0,
+      is_active INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+  `);
+
   // News and gallery tables
   db.exec(`
     CREATE TABLE IF NOT EXISTS news (
@@ -311,6 +326,30 @@ function initDb() {
     const branches = ['Futbol', 'Basketbol', 'Voleybol', 'Tekerlekli Paten', 'Yüzme', 'Tenis', 'Satranç'];
     const insertBranch = db.prepare('INSERT OR IGNORE INTO branches (name) VALUES (?)');
     for (const b of branches) insertBranch.run(b);
+  }
+
+  const trainerCountRow = db.prepare('SELECT COUNT(*) AS count FROM trainers').get();
+  if (!trainerCountRow || trainerCountRow.count === 0) {
+    const seedTrainers = [
+      ['Muzaffer Uğur', 'Futbol', 'UEFA C / Çocuk Gelişim Antrenörü', '/images/trainers/muzaffer-ugur.jpeg', 1],
+      ['Gökhan Turan', 'Futbol', 'Futbol Antrenörü', '/images/trainers/gokhan-turan.jpeg', 2],
+      ['Mümin Taş', 'Futbol', 'UEFA C Futbol Antrenörü', '/images/trainers/mumin-tas.jpeg', 3],
+      ['Berkant Özyer', 'Futbol', 'Yardımcı Antrenör', '/images/trainers/berkant-ozyer.jpeg', 4],
+      ['Tuğba Uğur', 'Voleybol & Paten', '3. Kademe Voleybol / Paten Antrenörü', '/images/trainers/tugba-ugur.jpeg', 5],
+      ['Fatma Ceren Yılmaz', 'Voleybol', 'Voleybol Antrenörü', '/images/trainers/ceren-yilmaz.jpeg', 6],
+      ['Şeval Akurt', 'Voleybol', 'Voleybol Antrenörü', '/images/trainers/sevval-akurt.jpeg', 7],
+      ['Nipel Uluca', 'Voleybol', 'Voleybol Antrenörü', '/images/trainers/nipel-uluca.jpeg', 8],
+      ['İlayda Bulut', 'Voleybol', 'Yardımcı Antrenör', '/images/trainers/ilayda-bulut.jpeg', 9],
+      ['Mehmet Dinçer', 'Basketbol', '3. Kademe Basketbol Antrenörü', '', 10],
+      ['Fatma Gülten Özdil', 'Basketbol', '2. Kademe Basketbol Antrenörü', '', 11],
+      ['Ceylan Sultan Koçak', 'Yüzme', '3. Kademe Kıdemli Yüzme Antrenörü', '', 12],
+      ['Musa Çimen', 'Tenis', '3. Kademe Paten Antrenörü', '', 13],
+      ['Beyza Ünüvar', 'Satranç', '2. Kademe Satranç Antrenörü', '', 14],
+    ];
+    const insertTrainer = db.prepare(
+      'INSERT INTO trainers (name, branch, role, photo_url, display_order, is_active) VALUES (?, ?, ?, ?, ?, 1)'
+    );
+    for (const t of seedTrainers) insertTrainer.run(...t);
   }
 
   return db;

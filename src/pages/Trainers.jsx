@@ -1,28 +1,43 @@
 import './Trainers.css';
+import { useEffect, useMemo, useState } from 'react';
+import client from '../api/client';
 
-const coaches = [
-  { name: 'Muzaffer Uğur', branch: 'Futbol', role: 'UEFA C / Çocuk Gelişim Antrenörü', icon: '⚽', photo: '/images/trainers/muzaffer-ugur.jpeg' },
-  { name: 'Gökhan Turan', branch: 'Futbol', role: 'Futbol Antrenörü', icon: '⚽', photo: '/images/trainers/gokhan-turan.jpeg' },
-  { name: 'Mümin Taş', branch: 'Futbol', role: 'UEFA C Futbol Antrenörü', icon: '⚽', photo: '/images/trainers/mumin-tas.jpeg' },
-  { name: 'Berkant Özyer', branch: 'Futbol', role: 'Yardımcı Antrenör', icon: '⚽', photo: '/images/trainers/berkant-ozyer.jpeg' },
-  { name: 'Tuğba Uğur', branch: 'Voleybol & Paten', role: '3. Kademe Voleybol / Paten Antrenörü', icon: '🏐', photo: '/images/trainers/tugba-ugur.jpeg' },
-  { name: 'Fatma Ceren Yılmaz', branch: 'Voleybol', role: 'Voleybol Antrenörü', icon: '🏐', photo: '/images/trainers/ceren-yilmaz.jpeg' },
-  { name: 'Şeval Akurt', branch: 'Voleybol', role: 'Voleybol Antrenörü', icon: '🏐', photo: '/images/trainers/sevval-akurt.jpeg' },
-  { name: 'Nipel Uluca', branch: 'Voleybol', role: 'Voleybol Antrenörü', icon: '🏐', photo: '/images/trainers/nipel-uluca.jpeg' },
-  { name: 'İlayda Bulut', branch: 'Voleybol', role: 'Yardımcı Antrenör', icon: '🏐', photo: '/images/trainers/ilayda-bulut.jpeg' },
-  { name: 'Mehmet Dinçer', branch: 'Basketbol', role: '3. Kademe Basketbol Antrenörü', icon: '🏀', photo: '' },
-  { name: 'Fatma Gülten Özdil', branch: 'Basketbol', role: '2. Kademe Basketbol Antrenörü', icon: '🏀', photo: '' },
-  { name: 'Ceylan Sultan Koçak', branch: 'Yüzme', role: '3. Kademe Kıdemli Yüzme Antrenörü', icon: '🏄', photo: '' },
-  { name: 'Musa Çimen', branch: 'Tenis', role: '3. Kademe Paten Antrenörü', icon: '🎾', photo: '' },
-  { name: 'Beyza Ünüvar', branch: 'Satranç', role: '2. Kademe Satranç Antrenörü', icon: '♟️', photo: '' },
-];
+const BRANCH_ICONS = {
+  futbol: '⚽',
+  voleybol: '🏐',
+  basketbol: '🏀',
+  yuzme: '🏊',
+  tenis: '🎾',
+  satranc: '♟️',
+  paten: '🛼',
+};
 
-const branches = ['Tümü', 'Futbol', 'Voleybol', 'Basketbol', 'Yüzme', 'Tenis', 'Satranç', 'Paten'];
-
-import { useState } from 'react';
+function normalizeKey(v) {
+  return String(v || '')
+    .toLowerCase()
+    .replaceAll('ı', 'i')
+    .replaceAll('ş', 's')
+    .replaceAll('ğ', 'g')
+    .replaceAll('ü', 'u')
+    .replaceAll('ö', 'o')
+    .replaceAll('ç', 'c');
+}
 
 export default function Trainers() {
+  const [coaches, setCoaches] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('Tümü');
+
+  useEffect(() => {
+    client.get('/trainers')
+      .then(res => setCoaches(res.data || []))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const branches = useMemo(() => {
+    const all = Array.from(new Set((coaches || []).map(c => c.branch).filter(Boolean)));
+    return ['Tümü', ...all];
+  }, [coaches]);
 
   const filtered = filter === 'Tümü'
     ? coaches
@@ -38,38 +53,47 @@ export default function Trainers() {
       <section className="section">
         <div className="container">
           {/* Filter */}
-          <div className="trainers-filter">
-            {branches.map(b => (
-              <button
-                key={b}
-                className={`trainers-filter__btn${filter === b ? ' active' : ''}`}
-                onClick={() => setFilter(b)}
-              >
-                {b}
-              </button>
-            ))}
-          </div>
+          {branches.length > 1 && (
+            <div className="trainers-filter">
+              {branches.map(b => (
+                <button
+                  key={b}
+                  className={`trainers-filter__btn${filter === b ? ' active' : ''}`}
+                  onClick={() => setFilter(b)}
+                >
+                  {b}
+                </button>
+              ))}
+            </div>
+          )}
 
           <div className="trainers-grid">
             {filtered.map(c => (
-              <div key={c.name} className="trainer-card card">
+              <div key={c.id || `${c.name}-${c.branch}`} className="trainer-card card">
                 <div className="trainer-card__avatar">
-                  {c.photo ? (
-                    <img src={c.photo} alt={c.name} className="trainer-card__photo" />
+                  {c.photo_url ? (
+                    <img src={c.photo_url} alt={c.name} className="trainer-card__photo" />
                   ) : (
-                    <span className="trainer-card__icon">{c.icon}</span>
+                    <span className="trainer-card__icon">{BRANCH_ICONS[normalizeKey(c.branch)] || '🏅'}</span>
                   )}
                 </div>
                 <div className="trainer-card__info">
                   <h3 className="trainer-card__name">{c.name}</h3>
                   <span className="trainer-card__branch">{c.branch}</span>
                   <p className="trainer-card__role">{c.role}</p>
+                  {!!c.bio && <p className="trainer-card__role" style={{ marginTop: 8, opacity: 0.85 }}>{c.bio}</p>}
                 </div>
               </div>
             ))}
           </div>
 
-          {filtered.length === 0 && (
+          {loading && (
+            <p style={{ textAlign: 'center', color: '#666', padding: '40px 0' }}>
+              Antrenörler yükleniyor...
+            </p>
+          )}
+
+          {!loading && filtered.length === 0 && (
             <p style={{ textAlign: 'center', color: '#666', padding: '40px 0' }}>
               Bu branşta antrenör bulunamadı.
             </p>

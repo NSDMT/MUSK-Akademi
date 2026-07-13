@@ -43,6 +43,7 @@ app.use('/api/dues', require('./routes/dues'));
 app.use('/api/payments', require('./routes/payments'));
 app.use('/api/applications', require('./routes/applications'));
 app.use('/api/sponsors', require('./routes/sponsors'));
+app.use('/api/trainers', require('./routes/trainers'));
 app.use('/api/news', require('./routes/news'));
 app.use('/api/gallery', require('./routes/gallery'));
 app.use('/api/upload', require('./routes/upload'));
