@@ -105,12 +105,17 @@ async function sendSms(phone, message) {
   try {
     // getNumberId ile numarayı doğrula ve gerçek chat ID'yi al (No LID for user hatasını önler)
     const numberId = await waClient.getNumberId(normalized);
+    const sendTarget = numberId?._serialized || chatId;
+
     if (!numberId) {
-      console.warn(`[WhatsApp] Numara WhatsApp'ta bulunamadı → ${chatId}`);
-      return { success: false, error: 'Numara WhatsApp kullanmıyor' };
+      console.warn(`[WhatsApp] getNumberId çözülemedi, doğrudan chatId denenecek → ${chatId}`);
+      await waClient.sendMessage(chatId, message);
+      console.log(`[WhatsApp] ✓ Mesaj gönderildi → ${chatId}`);
+      return { success: true, fallback: true };
     }
-    await waClient.sendMessage(numberId._serialized, message);
-    console.log(`[WhatsApp] ✓ Mesaj gönderildi → ${numberId._serialized}`);
+
+    await waClient.sendMessage(sendTarget, message);
+    console.log(`[WhatsApp] ✓ Mesaj gönderildi → ${sendTarget}`);
     return { success: true };
   } catch (error) {
     console.error('[WhatsApp-ERROR]', error.message);
