@@ -34,6 +34,12 @@ export default function AdminApplications() {
   }
 
   async function handleApprove(app) {
+    if (processing === app.id) return;
+    if (app.status !== 'pending') {
+      showAlert('error', 'Bu başvuru zaten işleme alındı');
+      await load();
+      return;
+    }
     if (!window.confirm(`"${app.child_name}" için başvuruyu onaylayıp veli hesabı oluşturulsun mu?`)) return;
     setProcessing(app.id);
     try {
@@ -43,9 +49,11 @@ export default function AdminApplications() {
         ? `Sporcu eklendi, mevcut veli hesabına bağlandı. ${res.data.wpSent ? 'WhatsApp bildirimi gönderildi.' : ''}`
         : `Hesap oluşturuldu. ${res.data.wpSent ? 'WhatsApp bildirimi gönderildi.' : 'WhatsApp gönderilemedi — bilgileri manuel iletin.'}`;
       showAlert('success', msg);
-      load();
+      await load();
     } catch (err) {
-      showAlert('error', err.response?.data?.error || 'Onaylama başarısız');
+      const serverMsg = err.response?.data?.error || 'Onaylama başarısız';
+      showAlert('error', serverMsg);
+      await load();
     } finally {
       setProcessing(null);
     }
