@@ -23,6 +23,16 @@ const LEGACY_CHROME_PATH = '/root/.cache/puppeteer/chrome/linux-146.0.7680.31/ch
 const CHROME_PATH = process.env.CHROME_PATH ||
   (fs.existsSync(LEGACY_CHROME_PATH) ? LEGACY_CHROME_PATH : undefined);
 
+// QR yerine telefon numarasıyla eşleştirme kodu (uzaktan bağlamak için): WA_PAIR_PHONE=905XXXXXXXXX
+const PAIR_PHONE = normalizePhone(process.env.WA_PAIR_PHONE || '');
+
+// Türk numarası → 905XXXXXXXXX (05XX, 905XX, +90 5XX vb. kabul eder)
+function normalizePhone(phone) {
+  const digits = String(phone || '').replace(/\D/g, '');
+  if (!digits) return '';
+  return digits.startsWith('90') ? digits : digits.startsWith('0') ? `9${digits}` : `90${digits}`;
+}
+
 let waClient = null;
 let isReady = false;
 let readyWatchdog = null;
@@ -48,6 +58,7 @@ function initWhatsApp() {
         '--disable-extensions',
       ],
     },
+    ...(PAIR_PHONE && { pairWithPhoneNumber: { phoneNumber: PAIR_PHONE, showNotification: true } }),
   });
   waClient = client;
   isReady = false;
@@ -55,8 +66,19 @@ function initWhatsApp() {
   // Eski (yok edilmiş) client'tan gelen geç olayları yok say
   const isCurrent = () => client === waClient;
 
+  // QR/kod geldiyse client çalışıyor, sadece eşleştirme bekliyor — watchdog gereksiz
+  const stopWatchdog = () => { clearTimeout(readyWatchdog); readyWatchdog = null; };
+
+  client.on('code', code => {
+    if (!isCurrent()) return;
+    stopWatchdog();
+    console.log(`\n🔑 WhatsApp eşleştirme kodu (${PAIR_PHONE}): ${code.slice(0, 4)}-${code.slice(4)}`);
+    console.log('(Telefonda: WhatsApp > Bağlı Cihazlar > Cihaz Bağla > "Bunun yerine telefon numarasıyla bağla")\n');
+  });
+
   client.on('qr', qr => {
     if (!isCurrent()) return;
+    stopWatchdog();
     console.log('\n📱 WhatsApp QR Kodu — Telefonunuzla tarayın:');
     qrcode.generate(qr, { small: true });
     console.log('(WhatsApp > Bağlı Cihazlar > Cihaz Bağla)\n');
@@ -165,8 +187,7 @@ setInterval(async () => {
  */
 async function sendSms(phone, message) {
   // Numarayı normalize et → 905XXXXXXXXX@c.us
-  const digits = String(phone || '').replace(/\D/g, '');
-  const normalized = digits.startsWith('90') ? digits : digits.startsWith('0') ? `9${digits}` : `90${digits}`;
+  const normalized = normalizePhone(phone);
   const chatId = `${normalized}@c.us`;
 
   const client = waClient;
