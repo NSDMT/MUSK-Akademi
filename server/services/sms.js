@@ -15,7 +15,7 @@ const fs = require('fs');
  */
 
 const READY_TIMEOUT_MS = 5 * 60 * 1000; // bu sürede ready olmazsa yeniden başlat
-const SEND_TIMEOUT_MS = 30 * 1000;      // tek mesaj gönderimi en fazla bu kadar beklenir
+const SEND_TIMEOUT_MS = 20 * 1000;      // numara sorgusu / gönderim adımı başına; toplam nginx 60 sn sınırının altında kalmalı
 const HEALTH_CHECK_MS = 10 * 60 * 1000; // bağlantı bu aralıkla yoklanır
 
 // Chrome yolu: .env'de CHROME_PATH varsa o, yoksa eski sabit yol (varsa), yoksa puppeteer'ın kendi Chrome'u
