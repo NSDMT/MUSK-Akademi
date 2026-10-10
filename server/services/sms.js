@@ -1,6 +1,7 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const path = require('path');
+const fs = require('fs');
 
 /**
  * WhatsApp mesaj gönderim servisi - whatsapp-web.js (ücretsiz)
@@ -13,21 +14,29 @@ const path = require('path');
  * kayıtlı oturumla otomatik bağlanır.
  */
 
+const READY_TIMEOUT_MS = 5 * 60 * 1000; // bu sürede ready olmazsa yeniden başlat
+const SEND_TIMEOUT_MS = 30 * 1000;      // tek mesaj gönderimi en fazla bu kadar beklenir
+
+// Chrome yolu: .env'de CHROME_PATH varsa o, yoksa eski sabit yol (varsa), yoksa puppeteer'ın kendi Chrome'u
+const LEGACY_CHROME_PATH = '/root/.cache/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
+const CHROME_PATH = process.env.CHROME_PATH ||
+  (fs.existsSync(LEGACY_CHROME_PATH) ? LEGACY_CHROME_PATH : undefined);
+
 let waClient = null;
 let isReady = false;
-let initStarted = false;
+let readyWatchdog = null;
+let restartTimer = null;
 
 function initWhatsApp() {
-  if (initStarted) return;
-  initStarted = true;
+  if (waClient || restartTimer) return;
 
-  waClient = new Client({
+  const client = new Client({
     authStrategy: new LocalAuth({
       dataPath: path.join(__dirname, '../../.wwebjs_auth'),
     }),
     puppeteer: {
       headless: true,
-      executablePath: '/root/.cache/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome',
+      executablePath: CHROME_PATH,
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -37,46 +46,92 @@ function initWhatsApp() {
       ],
     },
   });
+  waClient = client;
+  isReady = false;
 
-  waClient.on('qr', qr => {
+  // Eski (yok edilmiş) client'tan gelen geç olayları yok say
+  const isCurrent = () => client === waClient;
+
+  client.on('qr', qr => {
+    if (!isCurrent()) return;
     console.log('\n📱 WhatsApp QR Kodu — Telefonunuzla tarayın:');
     qrcode.generate(qr, { small: true });
     console.log('(WhatsApp > Bağlı Cihazlar > Cihaz Bağla)\n');
   });
 
-  waClient.on('ready', () => {
+  client.on('ready', () => {
+    if (!isCurrent()) return;
     console.log('✅ WhatsApp bağlantısı hazır — mesaj gönderilebilir');
     isReady = true;
+    clearTimeout(readyWatchdog);
+    readyWatchdog = null;
   });
 
-  waClient.on('auth_failure', msg => {
-    console.error('[WhatsApp] Oturum hatası:', msg);
-    isReady = false;
-    initStarted = false;
+  client.on('auth_failure', msg => {
+    if (!isCurrent()) return;
+    console.error('[WhatsApp] Oturum hatası:', msg, '— yeniden başlatılacak (QR gerekebilir)');
+    restartWhatsApp('auth_failure', 30_000);
   });
 
-  waClient.on('disconnected', reason => {
+  client.on('disconnected', reason => {
+    if (!isCurrent()) return;
     console.warn('[WhatsApp] Bağlantı kesildi:', reason, '— 15 sn sonra yeniden denenecek');
-    isReady = false;
-    initStarted = false;
-    setTimeout(initWhatsApp, 15_000);
+    restartWhatsApp('disconnected', 15_000);
   });
 
-  waClient.initialize().catch(err => {
+  client.initialize().catch(err => {
+    if (!isCurrent()) return;
     console.error('[WhatsApp] Başlatma hatası:', err.message);
-    initStarted = false;
-    // Puppeteer eksikse veya hata varsa mock modda devam et
+    restartWhatsApp('initialize hatası', 60_000);
   });
 
-  // Eğer 5 dakika içinde ready olmazsa yeniden başlat
-  setTimeout(() => {
-    if (!isReady) {
+  // Belirli süre içinde ready olmazsa yeniden başlat
+  clearTimeout(readyWatchdog);
+  readyWatchdog = setTimeout(() => {
+    readyWatchdog = null;
+    if (isCurrent() && !isReady) {
       console.warn('[WhatsApp] 5 dk içinde bağlantı kurulamadı, yeniden başlatılıyor...');
-      initStarted = false;
-      try { waClient.destroy().catch(() => { }); } catch { }
-      initWhatsApp();
+      restartWhatsApp('ready zaman aşımı', 0);
     }
-  }, 5 * 60 * 1000);
+  }, READY_TIMEOUT_MS);
+}
+
+/**
+ * Mevcut client'ı tamamen kapatır (Chrome profil kilidi kalmasın diye),
+ * ardından belirtilen süre sonra yenisini başlatır. Aynı anda tek restart çalışır.
+ */
+function restartWhatsApp(reason, delayMs) {
+  if (restartTimer) return;
+  console.warn(`[WhatsApp] Yeniden başlatma planlandı (${reason})`);
+
+  const old = waClient;
+  waClient = null;
+  isReady = false;
+  clearTimeout(readyWatchdog);
+  readyWatchdog = null;
+
+  restartTimer = setTimeout(async () => {
+    if (old) {
+      try { await old.destroy(); } catch (e) {
+        console.warn('[WhatsApp] Eski client kapatılamadı:', e.message);
+      }
+    }
+    restartTimer = null;
+    initWhatsApp();
+  }, delayMs);
+}
+
+// Tarayıcı/oturum öldüğünü gösteren hatalar — bunlarda client yeniden başlatılır
+const FATAL_ERROR_RE = /Session closed|Target closed|detached Frame|Protocol error|Execution context was destroyed|browser has disconnected/i;
+
+function withTimeout(promise, ms) {
+  let timer;
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(`Zaman aşımı (${ms / 1000} sn)`)), ms);
+    }),
+  ]).finally(() => clearTimeout(timer));
 }
 
 // Uygulama başlarken WhatsApp'ı başlat
@@ -91,11 +146,12 @@ initWhatsApp();
  */
 async function sendSms(phone, message) {
   // Numarayı normalize et → 905XXXXXXXXX@c.us
-  const digits = phone.replace(/\D/g, '');
+  const digits = String(phone || '').replace(/\D/g, '');
   const normalized = digits.startsWith('90') ? digits : digits.startsWith('0') ? `9${digits}` : `90${digits}`;
   const chatId = `${normalized}@c.us`;
 
-  if (!isReady || !waClient) {
+  const client = waClient;
+  if (!isReady || !client) {
     console.log(`[WhatsApp-MOCK] Bağlantı hazır değil — mesaj loglanıyor`);
     console.log(`[WhatsApp-MOCK] Alıcı : ${chatId}`);
     console.log(`[WhatsApp-MOCK] Mesaj : ${message}`);
@@ -104,21 +160,20 @@ async function sendSms(phone, message) {
 
   try {
     // getNumberId ile numarayı doğrula ve gerçek chat ID'yi al (No LID for user hatasını önler)
-    const numberId = await waClient.getNumberId(normalized);
+    const numberId = await withTimeout(client.getNumberId(normalized), SEND_TIMEOUT_MS);
     const sendTarget = numberId?._serialized || chatId;
-
     if (!numberId) {
       console.warn(`[WhatsApp] getNumberId çözülemedi, doğrudan chatId denenecek → ${chatId}`);
-      await waClient.sendMessage(chatId, message);
-      console.log(`[WhatsApp] ✓ Mesaj gönderildi → ${chatId}`);
-      return { success: true, fallback: true };
     }
 
-    await waClient.sendMessage(sendTarget, message);
+    await withTimeout(client.sendMessage(sendTarget, message), SEND_TIMEOUT_MS);
     console.log(`[WhatsApp] ✓ Mesaj gönderildi → ${sendTarget}`);
-    return { success: true };
+    return numberId ? { success: true } : { success: true, fallback: true };
   } catch (error) {
-    console.error('[WhatsApp-ERROR]', error.message);
+    console.error(`[WhatsApp-ERROR] ${chatId}:`, error.message);
+    if (FATAL_ERROR_RE.test(error.message) && client === waClient) {
+      restartWhatsApp(`gönderim hatası: ${error.message}`, 5_000);
+    }
     return { success: false, error: error.message };
   }
 }

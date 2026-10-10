@@ -57,6 +57,11 @@ app.use((err, req, res, _next) => {
   res.status(500).json({ error: 'Sunucu hatası' });
 });
 
+// Yakalanmamış async hatalar process'i düşürmesin (düşerse WhatsApp oturumu da sıfırlanır)
+process.on('unhandledRejection', (reason) => {
+  console.error('[unhandledRejection]', reason);
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`✅ Muzaffer Uğur Spor API → http://localhost:${PORT}`);

@@ -47,6 +47,25 @@ router.post('/', [
   } = req.body;
   const db = getDb();
 
+  // Aynı TC ile kayıtlı sporcu veya bekleyen başvuru varsa tekrar başvuru alma
+  const tc = (childTc || '').trim();
+  if (tc) {
+    const existingStudent = db.prepare('SELECT id FROM students WHERE tc = ?').get(tc);
+    if (existingStudent) {
+      return res.status(409).json({
+        error: 'Bu TC kimlik numarasıyla kayıtlı bir sporcu zaten var. Lütfen kulüple iletişime geçin.',
+      });
+    }
+    const pendingApp = db.prepare(
+      "SELECT id FROM applications WHERE child_tc = ? AND status = 'pending'"
+    ).get(tc);
+    if (pendingApp) {
+      return res.status(409).json({
+        error: 'Bu TC kimlik numarasıyla bekleyen bir başvuru zaten var. Başvurunuz inceleniyor.',
+      });
+    }
+  }
+
   const result = db.prepare(`
     INSERT INTO applications (
       parent_name, parent_phone, parent_email, child_name, child_birth_year, branch, message,
@@ -87,6 +106,19 @@ router.post('/:id/approve', authenticate, authorize('admin'), async (req, res) =
     return res.status(400).json({ error: 'Bu başvuru zaten işleme alındı' });
   }
 
+  // Sporcu kaydı oluştur — başvurudaki tüm bilgileri aktar
+  const tcValue = app.child_tc && app.child_tc.trim() ? app.child_tc.trim() : `APP_${app.id}`;
+  const birthValue = app.child_birth_date && app.child_birth_date.trim()
+    ? app.child_birth_date.trim()
+    : `${app.child_birth_year}-01-01`;
+
+  const tcOwner = db.prepare('SELECT id, first_name, last_name FROM students WHERE tc = ?').get(tcValue);
+  if (tcOwner) {
+    return res.status(409).json({
+      error: `Bu TC kimlik numarası zaten kayıtlı bir sporcuya ait (#${tcOwner.id} ${tcOwner.first_name} ${tcOwner.last_name}). Başvuruyu reddedebilir veya mevcut kaydı düzenleyebilirsiniz.`,
+    });
+  }
+
   // E-posta yoksa telefon bazlı üret
   const emailBase = app.parent_email ||
     `veli_${app.parent_phone.replace(/\D/g, '')}@muzafferugur.com`;
@@ -97,68 +129,78 @@ router.post('/:id/approve', authenticate, authorize('admin'), async (req, res) =
   let veliUserId;
   let rawPassword = null;
   let isNewUser = false;
+  let studentResult;
 
-  if (existingUser) {
-    // Aynı velinin 2. (veya daha fazla) çocuğu — mevcut hesaba bağla
-    veliUserId = existingUser.id;
-  } else {
-    // Yeni veli hesabı oluştur
-    isNewUser = true;
-    const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-    const lower = 'abcdefghjkmnpqrstuvwxyz';
-    const digits = '23456789';
-    const rand = (set) => set[crypto.randomInt(set.length)];
-    rawPassword = [
-      rand(upper), rand(upper), rand(upper),
-      rand(lower), rand(lower), rand(lower),
-      rand(digits), rand(digits), rand(digits),
-      '@',
-    ].sort(() => crypto.randomInt(3) - 1).join('');
+  // Veli hesabı + sporcu + başvuru durumu tek transaction — biri patlarsa hiçbiri yazılmaz
+  db.exec('BEGIN');
+  try {
+    if (existingUser) {
+      // Aynı velinin 2. (veya daha fazla) çocuğu — mevcut hesaba bağla
+      veliUserId = existingUser.id;
+    } else {
+      // Yeni veli hesabı oluştur
+      isNewUser = true;
+      const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+      const lower = 'abcdefghjkmnpqrstuvwxyz';
+      const digits = '23456789';
+      const rand = (set) => set[crypto.randomInt(set.length)];
+      rawPassword = [
+        rand(upper), rand(upper), rand(upper),
+        rand(lower), rand(lower), rand(lower),
+        rand(digits), rand(digits), rand(digits),
+        '@',
+      ].sort(() => crypto.randomInt(3) - 1).join('');
 
-    const hash = bcrypt.hashSync(rawPassword, 10);
-    const userResult = db.prepare(
-      'INSERT INTO users (name, email, password_hash, role, phone) VALUES (?, ?, ?, ?, ?)'
-    ).run(app.parent_name, emailBase, hash, 'veli', app.parent_phone);
-    veliUserId = userResult.lastInsertRowid;
+      const hash = bcrypt.hashSync(rawPassword, 10);
+      const userResult = db.prepare(
+        'INSERT INTO users (name, email, password_hash, role, phone) VALUES (?, ?, ?, ?, ?)'
+      ).run(app.parent_name, emailBase, hash, 'veli', app.parent_phone);
+      veliUserId = userResult.lastInsertRowid;
+    }
+
+    studentResult = db.prepare(`
+      INSERT INTO students
+        (first_name, last_name, tc, birth_date, parent_name, parent_phone,
+         school, blood_type, address, veli_user_id, notes,
+         height, weight, emergency_phone, mother_name, father_name, mother_job, father_job)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      app.child_name.split(' ')[0],
+      app.child_name.split(' ').slice(1).join(' ') || '-',
+      tcValue,
+      birthValue,
+      app.parent_name,
+      app.parent_phone,
+      app.child_school || '',
+      app.child_blood_group || '',
+      app.child_address || '',
+      veliUserId,
+      `Başvuru #${app.id} — Branş: ${app.branch}${app.message ? ' | Not: ' + app.message : ''}`,
+      app.child_height || '',
+      app.child_weight || '',
+      app.emergency_phone || '',
+      app.mother_name || '',
+      app.father_name || '',
+      app.mother_job || '',
+      app.father_job || ''
+    );
+
+    // Başvuruyu onayla
+    db.prepare(`
+      UPDATE applications SET status='approved', processed_at=datetime('now') WHERE id=?
+    `).run(app.id);
+
+    db.exec('COMMIT');
+  } catch (err) {
+    db.exec('ROLLBACK');
+    console.error(`[Applications] Başvuru #${app.id} onaylanamadı:`, err.message);
+    const isUnique = /UNIQUE constraint failed/i.test(err.message);
+    return res.status(isUnique ? 409 : 500).json({
+      error: isUnique
+        ? 'Kayıt çakışması: bu veli e-postası veya sporcu TC numarası zaten kullanılıyor.'
+        : 'Onaylama sırasında sunucu hatası oluştu, hiçbir kayıt oluşturulmadı.',
+    });
   }
-
-  // Sporcu kaydı oluştur — başvurudaki tüm bilgileri aktar
-  const tcValue = app.child_tc && app.child_tc.trim() ? app.child_tc.trim() : `APP_${app.id}`;
-  const birthValue = app.child_birth_date && app.child_birth_date.trim()
-    ? app.child_birth_date.trim()
-    : `${app.child_birth_year}-01-01`;
-
-  const studentResult = db.prepare(`
-    INSERT INTO students
-      (first_name, last_name, tc, birth_date, parent_name, parent_phone,
-       school, blood_type, address, veli_user_id, notes,
-       height, weight, emergency_phone, mother_name, father_name, mother_job, father_job)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
-    app.child_name.split(' ')[0],
-    app.child_name.split(' ').slice(1).join(' ') || '-',
-    tcValue,
-    birthValue,
-    app.parent_name,
-    app.parent_phone,
-    app.child_school || '',
-    app.child_blood_group || '',
-    app.child_address || '',
-    veliUserId,
-    `Başvuru #${app.id} — Branş: ${app.branch}${app.message ? ' | Not: ' + app.message : ''}`,
-    app.child_height || '',
-    app.child_weight || '',
-    app.emergency_phone || '',
-    app.mother_name || '',
-    app.father_name || '',
-    app.mother_job || '',
-    app.father_job || ''
-  );
-
-  // Başvuruyu onayla
-  db.prepare(`
-    UPDATE applications SET status='approved', processed_at=datetime('now') WHERE id=?
-  `).run(app.id);
 
   // WhatsApp mesajı gönder
   let wpSent = false;
