@@ -1,6 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { getDb } = require('../db/init');
+const { findVeliByPhone } = require('../db/veli');
 const { authenticate, authorize } = require('../middleware/auth');
 
 const router = express.Router();
@@ -151,6 +152,9 @@ router.post('/', authenticate, authorize('admin'), studentValidation, (req, res)
   const groupIdList = Array.isArray(group_ids) ? group_ids.map(Number).filter(Boolean) : [];
   const primaryGroupId = groupIdList[0] || null;
 
+  // Veli seçilmediyse veli telefonuyla eşleşen mevcut veli hesabına otomatik bağla
+  const veliUserId = veli_user_id || findVeliByPhone(db, parent_phone)?.id || null;
+
   const result = db.prepare(`
     INSERT INTO students
       (first_name, last_name, tc, birth_date, parent_name, school, foot, blood_type,
@@ -161,7 +165,7 @@ router.post('/', authenticate, authorize('admin'), studentValidation, (req, res)
     first_name, last_name, tc, birth_date, parent_name,
     school || '', foot || '', blood_type || '',
     primaryGroupId, address || '', athlete_phone || '',
-    parent_phone, veli_user_id || null, notes || '', photo_url || '',
+    parent_phone, veliUserId, notes || '', photo_url || '',
     height || '', weight || '', emergency_phone || '',
     mother_name || '', father_name || '', mother_job || '', father_job || ''
   );
@@ -170,7 +174,7 @@ router.post('/', authenticate, authorize('admin'), studentValidation, (req, res)
   const insertSg = db.prepare('INSERT OR IGNORE INTO student_groups (student_id, group_id) VALUES (?, ?)');
   for (const gid of groupIdList) insertSg.run(studentId, gid);
 
-  res.status(201).json({ id: studentId });
+  res.status(201).json({ id: studentId, veliUserId });
 });
 
 // PUT /api/students/:id

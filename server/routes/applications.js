@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const { body, validationResult } = require('express-validator');
 const { getDb } = require('../db/init');
+const { findVeliByPhone } = require('../db/veli');
 const { authenticate, authorize } = require('../middleware/auth');
 const { sendSms } = require('../services/sms');
 
@@ -123,8 +124,14 @@ router.post('/:id/approve', authenticate, authorize('admin'), async (req, res) =
   const emailBase = app.parent_email ||
     `veli_${app.parent_phone.replace(/\D/g, '')}@muzafferugur.com`;
 
-  // Mevcut veli hesabı var mı kontrol et
-  const existingUser = db.prepare('SELECT id FROM users WHERE email = ?').get(emailBase);
+  // Mevcut veli hesabı var mı kontrol et — önce e-posta, yoksa telefon (son 10 hane) ile
+  // (aynı veli 2. çocukta e-postayı boş bırakmış / farklı yazmış olabilir)
+  const existingUser =
+    db.prepare('SELECT id, email FROM users WHERE email = ?').get(emailBase) ||
+    findVeliByPhone(db, app.parent_phone);
+
+  // Panele giriş e-postası: mevcut velininki ya da yeni oluşturulacak olan
+  const loginEmail = existingUser ? existingUser.email : emailBase;
 
   let veliUserId;
   let rawPassword = null;
@@ -227,7 +234,7 @@ router.post('/:id/approve', authenticate, authorize('admin'), async (req, res) =
       `"${app.child_name}" adlı sporcunuzun "${app.branch}" branşı için yaptığınız başvuru onaylanmıştır.\n\n` +
       `Mevcut veli hesabınızla panele giriş yapabilirsiniz:\n` +
       `🌐 https://musksporkulübü.com/panel/login\n` +
-      `📧 E-posta: ${emailBase}\n\n` +
+      `📧 E-posta: ${loginEmail}\n\n` +
       `İyi günler dileriz!`;
     try {
       const smsResult = await sendSms(app.parent_phone, msg);
@@ -241,7 +248,7 @@ router.post('/:id/approve', authenticate, authorize('admin'), async (req, res) =
     success: true,
     userId: veliUserId,
     studentId: studentResult.lastInsertRowid,
-    email: emailBase,
+    email: loginEmail,
     password: rawPassword,
     isExistingUser: !isNewUser,
     wpSent,
