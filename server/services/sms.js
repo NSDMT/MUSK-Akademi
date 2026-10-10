@@ -16,6 +16,7 @@ const fs = require('fs');
 
 const READY_TIMEOUT_MS = 5 * 60 * 1000; // bu sürede ready olmazsa yeniden başlat
 const SEND_TIMEOUT_MS = 30 * 1000;      // tek mesaj gönderimi en fazla bu kadar beklenir
+const HEALTH_CHECK_MS = 10 * 60 * 1000; // bağlantı bu aralıkla yoklanır
 
 // Chrome yolu: .env'de CHROME_PATH varsa o, yoksa eski sabit yol (varsa), yoksa puppeteer'ın kendi Chrome'u
 const LEGACY_CHROME_PATH = '/root/.cache/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
@@ -36,6 +37,8 @@ function initWhatsApp() {
     }),
     puppeteer: {
       headless: true,
+      // Donmuş sayfada her çağrı varsayılan 180 sn beklemesin
+      protocolTimeout: 60_000,
       executablePath: CHROME_PATH,
       args: [
         '--no-sandbox',
@@ -112,8 +115,9 @@ function restartWhatsApp(reason, delayMs) {
 
   restartTimer = setTimeout(async () => {
     if (old) {
-      try { await old.destroy(); } catch (e) {
-        console.warn('[WhatsApp] Eski client kapatılamadı:', e.message);
+      try { await withTimeout(old.destroy(), 20_000); } catch (e) {
+        console.warn('[WhatsApp] Eski client kapatılamadı, Chrome zorla sonlandırılıyor:', e.message);
+        try { old.pupBrowser?.process()?.kill('SIGKILL'); } catch { /* zaten kapalı */ }
       }
     }
     restartTimer = null;
@@ -122,7 +126,8 @@ function restartWhatsApp(reason, delayMs) {
 }
 
 // Tarayıcı/oturum öldüğünü gösteren hatalar — bunlarda client yeniden başlatılır
-const FATAL_ERROR_RE = /Session closed|Target closed|detached Frame|Protocol error|Execution context was destroyed|browser has disconnected/i;
+// (Runtime.callFunctionOn timed out / Zaman aşımı → WhatsApp Web sayfası donmuş demektir)
+const FATAL_ERROR_RE = /Session closed|Target closed|detached Frame|Protocol error|Execution context was destroyed|browser has disconnected|timed out|Zaman aşımı/i;
 
 function withTimeout(promise, ms) {
   let timer;
@@ -136,6 +141,20 @@ function withTimeout(promise, ms) {
 
 // Uygulama başlarken WhatsApp'ı başlat
 initWhatsApp();
+
+// Sağlık kontrolü: "hazır" görünen ama donmuş/kopmuş oturumu mesaj gelmeden yakala
+setInterval(async () => {
+  const client = waClient;
+  if (!isReady || !client) return;
+  try {
+    const state = await withTimeout(client.getState(), 30_000);
+    if (state !== 'CONNECTED' && client === waClient) {
+      restartWhatsApp(`sağlık kontrolü: durum ${state}`, 0);
+    }
+  } catch (err) {
+    if (client === waClient) restartWhatsApp(`sağlık kontrolü: ${err.message}`, 0);
+  }
+}, HEALTH_CHECK_MS).unref();
 
 /**
  * Veliye WhatsApp mesajı gönderir.

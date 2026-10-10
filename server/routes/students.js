@@ -225,7 +225,29 @@ router.delete('/:id', authenticate, authorize('admin'), (req, res) => {
   const db = getDb();
   const student = db.prepare('SELECT id FROM students WHERE id = ?').get(req.params.id);
   if (!student) return res.status(404).json({ error: 'Öğrenci bulunamadı' });
-  db.prepare('DELETE FROM students WHERE id = ?').run(req.params.id);
+
+  // Ödeme geçmişi olan sporcu silinmez (finansal kayıt kaybolmasın)
+  const paidDues = db.prepare("SELECT COUNT(*) AS c FROM dues WHERE student_id = ? AND status = 'paid'").get(student.id).c;
+  const completedPayments = db.prepare("SELECT COUNT(*) AS c FROM payments WHERE student_id = ? AND status = 'completed'").get(student.id).c;
+  if (paidDues || completedPayments) {
+    return res.status(409).json({
+      error: 'Bu sporcunun ödeme geçmişi var, silinemez. Gerekirse sporcuyu pasif yapın veya gruplardan çıkarın.',
+    });
+  }
+
+  // Bağlı yoklama / bekleyen aidat / başarısız ödeme kayıtlarıyla birlikte sil
+  db.exec('BEGIN');
+  try {
+    db.prepare('DELETE FROM attendance WHERE student_id = ?').run(student.id);
+    db.prepare('DELETE FROM dues WHERE student_id = ?').run(student.id);
+    db.prepare('DELETE FROM payments WHERE student_id = ?').run(student.id);
+    db.prepare('DELETE FROM students WHERE id = ?').run(student.id);
+    db.exec('COMMIT');
+  } catch (err) {
+    db.exec('ROLLBACK');
+    console.error(`[Students] #${student.id} silinemedi:`, err.message);
+    return res.status(500).json({ error: 'Sporcu silinemedi: ' + err.message });
+  }
   res.json({ success: true });
 });
 
