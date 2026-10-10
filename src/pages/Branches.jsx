@@ -5,16 +5,16 @@ import './Branches.css';
 
 function TrainerCard({ trainer }) {
   return (
-    <div className="trainer-card">
+    <div className="branch-trainer">
       {trainer.photo ? (
-        <img src={trainer.photo} alt={trainer.name} className="trainer-card__photo" />
+        <img src={trainer.photo} alt={trainer.name} className="branch-trainer__photo" />
       ) : (
-        <div className="trainer-card__avatar">
+        <div className="branch-trainer__avatar">
           <span>👤</span>
         </div>
       )}
       {/* FOTOĞRAF: her antrenör için public/images/trainer-[isim].jpg ekleyin */}
-      <div className="trainer-card__info">
+      <div className="branch-trainer__info">
         <strong>{trainer.name}</strong>
         <span>{trainer.role}</span>
       </div>
@@ -46,7 +46,7 @@ function BranchSection({ branch }) {
             {branch.trainers.length > 0 && (
               <div className="branch-section__trainers">
                 <h3>{branch.name} Antrenörlerimiz</h3>
-                <div className="trainers-grid">
+                <div className="branch-trainers">
                   {branch.trainers.map(t => (
                     <TrainerCard key={t.name} trainer={t} />
                   ))}
